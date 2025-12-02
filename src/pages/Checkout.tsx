@@ -155,6 +155,18 @@ const Checkout = () => {
                       <h3 className="font-medium text-foreground">সমস্যা হলে কোথায় যোগাযোগ করবো?</h3>
                       <p className="text-sm text-muted-foreground mt-1">আমাদের সাপোর্ট ইমেইল বা ফেসবুক পেজে যোগাযোগ করুন।</p>
                     </div>
+                    <div>
+                      <h3 className="font-medium text-foreground">কোর্সের ভিডিও ডাউনলোড করা যাবে?</h3>
+                      <p className="text-sm text-muted-foreground mt-1">না, কপিরাইট সুরক্ষার জন্য ভিডিও শুধুমাত্র অনলাইনে দেখা যাবে।</p>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-foreground">রিফান্ড পলিসি কি?</h3>
+                      <p className="text-sm text-muted-foreground mt-1">কোর্স কেনার ৭ দিনের মধ্যে রিফান্ডের জন্য আবেদন করতে পারবেন।</p>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-foreground">মোবাইলে কোর্স দেখা যাবে?</h3>
+                      <p className="text-sm text-muted-foreground mt-1">হ্যাঁ, যেকোনো ডিভাইস থেকে কোর্স অ্যাক্সেস করতে পারবেন।</p>
+                    </div>
                   </div>
                 </Card>
               </div>
