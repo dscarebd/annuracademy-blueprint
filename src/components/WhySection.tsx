@@ -46,7 +46,7 @@ const WhySection = () => {
     <section className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
         {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-2 gap-12 items-start mb-12">
+        <div className="grid lg:grid-cols-[30%_70%] gap-8 items-start mb-12">
           {/* Left Side - Text Content */}
           <div>
             <h2 className="text-4xl md:text-5xl font-bold mb-4">কেন?</h2>
@@ -59,7 +59,7 @@ const WhySection = () => {
                 <span className="text-xs text-primary font-semibold">ACADEMY</span>
               </div>
             </div>
-            <p className="text-lg leading-relaxed text-muted-foreground mb-6">
+            <p className="text-base leading-relaxed text-muted-foreground mb-6">
               আমার চ্যানেলে এখন পর্যন্ত ৭০০ টির বেশি ভিডিও আছে। দেশ-বিদেশের অসংখ্য মানুষ এই ভিডিওগুলো দেখে উপকৃত হয়েছে। ক্যারিয়ার ডেভেলপমেন্টে নিয়ে কথা বলেছি, লার্নিং রিলেটেড—এই ভিডিও আমি প্রতিটিতে ফেল প্রেকটিক্যাল আলোর বাতি। প্রোগ্রামিং জার্নিসে বিষয়ে সহজ ভাষায় সবকিছু জানা যাবার হাজার হাজার মানুষকে ফ্রি শেখাতে আমার ইউটিউবের চ্যানেলা পেয়ার এখন সহজ-সুন্দর পথ খেঁজে পাওয়া যায় না।
             </p>
             <Button className="gradient-purple text-white hover:opacity-90 gap-2">
@@ -69,7 +69,7 @@ const WhySection = () => {
           </div>
 
           {/* Right Side - Video Thumbnails */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {videos.map((video, index) => (
               <Card
                 key={index}
@@ -82,13 +82,13 @@ const WhySection = () => {
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Youtube className="w-12 h-12 text-white" />
+                    <Youtube className="w-16 h-16 text-white" />
                   </div>
                 </div>
-                <div className="p-3">
-                  <h3 className="font-bold text-sm mb-1">{video.title}</h3>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Youtube className="w-3 h-3" />
+                <div className="p-4">
+                  <h3 className="font-bold text-base mb-2">{video.title}</h3>
+                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                    <Youtube className="w-4 h-4" />
                     {video.label}
                   </p>
                 </div>
