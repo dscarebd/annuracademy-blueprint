@@ -26,9 +26,9 @@ const Navbar = () => {
             <Link to="/about" className="text-foreground hover:text-primary transition-colors font-medium">
               মেন্টর
             </Link>
-            <a href="/#courses" className="text-foreground hover:text-primary transition-colors font-medium">
+            <Link to="/courses" className="text-foreground hover:text-primary transition-colors font-medium">
               সকল কোর্স
-            </a>
+            </Link>
             <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-medium">
               ব্লগ
             </Link>
