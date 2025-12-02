@@ -19,7 +19,7 @@ const Index = () => {
       rating: 4.92,
       reviewCount: 12,
       price: "1,199.00",
-      instructor: "Ali Hossain",
+      instructor: "An-Nur Academy",
       category: "Career Development",
     },
     {
@@ -29,7 +29,7 @@ const Index = () => {
       rating: 5.0,
       reviewCount: 7,
       price: "",
-      instructor: "Ali Hossain",
+      instructor: "An-Nur Academy",
       category: "Design",
       isFree: true,
     },
@@ -40,7 +40,7 @@ const Index = () => {
       rating: 5.0,
       reviewCount: 1,
       price: "599.00",
-      instructor: "Ali Hossain",
+      instructor: "An-Nur Academy",
       category: "Design",
     },
     {
@@ -50,7 +50,7 @@ const Index = () => {
       rating: 0,
       reviewCount: 0,
       price: "999.00",
-      instructor: "Ali Hossain",
+      instructor: "An-Nur Academy",
       category: "No Code",
     },
     {
@@ -60,7 +60,7 @@ const Index = () => {
       rating: 5.0,
       reviewCount: 30,
       price: "1,499.00",
-      instructor: "Ali Hossain",
+      instructor: "An-Nur Academy",
       category: "No Code, WordPress",
     },
   ];
