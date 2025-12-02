@@ -30,6 +30,9 @@ const Navbar = () => {
               সকল কোর্স
             </a>
             <a href="#" className="text-foreground hover:text-primary transition-colors font-medium">
+              ব্লগ
+            </a>
+            <a href="#" className="text-foreground hover:text-primary transition-colors font-medium">
               যোগাযোগ
             </a>
           </div>
