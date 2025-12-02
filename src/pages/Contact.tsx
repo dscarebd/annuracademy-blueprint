@@ -10,9 +10,9 @@ const Contact = () => {
       {/* Hero Section */}
       <section className="py-12 bg-gradient-to-br from-primary/5 to-secondary/5">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-primary font-medium mb-4">আমাদের সাথে</p>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            "একটি দৃঢ় সম্পর্ক যেকোনো কিছু উপর টিকে থাকতে পারে"
+          <h1 className="text-2xl md:text-3xl font-bold mb-6">
+            <span className="text-primary block">"আপনাদের ভালোবাসা আর বিশ্বাস,</span>
+            <span className="text-foreground">আমাদের আগামী দিনের পথ চলার রাস্তা তৈরি করবে"</span>
           </h1>
         </div>
       </section>
