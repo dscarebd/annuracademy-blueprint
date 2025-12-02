@@ -3,6 +3,12 @@ import Navbar from "@/components/Navbar";
 import TopBanner from "@/components/TopBanner";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
+import blogWordpressAutomation from "@/assets/blog-wordpress-automation.jpg";
+import blogProgrammingHabits from "@/assets/blog-programming-habits.jpg";
+import blogWebHosting from "@/assets/blog-web-hosting.jpg";
+import blogCareerBreaking from "@/assets/blog-career-breaking.jpg";
+import blogRemoteJobSkills from "@/assets/blog-remote-job-skills.jpg";
+import blogWebDevFuture from "@/assets/blog-web-dev-future.jpg";
 
 const Blog = () => {
   const blogPosts = [
@@ -12,7 +18,7 @@ const Blog = () => {
       excerpt: "আপনি যদি আপনার WordPress ওয়েবসাইট এ AI দিয়ে ব্লগ লিখাতে চান এবং ভাবেন প্রতিদিন AI আপনার জন্য একটা করে পোষ্ট করবে...",
       category: "Web Development",
       categoryColor: "bg-blue-500",
-      image: "/placeholder.svg",
+      image: blogWordpressAutomation,
       author: "An-Nur Academy",
       date: "June 27, 2025",
       link: "#",
@@ -23,7 +29,7 @@ const Blog = () => {
       excerpt: "আপনার কি কখনো এমন হয়েছে যে কোডিং শেখার পরেও মনে রাখতে পারছেন না? হয়তো কোনো একটা ফাংশন লিখতে গিয়ে থেমে যাচ্ছেন...",
       category: "Career Development",
       categoryColor: "bg-purple-500",
-      image: "/placeholder.svg",
+      image: blogProgrammingHabits,
       author: "An-Nur Academy",
       date: "December 11, 2024",
       link: "#",
@@ -34,7 +40,7 @@ const Blog = () => {
       excerpt: "আপনি যদি ওয়েব সাইট বানাতে চান আপনার অবশ্যই ভালো একটা হস্টিং প্রোভাইডার থেকে Web Host কিনতে হবে...",
       category: "Tips and Tricks",
       categoryColor: "bg-green-500",
-      image: "/placeholder.svg",
+      image: blogWebHosting,
       author: "An-Nur Academy",
       date: "November 12, 2024",
       link: "#",
@@ -45,7 +51,7 @@ const Blog = () => {
       excerpt: "আমার দীর্ঘ ১২+ বছরের ক্যারিয়ার কয়েকবার ধ্বংসের দ্বারপ্রান্তে পৌঁছেছিল, আমি শিক্ষা নিয়েছি এবং আবার ঘুরে দাঁড়িয়েছি...",
       category: "Career Development",
       categoryColor: "bg-purple-500",
-      image: "/placeholder.svg",
+      image: blogCareerBreaking,
       author: "An-Nur Academy",
       date: "November 10, 2024",
       link: "#",
@@ -56,7 +62,7 @@ const Blog = () => {
       excerpt: "আপনি কোড করতে জানেন একটা জব পাবার জন্য এতটুকুই যথেষ্ট না এর সাথে আপনার Problem solving Skill, communication...",
       category: "Remote Job",
       categoryColor: "bg-orange-500",
-      image: "/placeholder.svg",
+      image: blogRemoteJobSkills,
       author: "An-Nur Academy",
       date: "November 8, 2024",
       link: "#",
@@ -67,7 +73,7 @@ const Blog = () => {
       excerpt: "GitHub co-pilot, ChatGPT, Open AI যে ভাবে এগিয়ে যাচ্ছে, ওয়েব ডেভেলপমেন্টের ক্যারিয়ার ধ্বংসের দিকে, আসলেই কি তাই?...",
       category: "Web Development",
       categoryColor: "bg-blue-500",
-      image: "/placeholder.svg",
+      image: blogWebDevFuture,
       author: "An-Nur Academy",
       date: "November 5, 2024",
       link: "#",
