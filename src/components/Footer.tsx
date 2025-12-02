@@ -33,17 +33,11 @@ const Footer = () => {
       name: "রিফান্ড পলিসি",
       url: "#refund"
     }, {
-      name: "মার্চেন্ট রেজিস্ট্রেশন সর্তাবলি",
-      url: "#merchant"
-    }, {
       name: "সাপোর্ট",
       url: "#support"
     }, {
       name: "প্রাইভেসি পলিসি",
       url: "#privacy"
-    }, {
-      name: "টেক্সটবুক গ্রপ",
-      url: "#textbook"
     }],
     // Copyright
     copyright: "© 2024 - 2025. All Rights Reserved."
