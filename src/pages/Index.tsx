@@ -1,6 +1,7 @@
 import TopBanner from "@/components/TopBanner";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import WhySection from "@/components/WhySection";
 import CourseCard from "@/components/CourseCard";
 import PurpleCallout from "@/components/PurpleCallout";
 import Footer from "@/components/Footer";
@@ -70,6 +71,7 @@ const Index = () => {
       <TopBanner />
       <Navbar />
       <Hero />
+      <WhySection />
       
       {/* Purple Callout */}
       <PurpleCallout>
