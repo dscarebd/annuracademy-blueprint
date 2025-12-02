@@ -1,4 +1,4 @@
-import { Facebook, Youtube, Instagram, Send } from "lucide-react";
+import { Facebook, Youtube, Send } from "lucide-react";
 import { Link } from "react-router-dom";
 const Footer = () => {
   // All editable content
@@ -7,10 +7,9 @@ const Footer = () => {
     brandDescription: "স্কিল ডেভেলপমেন্ট করে নিজেকে এমনভাবে গড়ে তুলুন, যেমন ভাবে একটি ছোট্ট বাল্ব অনিক প্রতিক্রিয়ার হয়ে উঠে। এই স্বপ্ন তোমার নিজেরী আমাদের নতুন আয়েম— যেখানে সফলতা হবে আপনার নিজেমের, আর আমরিকা হবে নিজের সংবুল নহিষা।",
     // Social links
     socialLinks: {
-      facebook: "https://facebook.com",
-      telegram: "https://t.me",
-      instagram: "https://instagram.com",
-      youtube: "https://youtube.com"
+      facebook: "https://facebook.com/annuracademy",
+      telegram: "https://t.me/annuracademy",
+      youtube: "https://youtube.com/@annuracademy"
     },
     // All Courses
     allCourses: [{
@@ -31,11 +30,11 @@ const Footer = () => {
       name: "আমাদের সম্পর্কে",
       url: "/about"
     }, {
-      name: "রিফান্ড পলিসি",
-      url: "/refund-policy"
-    }, {
       name: "সাপোর্ট",
       url: "/contact"
+    }, {
+      name: "রিফান্ড পলিসি",
+      url: "/refund-policy"
     }, {
       name: "প্রাইভেসি পলিসি",
       url: "/privacy-policy"
@@ -77,9 +76,6 @@ const Footer = () => {
               </a>
               <a href={content.socialLinks.telegram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border-2 border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300">
                 <Send className="w-5 h-5" />
-              </a>
-              <a href={content.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border-2 border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300">
-                <Instagram className="w-5 h-5" />
               </a>
               <a href={content.socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border-2 border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300">
                 <Youtube className="w-5 h-5" />

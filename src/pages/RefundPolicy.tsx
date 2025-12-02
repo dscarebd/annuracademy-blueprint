@@ -10,7 +10,7 @@ const RefundPolicy = () => {
       
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary/10 via-background to-primary/5 py-16 md:py-24">
+        <section className="bg-gradient-to-br from-primary/10 via-background to-primary/5 py-8 md:py-12">
           <div className="container mx-auto px-4">
             <Link 
               to="/" 
@@ -29,7 +29,7 @@ const RefundPolicy = () => {
         </section>
 
         {/* Policy Content */}
-        <section className="py-16">
+        <section className="py-8 md:py-12">
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="prose prose-lg max-w-none">
               
