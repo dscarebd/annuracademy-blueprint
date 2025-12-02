@@ -8,9 +8,9 @@ const Contact = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="py-12 bg-gradient-to-br from-primary/5 to-secondary/5">
+      <section className="pt-12 pb-6 bg-gradient-to-br from-primary/5 to-secondary/5">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-2xl md:text-3xl font-bold mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold mb-0">
             <span className="text-primary block">"আপনাদের ভালোবাসা আর বিশ্বাস,</span>
             <span className="text-foreground">আমাদের আগামী দিনের পথ চলার রাস্তা তৈরি করবে"</span>
           </h1>
@@ -18,7 +18,7 @@ const Contact = () => {
       </section>
 
       {/* Contact Guidelines */}
-      <section className="py-12 bg-background">
+      <section className="pt-6 pb-12 bg-background">
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="bg-card border border-border rounded-lg p-8 shadow-sm">
             <h2 className="text-2xl font-bold text-foreground mb-6">
