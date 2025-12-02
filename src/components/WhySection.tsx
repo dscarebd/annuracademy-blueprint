@@ -45,53 +45,56 @@ const WhySection = () => {
   return (
     <section className="py-16 md:py-24 bg-white">
       <div className="container mx-auto px-4">
-        {/* Heading */}
-        <div className="mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">কেন?</h2>
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-              A
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-2 gap-12 items-start mb-12">
+          {/* Left Side - Text Content */}
+          <div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">কেন?</h2>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                A
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xl font-bold text-foreground">An-Nur</span>
+                <span className="text-xs text-primary font-semibold">ACADEMY</span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold text-foreground">An-Nur</span>
-              <span className="text-xs text-primary font-semibold">ACADEMY</span>
-            </div>
+            <p className="text-lg leading-relaxed text-muted-foreground mb-6">
+              আমার চ্যানেলে এখন পর্যন্ত ৭০০ টির বেশি ভিডিও আছে। দেশ-বিদেশের অসংখ্য মানুষ এই ভিডিওগুলো দেখে উপকৃত হয়েছে। ক্যারিয়ার ডেভেলপমেন্টে নিয়ে কথা বলেছি, লার্নিং রিলেটেড—এই ভিডিও আমি প্রতিটিতে ফেল প্রেকটিক্যাল আলোর বাতি। প্রোগ্রামিং জার্নিসে বিষয়ে সহজ ভাষায় সবকিছু জানা যাবার হাজার হাজার মানুষকে ফ্রি শেখাতে আমার ইউটিউবের চ্যানেলা পেয়ার এখন সহজ-সুন্দর পথ খেঁজে পাওয়া যায় না।
+            </p>
+            <Button className="gradient-purple text-white hover:opacity-90 gap-2">
+              <Youtube className="w-5 h-5" />
+              YouTube Channel
+            </Button>
           </div>
-          <p className="text-lg leading-relaxed text-muted-foreground max-w-4xl">
-            আমার চ্যানেলে এখন পর্যন্ত ৭০০ টির বেশি ভিডিও আছে। দেশ-বিদেশের অসংখ্য মানুষ এই ভিডিওগুলো দেখে উপকৃত হয়েছে। ক্যারিয়ার ডেভেলপমেন্টে নিয়ে কথা বলেছি, লার্নিং রিলেটেড—এই ভিডিও আমি প্রতিটিতে ফেল প্রেকটিক্যাল আলোর বাতি। প্রোগ্রামিং জার্নিসে বিষয়ে সহজ ভাষায় সবকিছু জানা যাবার হাজার হাজার মানুষকে ফ্রি শেখাতে আমার ইউটিউবের চ্যানেলা পেয়ার এখন সহজ-সুন্দর পথ খেঁজে পাওয়া যায় না।
-          </p>
-          <Button className="mt-6 gradient-purple text-white hover:opacity-90 gap-2">
-            <Youtube className="w-5 h-5" />
-            YouTube Channel
-          </Button>
-        </div>
 
-        {/* Video Thumbnails */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {videos.map((video, index) => (
-            <Card
-              key={index}
-              className="group overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300"
-            >
-              <div className="relative aspect-video overflow-hidden">
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Youtube className="w-16 h-16 text-white" />
+          {/* Right Side - Video Thumbnails */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {videos.map((video, index) => (
+              <Card
+                key={index}
+                className="group overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300"
+              >
+                <div className="relative aspect-video overflow-hidden">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Youtube className="w-12 h-12 text-white" />
+                  </div>
                 </div>
-              </div>
-              <div className="p-4">
-                <h3 className="font-bold text-lg mb-2">{video.title}</h3>
-                <p className="text-sm text-muted-foreground flex items-center gap-1">
-                  <Youtube className="w-4 h-4" />
-                  {video.label}
-                </p>
-              </div>
-            </Card>
-          ))}
+                <div className="p-3">
+                  <h3 className="font-bold text-sm mb-1">{video.title}</h3>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Youtube className="w-3 h-3" />
+                    {video.label}
+                  </p>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
 
         {/* Statistics Cards */}
