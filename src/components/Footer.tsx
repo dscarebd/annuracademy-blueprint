@@ -1,4 +1,5 @@
 import { Facebook, Youtube, Instagram, Send } from "lucide-react";
+import { Link } from "react-router-dom";
 const Footer = () => {
   // All editable content
   const content = {
@@ -28,16 +29,16 @@ const Footer = () => {
     // Quick Links
     quickLinks: [{
       name: "আমাদের সম্পর্কে",
-      url: "#about"
+      url: "/about"
     }, {
       name: "রিফান্ড পলিসি",
-      url: "#refund"
+      url: "/refund-policy"
     }, {
       name: "সাপোর্ট",
-      url: "#support"
+      url: "/contact"
     }, {
       name: "প্রাইভেসি পলিসি",
-      url: "#privacy"
+      url: "/privacy-policy"
     }],
     // Copyright
     copyright: "© 2024 - 2025. All Rights Reserved."
@@ -107,9 +108,9 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               {content.quickLinks.map((link, index) => <li key={index}>
-                  <a href={link.url} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
+                  <Link to={link.url} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
                     {link.name}
-                  </a>
+                  </Link>
                 </li>)}
             </ul>
           </div>
