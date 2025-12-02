@@ -2,6 +2,8 @@ import TopBanner from "@/components/TopBanner";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import WhySection from "@/components/WhySection";
+import CourseFeaturesSection from "@/components/CourseFeaturesSection";
+import AboutMeSection from "@/components/AboutMeSection";
 import CourseCard from "@/components/CourseCard";
 import PurpleCallout from "@/components/PurpleCallout";
 import Footer from "@/components/Footer";
@@ -102,6 +104,10 @@ const Index = () => {
       </section>
 
       <WhySection />
+
+      <CourseFeaturesSection />
+
+      <AboutMeSection />
 
       <Footer />
     </div>
