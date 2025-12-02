@@ -1,4 +1,5 @@
 import { ShoppingCart } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
@@ -19,18 +20,18 @@ const Navbar = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-foreground hover:text-primary transition-colors font-medium">
+            <Link to="/" className="text-foreground hover:text-primary transition-colors font-medium">
               হোম
-            </a>
-            <a href="#courses" className="text-foreground hover:text-primary transition-colors font-medium">
+            </Link>
+            <a href="/#courses" className="text-foreground hover:text-primary transition-colors font-medium">
               কোর্স
             </a>
-            <a href="#courses" className="text-foreground hover:text-primary transition-colors font-medium">
+            <a href="/#courses" className="text-foreground hover:text-primary transition-colors font-medium">
               সকল কোর্স
             </a>
-            <a href="#" className="text-foreground hover:text-primary transition-colors font-medium">
-              ব্লগ
-            </a>
+            <Link to="/about" className="text-foreground hover:text-primary transition-colors font-medium">
+              আমাদের সম্পর্কে
+            </Link>
             <a href="#" className="text-foreground hover:text-primary transition-colors font-medium">
               যোগাযোগ
             </a>
