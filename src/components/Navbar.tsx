@@ -23,15 +23,12 @@ const Navbar = () => {
             <Link to="/" className="text-foreground hover:text-primary transition-colors font-medium">
               হোম
             </Link>
-            <a href="/#courses" className="text-foreground hover:text-primary transition-colors font-medium">
-              কোর্স
-            </a>
+            <Link to="/about" className="text-foreground hover:text-primary transition-colors font-medium">
+              মেন্টর
+            </Link>
             <a href="/#courses" className="text-foreground hover:text-primary transition-colors font-medium">
               সকল কোর্স
             </a>
-            <Link to="/about" className="text-foreground hover:text-primary transition-colors font-medium">
-              আমাদের সম্পর্কে
-            </Link>
             <a href="#" className="text-foreground hover:text-primary transition-colors font-medium">
               যোগাযোগ
             </a>
