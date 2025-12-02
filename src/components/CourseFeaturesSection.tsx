@@ -40,9 +40,11 @@ const CourseFeaturesSection = () => {
               key={index}
               className="p-8 text-center hover:shadow-xl transition-all duration-300 bg-white"
             >
-              {/* Icon Circle */}
-              <div className="mx-auto mb-6 w-32 h-32 rounded-full border-4 border-dashed border-primary/30 flex items-center justify-center bg-purple-50">
-                <feature.icon className="w-12 h-12 text-primary" strokeWidth={2} />
+              {/* Icon with 2 Layers */}
+              <div className="mx-auto mb-6 w-36 h-36 rounded-full border-4 border-dashed border-primary/40 flex items-center justify-center">
+                <div className="w-28 h-28 rounded-full bg-purple-100 flex items-center justify-center">
+                  <feature.icon className="w-12 h-12 text-primary" strokeWidth={2} />
+                </div>
               </div>
 
               {/* Title */}
