@@ -12,7 +12,7 @@ const Navbar = () => {
               A
             </div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold text-foreground">aliHossain</span>
+              <span className="text-xl font-bold text-foreground">An-Nur</span>
               <span className="text-xs text-primary font-semibold">ACADEMY</span>
             </div>
           </div>

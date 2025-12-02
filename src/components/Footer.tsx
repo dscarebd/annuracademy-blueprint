@@ -12,7 +12,7 @@ const Footer = () => {
                 A
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-bold text-white">aliHossain</span>
+                <span className="text-xl font-bold text-white">An-Nur</span>
                 <span className="text-xs text-primary font-semibold">ACADEMY</span>
               </div>
             </div>
@@ -70,7 +70,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-          <p>© 2025 aliHossain Academy. All rights reserved.</p>
+          <p>© 2025 An-Nur Academy. All rights reserved.</p>
         </div>
       </div>
     </footer>
