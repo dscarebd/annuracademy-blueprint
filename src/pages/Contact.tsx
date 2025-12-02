@@ -8,39 +8,37 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Mail, Send, MessageCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 const Contact = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
-    message: "",
+    message: ""
   });
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     toast({
       title: "বার্তা পাঠানো হয়েছে!",
-      description: "আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।",
+      description: "আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।"
     });
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setFormData({
+      name: "",
+      email: "",
+      subject: "",
+      message: ""
+    });
   };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Navbar />
 
       {/* Hero Section */}
@@ -85,42 +83,24 @@ const Contact = () => {
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
-              <a
-                href="mailto:support@annuracademy.com"
-                className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
-              >
+              <a href="mailto:support@annuracademy.com" className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors">
                 <Mail className="text-primary" size={24} />
                 <span className="text-foreground font-medium">support@annuracademy.com</span>
               </a>
               
-              <a
-                href="https://t.me/annuracademy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
-              >
+              <a href="https://t.me/annuracademy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors">
                 <Send className="text-primary" size={24} />
-                <span className="text-foreground font-medium">Join Telegram</span>
+                <span className="text-foreground font-medium">Join in Telegram</span>
               </a>
               
-              <a
-                href="https://www.facebook.com/annuracademy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
-              >
+              <a href="https://www.facebook.com/annuracademy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors">
                 <MessageCircle className="text-primary" size={24} />
-                <span className="text-foreground font-medium">Follow us on Facebook</span>
+                <span className="text-foreground font-medium">Follow on Facebook</span>
               </a>
               
-              <a
-                href="https://www.youtube.com/@annuracademy"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
-              >
+              <a href="https://www.youtube.com/@annuracademy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors">
                 <MessageCircle className="text-primary" size={24} />
-                <span className="text-foreground font-medium">Follow Us on YouTube</span>
+                <span className="text-foreground font-medium">Subscribe on YouTube</span>
               </a>
             </div>
           </div>
@@ -137,55 +117,22 @@ const Contact = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <Label htmlFor="name">আপনার নাম *</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="আপনার পুরো নাম লিখুন"
-                  className="mt-2"
-                />
+                <Input id="name" name="name" value={formData.name} onChange={handleChange} required placeholder="আপনার পুরো নাম লিখুন" className="mt-2" />
               </div>
 
               <div>
                 <Label htmlFor="email">ইমেইল ঠিকানা *</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="your@email.com"
-                  className="mt-2"
-                />
+                <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required placeholder="your@email.com" className="mt-2" />
               </div>
 
               <div>
                 <Label htmlFor="subject">বিষয় *</Label>
-                <Input
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  required
-                  placeholder="আপনার বার্তার বিষয়"
-                  className="mt-2"
-                />
+                <Input id="subject" name="subject" value={formData.subject} onChange={handleChange} required placeholder="আপনার বার্তার বিষয়" className="mt-2" />
               </div>
 
               <div>
                 <Label htmlFor="message">বার্তা *</Label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  placeholder="আপনার বিস্তারিত বার্তা লিখুন..."
-                  className="mt-2 min-h-[150px]"
-                />
+                <Textarea id="message" name="message" value={formData.message} onChange={handleChange} required placeholder="আপনার বিস্তারিত বার্তা লিখুন..." className="mt-2 min-h-[150px]" />
               </div>
 
               <Button type="submit" className="w-full" size="lg">
@@ -273,8 +220,6 @@ const Contact = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Contact;
