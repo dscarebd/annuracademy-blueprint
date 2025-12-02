@@ -1,3 +1,4 @@
+import TopBanner from "@/components/TopBanner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
@@ -122,6 +123,7 @@ const Courses = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <TopBanner />
       <Navbar />
 
       <main className="flex-grow">

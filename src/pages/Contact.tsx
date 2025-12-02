@@ -1,3 +1,4 @@
+import TopBanner from "@/components/TopBanner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Mail, Send, MessageCircle } from "lucide-react";
@@ -5,6 +6,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const Contact = () => {
   return <div className="min-h-screen bg-background">
+      <TopBanner />
       <Navbar />
 
       {/* Hero Section */}
