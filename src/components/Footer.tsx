@@ -28,7 +28,7 @@ const Footer = () => {
       { name: "আমাদের সম্পর্কে", url: "#about" },
       { name: "রিফান্ড পলিসি", url: "#refund" },
       { name: "মার্চেন্ট রেজিস্ট্রেশন সর্তাবলি", url: "#merchant" },
-      { name: "সাদযাই", url: "#support" },
+      { name: "সাপোর্ট", url: "#support" },
       { name: "প্রাইভেসি পলিসি", url: "#privacy" },
       { name: "টেক্সটবুক গ্রপ", url: "#textbook" },
     ],
@@ -51,12 +51,12 @@ const Footer = () => {
                 </div>
               </div>
               <div className="flex flex-col">
-                <span className="text-2xl font-bold text-foreground">
-                  aliHossain
-                </span>
-                <span className="text-xs text-primary font-bold uppercase tracking-wider">
-                  annur academy
-                </span>
+              <span className="text-2xl font-bold text-foreground">
+                An-Nur Academy
+              </span>
+              <span className="text-xs text-primary font-bold uppercase tracking-wider">
+                education platform
+              </span>
               </div>
             </div>
 
