@@ -14,7 +14,7 @@ const Blog = () => {
   const blogPosts = [
     {
       id: 1,
-      title: "Auto Blog Like a Pro: ChatGPT + n8n + WordPress = Magic!",
+      title: "অটো ব্লগিং এর ম্যাজিক: ChatGPT + n8n + WordPress!",
       excerpt: "আপনি যদি আপনার WordPress ওয়েবসাইট এ AI দিয়ে ব্লগ লিখাতে চান এবং ভাবেন প্রতিদিন AI আপনার জন্য একটা করে পোষ্ট করবে...",
       category: "Web Development",
       categoryColor: "bg-blue-500",
