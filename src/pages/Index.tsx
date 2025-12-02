@@ -17,54 +17,64 @@ import courseFigma from "@/assets/course-figma.jpg";
 const Index = () => {
   const courses = [
     {
+      id: 2,
       title: "Remote Job, Work From Home For Developers",
       image: courseRemoteJob,
       level: "Intermediate",
       rating: 4.92,
       reviewCount: 12,
       price: "1,199.00",
-      instructor: "An-Nur Academy",
+      priceNum: 1199,
+      instructor: "NUR AL-AMIN",
       category: "Career Development",
     },
     {
+      id: 3,
       title: "Canva Masterclass 101",
       image: courseCanva,
       level: "Beginner",
       rating: 5.0,
       reviewCount: 7,
       price: "",
-      instructor: "An-Nur Academy",
+      priceNum: 0,
+      instructor: "NUR AL-AMIN",
       category: "Design",
       isFree: true,
     },
     {
+      id: 4,
       title: "Figma Essentials Training For Developers",
       image: courseFigma,
       level: "Beginner",
       rating: 5.0,
       reviewCount: 1,
-      price: "599.00",
-      instructor: "An-Nur Academy",
+      price: "999.00",
+      priceNum: 999,
+      instructor: "NUR AL-AMIN",
       category: "Design",
     },
     {
+      id: 5,
       title: "Webflow Masterclass 101 PREEBOOK",
       image: courseWebflow,
       level: "Beginner",
       rating: 0,
       reviewCount: 0,
       price: "999.00",
-      instructor: "An-Nur Academy",
+      priceNum: 999,
+      instructor: "NUR AL-AMIN",
       category: "No Code",
     },
     {
+      id: 1,
       title: "WordPress Customization with WooCommerce",
       image: courseWordPress,
       level: "Beginner",
       rating: 5.0,
       reviewCount: 30,
       price: "1,499.00",
-      instructor: "An-Nur Academy",
+      priceNum: 1499,
+      instructor: "NUR AL-AMIN",
       category: "No Code, WordPress",
     },
   ];
@@ -97,8 +107,8 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses.map((course, index) => (
-              <CourseCard key={index} {...course} />
+            {courses.map((course) => (
+              <CourseCard key={course.id} {...course} />
             ))}
           </div>
         </div>

@@ -1,30 +1,59 @@
-import { Star, ShoppingCart } from "lucide-react";
+import { Star, ShoppingCart, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useCart } from "@/context/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface CourseCardProps {
+  id: number;
   title: string;
   image: string;
   level: string;
   rating: number;
   reviewCount: number;
   price: string;
+  priceNum: number;
   instructor: string;
   category: string;
   isFree?: boolean;
 }
 
 const CourseCard = ({
+  id,
   title,
   image,
   level,
   rating,
   reviewCount,
   price,
+  priceNum,
   instructor,
   category,
   isFree = false,
 }: CourseCardProps) => {
+  const { addToCart, isInCart } = useCart();
+  const { toast } = useToast();
+
+  const handleAddToCart = () => {
+    if (isFree) return;
+    
+    addToCart({
+      id,
+      title,
+      image,
+      price: priceNum,
+      instructor,
+      category,
+    });
+    
+    toast({
+      title: "কার্টে যোগ করা হয়েছে",
+      description: title,
+    });
+  };
+
+  const inCart = isInCart(id);
+
   return (
     <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       {/* Image */}
@@ -78,17 +107,28 @@ const CourseCard = ({
           ) : (
             <span className="text-primary font-bold text-lg">{price}৳</span>
           )}
-          <Button
-            size="sm"
-            variant={isFree ? "outline" : "default"}
-            className={
-              isFree
-                ? "border-primary text-primary hover:bg-primary hover:text-white"
-                : "gradient-purple text-white hover:opacity-90"
-            }
-          >
-            {isFree ? "Enroll" : <ShoppingCart className="w-4 h-4" />}
-          </Button>
+          {isFree ? (
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary hover:text-white"
+            >
+              Enroll
+            </Button>
+          ) : inCart ? (
+            <Button size="sm" variant="secondary" className="gap-2" disabled>
+              <Check className="w-4 h-4" />
+              Added
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              className="gradient-purple text-white hover:opacity-90"
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
     </Card>

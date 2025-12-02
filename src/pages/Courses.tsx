@@ -2,8 +2,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Clock, ShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Star, Clock, ShoppingCart, Check } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 import courseWordpress from "@/assets/course-wordpress.jpg";
 import courseRemoteJob from "@/assets/course-remote-job.jpg";
@@ -12,6 +13,9 @@ import courseFigma from "@/assets/course-figma.jpg";
 import courseWebflow from "@/assets/course-webflow.jpg";
 
 const Courses = () => {
+  const { addToCart, isInCart } = useCart();
+  const { toast } = useToast();
+
   const courses = [
     {
       id: 1,
@@ -74,6 +78,24 @@ const Courses = () => {
       isFree: false,
     },
   ];
+
+  const handleAddToCart = (course: typeof courses[0]) => {
+    if (course.isFree) return;
+    
+    addToCart({
+      id: course.id,
+      title: course.title,
+      image: course.image,
+      price: course.price,
+      instructor: course.instructor,
+      category: course.category,
+    });
+    
+    toast({
+      title: "কার্টে যোগ করা হয়েছে",
+      description: course.title,
+    });
+  };
 
   const renderStars = (rating: number) => {
     const stars = [];
@@ -174,20 +196,26 @@ const Courses = () => {
                       <span className="font-bold text-lg text-foreground">
                         {course.isFree ? "ফ্রি" : `${course.price.toLocaleString()}৳`}
                       </span>
-                      <Button
-                        size="sm"
-                        variant={course.isFree ? "default" : "outline"}
-                        className="gap-2"
-                      >
-                        {course.isFree ? (
-                          "Enroll"
-                        ) : (
-                          <>
-                            <ShoppingCart className="w-4 h-4" />
-                            Add to cart
-                          </>
-                        )}
-                      </Button>
+                      {course.isFree ? (
+                        <Button size="sm">
+                          Enroll
+                        </Button>
+                      ) : isInCart(course.id) ? (
+                        <Button size="sm" variant="secondary" className="gap-2" disabled>
+                          <Check className="w-4 h-4" />
+                          Added
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => handleAddToCart(course)}
+                        >
+                          <ShoppingCart className="w-4 h-4" />
+                          Add to cart
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </Card>
