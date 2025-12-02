@@ -142,7 +142,7 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="text-center border-t border-gray-200 pt-8 mt-8">
+        <div className="text-center border-t border-black pt-8 mt-8">
           <p className="text-sm text-muted-foreground">{content.copyright}</p>
         </div>
       </div>
