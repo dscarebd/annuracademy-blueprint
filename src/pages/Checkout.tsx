@@ -93,142 +93,142 @@ const Checkout = () => {
               কার্টে ফিরে যান
             </Link>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Payment Form */}
-              <div>
-                <Card className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">পেমেন্ট তথ্য</h2>
-                  
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                      <Label htmlFor="name">আপনার নাম</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="পুরো নাম লিখুন"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="email">ইমেইল</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="email@example.com"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="phone">মোবাইল নম্বর</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="01XXXXXXXXX"
-                      />
-                    </div>
-
-                    <div className="pt-4">
-                      <Label className="text-base font-semibold">পেমেন্ট মেথড</Label>
-                      <RadioGroup
-                        value={paymentMethod}
-                        onValueChange={setPaymentMethod}
-                        className="mt-3 space-y-3"
-                      >
-                        {Object.entries(paymentDetails).map(([key, value]) => (
-                          <div
-                            key={key}
-                            className={`flex items-center space-x-3 p-3 rounded-lg border ${
-                              paymentMethod === key ? "border-primary bg-primary/5" : "border-border"
-                            }`}
-                          >
-                            <RadioGroupItem value={key} id={key} />
-                            <Label htmlFor={key} className="flex items-center gap-2 cursor-pointer">
-                              <span className={`w-8 h-8 ${value.color} rounded-full flex items-center justify-center text-white text-xs font-bold`}>
-                                {value.name.charAt(0)}
-                              </span>
-                              {value.name}
-                            </Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </div>
-
-                    {/* Payment Instructions */}
-                    <Card className="p-4 bg-muted/50">
-                      <p className="text-sm font-medium mb-2">পেমেন্ট নির্দেশনা:</p>
-                      <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-                        <li>
-                          {paymentDetails[paymentMethod as keyof typeof paymentDetails].name} অ্যাপ ওপেন করুন
-                        </li>
-                        <li>Send Money অপশনে যান</li>
-                        <li>
-                          নম্বর: <span className="font-mono font-semibold text-foreground">
-                            {paymentDetails[paymentMethod as keyof typeof paymentDetails].number}
-                          </span>
-                        </li>
-                        <li>
-                          পরিমাণ: <span className="font-semibold text-foreground">{totalPrice.toLocaleString()}৳</span>
-                        </li>
-                        <li>পেমেন্ট সম্পন্ন করে Transaction ID কপি করুন</li>
-                      </ol>
-                    </Card>
-
-                    <div>
-                      <Label htmlFor="transactionId">Transaction ID</Label>
-                      <Input
-                        id="transactionId"
-                        name="transactionId"
-                        value={formData.transactionId}
-                        onChange={handleInputChange}
-                        placeholder="যেমন: TRX1234567890"
-                      />
-                    </div>
-
-                    <Button type="submit" className="w-full" size="lg" disabled={isProcessing}>
-                      {isProcessing ? "প্রসেসিং..." : "পেমেন্ট কনফার্ম করুন"}
-                    </Button>
-                  </form>
-                </Card>
-              </div>
-
+            <div className="space-y-8">
               {/* Order Summary */}
-              <div>
-                <Card className="p-6 sticky top-24">
-                  <h2 className="text-xl font-semibold mb-4">অর্ডার সামারি</h2>
-                  
-                  <div className="space-y-3 mb-4">
-                    {items.map((item) => (
-                      <div key={item.id} className="flex gap-3">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-16 h-12 object-cover rounded"
-                        />
-                        <div className="flex-grow">
-                          <p className="text-sm font-medium line-clamp-1">{item.title}</p>
-                          <p className="text-sm text-primary font-semibold">
-                            {item.price.toLocaleString()}৳
-                          </p>
-                        </div>
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold mb-4">অর্ডার সামারি</h2>
+                
+                <div className="space-y-3 mb-4">
+                  {items.map((item) => (
+                    <div key={item.id} className="flex gap-3">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-16 h-12 object-cover rounded"
+                      />
+                      <div className="flex-grow">
+                        <p className="text-sm font-medium line-clamp-1">{item.title}</p>
+                        <p className="text-sm text-primary font-semibold">
+                          {item.price.toLocaleString()}৳
+                        </p>
                       </div>
-                    ))}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="border-t pt-4">
+                  <div className="flex justify-between text-lg font-bold">
+                    <span>মোট:</span>
+                    <span className="text-primary">{totalPrice.toLocaleString()}৳</span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Payment Form */}
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold mb-4">পেমেন্ট তথ্য</h2>
+                
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="name">আপনার নাম <span className="text-destructive">*</span></Label>
+                    <Input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="পুরো নাম লিখুন"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="email">ইমেইল <span className="text-destructive">*</span></Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="email@example.com"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="phone">মোবাইল নম্বর <span className="text-destructive">*</span></Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="01XXXXXXXXX"
+                      required
+                    />
                   </div>
 
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>মোট:</span>
-                      <span className="text-primary">{totalPrice.toLocaleString()}৳</span>
-                    </div>
+                  <div className="pt-4">
+                    <Label className="text-base font-semibold">পেমেন্ট মেথড</Label>
+                    <RadioGroup
+                      value={paymentMethod}
+                      onValueChange={setPaymentMethod}
+                      className="mt-3 space-y-3"
+                    >
+                      {Object.entries(paymentDetails).map(([key, value]) => (
+                        <div
+                          key={key}
+                          className={`flex items-center space-x-3 p-3 rounded-lg border ${
+                            paymentMethod === key ? "border-primary bg-primary/5" : "border-border"
+                          }`}
+                        >
+                          <RadioGroupItem value={key} id={key} />
+                          <Label htmlFor={key} className="flex items-center gap-2 cursor-pointer">
+                            <span className={`w-8 h-8 ${value.color} rounded-full flex items-center justify-center text-white text-xs font-bold`}>
+                              {value.name.charAt(0)}
+                            </span>
+                            {value.name}
+                          </Label>
+                        </div>
+                      ))}
+                    </RadioGroup>
                   </div>
-                </Card>
-              </div>
+
+                  {/* Payment Instructions */}
+                  <Card className="p-4 bg-muted/50">
+                    <p className="text-sm font-medium mb-2">পেমেন্ট নির্দেশনা:</p>
+                    <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                      <li>
+                        {paymentDetails[paymentMethod as keyof typeof paymentDetails].name} অ্যাপ ওপেন করুন
+                      </li>
+                      <li>Send Money অপশনে যান</li>
+                      <li>
+                        নম্বর: <span className="font-mono font-semibold text-foreground">
+                          {paymentDetails[paymentMethod as keyof typeof paymentDetails].number}
+                        </span>
+                      </li>
+                      <li>
+                        পরিমাণ: <span className="font-semibold text-foreground">{totalPrice.toLocaleString()}৳</span>
+                      </li>
+                      <li>পেমেন্ট সম্পন্ন করে Transaction ID কপি করুন</li>
+                    </ol>
+                  </Card>
+
+                  <div>
+                    <Label htmlFor="transactionId">Transaction ID <span className="text-destructive">*</span></Label>
+                    <Input
+                      id="transactionId"
+                      name="transactionId"
+                      value={formData.transactionId}
+                      onChange={handleInputChange}
+                      placeholder="যেমন: TRX1234567890"
+                      required
+                    />
+                  </div>
+
+                  <Button type="submit" className="w-full" size="lg" disabled={isProcessing}>
+                    {isProcessing ? "প্রসেসিং..." : "পেমেন্ট কনফার্ম করুন"}
+                  </Button>
+                </form>
+              </Card>
             </div>
           </div>
         </section>
