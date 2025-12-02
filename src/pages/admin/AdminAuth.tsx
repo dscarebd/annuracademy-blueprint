@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Lock, Mail, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
+import { useEffect } from "react";
 
 const authSchema = z.object({
   email: z.string().trim().email({ message: "সঠিক ইমেইল দিন" }),
@@ -15,16 +16,22 @@ const authSchema = z.object({
 });
 
 export default function AdminAuth() {
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, user, isAdmin } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Redirect if already logged in as admin
+  useEffect(() => {
+    if (user && isAdmin) {
+      navigate("/admin");
+    }
+  }, [user, isAdmin, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,40 +52,21 @@ export default function AdminAuth() {
     setIsLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await signIn(email, password);
-        if (error) {
-          toast({
-            title: "লগইন ব্যর্থ",
-            description: error.message === "Invalid login credentials" 
-              ? "ইমেইল বা পাসওয়ার্ড ভুল" 
-              : error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "সফল!",
-            description: "সফলভাবে লগইন হয়েছে",
-          });
-          navigate("/admin");
-        }
+      const { error } = await signIn(email, password);
+      if (error) {
+        toast({
+          title: "লগইন ব্যর্থ",
+          description: error.message === "Invalid login credentials" 
+            ? "ইমেইল বা পাসওয়ার্ড ভুল" 
+            : error.message,
+          variant: "destructive",
+        });
       } else {
-        const { error } = await signUp(email, password);
-        if (error) {
-          toast({
-            title: "রেজিস্ট্রেশন ব্যর্থ",
-            description: error.message === "User already registered"
-              ? "এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট তৈরি করা হয়েছে"
-              : error.message,
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "সফল!",
-            description: "অ্যাকাউন্ট তৈরি হয়েছে। এখন লগইন করুন।",
-          });
-          setIsLogin(true);
-        }
+        toast({
+          title: "সফল!",
+          description: "সফলভাবে লগইন হয়েছে",
+        });
+        navigate("/admin");
       }
     } finally {
       setIsLoading(false);
@@ -93,9 +81,7 @@ export default function AdminAuth() {
             <Lock className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-2xl font-bold text-primary">অ্যাডমিন প্যানেল</h1>
-          <p className="text-muted-foreground mt-2">
-            {isLogin ? "লগইন করুন" : "নতুন অ্যাকাউন্ট তৈরি করুন"}
-          </p>
+          <p className="text-muted-foreground mt-2">লগইন করুন</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -143,23 +129,11 @@ export default function AdminAuth() {
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "অপেক্ষা করুন..." : isLogin ? "লগইন" : "রেজিস্টার"}
+            {isLoading ? "অপেক্ষা করুন..." : "লগইন"}
           </Button>
         </form>
 
         <div className="mt-6 text-center">
-          <button
-            type="button"
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-sm text-primary hover:underline"
-          >
-            {isLogin
-              ? "অ্যাকাউন্ট নেই? রেজিস্টার করুন"
-              : "অ্যাকাউন্ট আছে? লগইন করুন"}
-          </button>
-        </div>
-
-        <div className="mt-4 text-center">
           <a href="/" className="text-sm text-muted-foreground hover:text-primary">
             ← হোমপেজে ফিরে যান
           </a>
