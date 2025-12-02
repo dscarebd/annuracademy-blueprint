@@ -93,10 +93,11 @@ const Checkout = () => {
               কার্টে ফিরে যান
             </Link>
 
-            <div className="space-y-8">
+            <div className="grid md:grid-cols-2 gap-8">
               {/* Order Summary */}
-              <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">অর্ডার সামারি</h2>
+              <div>
+                <Card className="p-6 sticky top-24">
+                  <h2 className="text-xl font-semibold mb-4">অর্ডার সামারি</h2>
                 
                 <div className="space-y-3 mb-4">
                   {items.map((item) => (
@@ -122,10 +123,12 @@ const Checkout = () => {
                     <span className="text-primary">{totalPrice.toLocaleString()}৳</span>
                   </div>
                 </div>
-              </Card>
+                </Card>
+              </div>
 
               {/* Payment Form */}
-              <Card className="p-6">
+              <div>
+                <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-4">পেমেন্ট তথ্য</h2>
                 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -228,7 +231,8 @@ const Checkout = () => {
                     {isProcessing ? "প্রসেসিং..." : "পেমেন্ট কনফার্ম করুন"}
                   </Button>
                 </form>
-              </Card>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
