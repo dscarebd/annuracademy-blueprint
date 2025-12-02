@@ -141,43 +141,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Payment Methods */}
-        <div className="border-t border-gray-200 pt-8 mb-8">
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <span className="text-sm text-muted-foreground font-medium">
-              Pay With
-            </span>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {[
-                "VISA",
-                "Mastercard",
-                "American Express",
-                "UnionPay",
-                "bKash",
-                "Nagad",
-                "Rocket",
-                "SureCash",
-                "iPay",
-              ].map((method, index) => (
-                <div
-                  key={index}
-                  className="px-3 py-2 bg-gray-50 rounded border border-gray-200 text-xs font-medium text-muted-foreground"
-                >
-                  {method}
-                </div>
-              ))}
-            </div>
-            <a
-              href="https://www.sslcommerz.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-2 bg-primary/5 rounded border border-primary/20 text-xs font-bold text-primary"
-            >
-              SSLCOMMERZ
-            </a>
-          </div>
-        </div>
-
         {/* Copyright */}
         <div className="text-center">
           <p className="text-sm text-muted-foreground">{content.copyright}</p>
