@@ -32,9 +32,9 @@ const Navbar = () => {
             <Link to="/blog" className="text-foreground hover:text-primary transition-colors font-medium">
               ব্লগ
             </Link>
-            <a href="#" className="text-foreground hover:text-primary transition-colors font-medium">
+            <Link to="/contact" className="text-foreground hover:text-primary transition-colors font-medium">
               যোগাযোগ
-            </a>
+            </Link>
           </div>
 
           {/* Right Side */}
