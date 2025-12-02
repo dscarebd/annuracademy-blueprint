@@ -98,22 +98,6 @@ const Blog = () => {
               প্রোগ্রামিং, ওয়েব ডেভেলপমেন্ট এবং ক্যারিয়ার ডেভেলপমেন্ট নিয়ে সর্বশেষ টিপস এবং টিউটোরিয়াল
             </p>
           </div>
-
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-3 mt-12">
-            {categories.map((category, index) => (
-              <button
-                key={index}
-                className={`px-6 py-2 rounded-full font-medium transition-all hover:scale-105 ${
-                  index === 0
-                    ? "bg-primary text-white"
-                    : "bg-white border border-border text-foreground hover:border-primary hover:text-primary"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 
