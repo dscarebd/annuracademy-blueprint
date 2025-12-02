@@ -127,54 +127,58 @@ const Checkout = () => {
               </div>
 
               {/* Payment Form */}
-              <div>
+              <div className="space-y-6">
+                {/* Personal Info Card */}
                 <Card className="p-6">
-                <h2 className="text-xl font-semibold mb-4">পেমেন্ট তথ্য</h2>
-                
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">আপনার নাম <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="পুরো নাম লিখুন"
-                      required
-                    />
+                  <h2 className="text-xl font-semibold mb-4">পেমেন্ট তথ্য</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="name">আপনার নাম <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        placeholder="পুরো নাম লিখুন"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="email">ইমেইল <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        placeholder="email@example.com"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="phone">মোবাইল নম্বর <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="01XXXXXXXXX"
+                        required
+                      />
+                    </div>
                   </div>
-                  
-                  <div>
-                    <Label htmlFor="email">ইমেইল <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="email@example.com"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="phone">মোবাইল নম্বর <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="01XXXXXXXXX"
-                      required
-                    />
-                  </div>
+                </Card>
 
-                  <div className="pt-4">
-                    <Label className="text-base font-semibold">পেমেন্ট মেথড</Label>
+                {/* Payment Method Card */}
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">পেমেন্ট মেথড</h2>
+                  <form onSubmit={handleSubmit} className="space-y-4">
                     <RadioGroup
                       value={paymentMethod}
                       onValueChange={setPaymentMethod}
-                      className="mt-3 space-y-3"
+                      className="space-y-3"
                     >
                       {Object.entries(paymentDetails).map(([key, value]) => (
                         <div
@@ -193,44 +197,43 @@ const Checkout = () => {
                         </div>
                       ))}
                     </RadioGroup>
-                  </div>
 
-                  {/* Payment Instructions */}
-                  <Card className="p-4 bg-muted/50">
-                    <p className="text-sm font-medium mb-2">পেমেন্ট নির্দেশনা:</p>
-                    <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-                      <li>
-                        {paymentDetails[paymentMethod as keyof typeof paymentDetails].name} অ্যাপ ওপেন করুন
-                      </li>
-                      <li>Send Money অপশনে যান</li>
-                      <li>
-                        নম্বর: <span className="font-mono font-semibold text-foreground">
-                          {paymentDetails[paymentMethod as keyof typeof paymentDetails].number}
-                        </span>
-                      </li>
-                      <li>
-                        পরিমাণ: <span className="font-semibold text-foreground">{totalPrice.toLocaleString()}৳</span>
-                      </li>
-                      <li>পেমেন্ট সম্পন্ন করে Transaction ID কপি করুন</li>
-                    </ol>
-                  </Card>
+                    {/* Payment Instructions */}
+                    <Card className="p-4 bg-muted/50">
+                      <p className="text-sm font-medium mb-2">পেমেন্ট নির্দেশনা:</p>
+                      <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                        <li>
+                          {paymentDetails[paymentMethod as keyof typeof paymentDetails].name} অ্যাপ ওপেন করুন
+                        </li>
+                        <li>Send Money অপশনে যান</li>
+                        <li>
+                          নম্বর: <span className="font-mono font-semibold text-foreground">
+                            {paymentDetails[paymentMethod as keyof typeof paymentDetails].number}
+                          </span>
+                        </li>
+                        <li>
+                          পরিমাণ: <span className="font-semibold text-foreground">{totalPrice.toLocaleString()}৳</span>
+                        </li>
+                        <li>পেমেন্ট সম্পন্ন করে Transaction ID কপি করুন</li>
+                      </ol>
+                    </Card>
 
-                  <div>
-                    <Label htmlFor="transactionId">Transaction ID <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="transactionId"
-                      name="transactionId"
-                      value={formData.transactionId}
-                      onChange={handleInputChange}
-                      placeholder="যেমন: TRX1234567890"
-                      required
-                    />
-                  </div>
+                    <div>
+                      <Label htmlFor="transactionId">Transaction ID <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="transactionId"
+                        name="transactionId"
+                        value={formData.transactionId}
+                        onChange={handleInputChange}
+                        placeholder="যেমন: TRX1234567890"
+                        required
+                      />
+                    </div>
 
-                  <Button type="submit" className="w-full" size="lg" disabled={isProcessing}>
-                    {isProcessing ? "প্রসেসিং..." : "পেমেন্ট কনফার্ম করুন"}
-                  </Button>
-                </form>
+                    <Button type="submit" className="w-full" size="lg" disabled={isProcessing}>
+                      {isProcessing ? "প্রসেসিং..." : "পেমেন্ট কনফার্ম করুন"}
+                    </Button>
+                  </form>
                 </Card>
               </div>
             </div>
