@@ -1,43 +1,9 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Mail, Send, MessageCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
 const Contact = () => {
-  const {
-    toast
-  } = useToast();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: ""
-  });
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast({
-      title: "বার্তা পাঠানো হয়েছে!",
-      description: "আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।"
-    });
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: ""
-    });
-  };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
   return <div className="min-h-screen bg-background">
       <Navbar />
 
@@ -103,42 +69,6 @@ const Contact = () => {
                 <span className="text-foreground font-medium">Subscribe on YouTube</span>
               </a>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form */}
-      <section className="py-12 bg-muted/30">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="bg-card border border-border rounded-lg p-8 shadow-sm">
-            <h2 className="text-2xl font-bold text-foreground mb-6">
-              আমাদের বার্তা পাঠান
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <Label htmlFor="name">আপনার নাম *</Label>
-                <Input id="name" name="name" value={formData.name} onChange={handleChange} required placeholder="আপনার পুরো নাম লিখুন" className="mt-2" />
-              </div>
-
-              <div>
-                <Label htmlFor="email">ইমেইল ঠিকানা *</Label>
-                <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required placeholder="your@email.com" className="mt-2" />
-              </div>
-
-              <div>
-                <Label htmlFor="subject">বিষয় *</Label>
-                <Input id="subject" name="subject" value={formData.subject} onChange={handleChange} required placeholder="আপনার বার্তার বিষয়" className="mt-2" />
-              </div>
-
-              <div>
-                <Label htmlFor="message">বার্তা *</Label>
-                <Textarea id="message" name="message" value={formData.message} onChange={handleChange} required placeholder="আপনার বিস্তারিত বার্তা লিখুন..." className="mt-2 min-h-[150px]" />
-              </div>
-
-              <Button type="submit" className="w-full" size="lg">
-                বার্তা পাঠান
-              </Button>
-            </form>
           </div>
         </div>
       </section>
