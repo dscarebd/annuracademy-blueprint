@@ -7,21 +7,28 @@ import {
   XCircle,
   TrendingUp,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-const stats = [
-  { label: "মোট অর্ডার", value: 0, icon: ShoppingCart, color: "text-blue-500" },
-  { label: "পেন্ডিং", value: 0, icon: Clock, color: "text-yellow-500" },
-  { label: "কনফার্মড", value: 0, icon: CheckCircle, color: "text-green-500" },
-  { label: "ক্যান্সেল্ড", value: 0, icon: XCircle, color: "text-red-500" },
-];
-
-const recentOrders: Array<{
+interface Order {
   id: string;
-  customer: string;
-  course: string;
+  order_number: string;
+  customer_name: string;
+  customer_phone: string;
   status: string;
-  amount: string;
-}> = [];
+  total_amount: number;
+  items: Array<{ title: string }>;
+  created_at: string;
+}
+
+interface Stats {
+  total: number;
+  pending: number;
+  confirmed: number;
+  cancelled: number;
+  totalRevenue: number;
+  confirmedRevenue: number;
+}
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -37,6 +44,69 @@ const getStatusColor = (status: string) => {
 };
 
 export default function AdminDashboard() {
+  const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+  const [stats, setStats] = useState<Stats>({
+    total: 0,
+    pending: 0,
+    confirmed: 0,
+    cancelled: 0,
+    totalRevenue: 0,
+    confirmedRevenue: 0,
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching orders:", error);
+        return;
+      }
+
+      if (data) {
+        setRecentOrders(data.slice(0, 5) as unknown as Order[]);
+        
+        const total = data.length;
+        const pending = data.filter((o) => o.status === "পেন্ডিং").length;
+        const confirmed = data.filter((o) => o.status === "কনফার্মড").length;
+        const cancelled = data.filter((o) => o.status === "ক্যান্সেল্ড").length;
+        const totalRevenue = data.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+        const confirmedRevenue = data
+          .filter((o) => o.status === "কনফার্মড")
+          .reduce((sum, o) => sum + (o.total_amount || 0), 0);
+
+        setStats({ total, pending, confirmed, cancelled, totalRevenue, confirmedRevenue });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const statCards = [
+    { label: "মোট অর্ডার", value: stats.total, icon: ShoppingCart, color: "text-blue-500" },
+    { label: "পেন্ডিং", value: stats.pending, icon: Clock, color: "text-yellow-500" },
+    { label: "কনফার্মড", value: stats.confirmed, icon: CheckCircle, color: "text-green-500" },
+    { label: "ক্যান্সেল্ড", value: stats.cancelled, icon: XCircle, color: "text-red-500" },
+  ];
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -51,7 +121,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">মোট রেভিনিউ</p>
-                <p className="text-3xl font-bold text-primary">৳০</p>
+                <p className="text-3xl font-bold text-primary">৳{stats.totalRevenue.toLocaleString()}</p>
               </div>
               <TrendingUp className="h-8 w-8 text-primary" />
             </div>
@@ -60,7 +130,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">কনফার্মড রেভিনিউ</p>
-                <p className="text-3xl font-bold text-green-600">৳০</p>
+                <p className="text-3xl font-bold text-green-600">৳{stats.confirmedRevenue.toLocaleString()}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
@@ -69,7 +139,7 @@ export default function AdminDashboard() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {stats.map((stat) => (
+          {statCards.map((stat) => (
             <Card key={stat.label} className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -117,20 +187,20 @@ export default function AdminDashboard() {
                 <tbody>
                   {recentOrders.map((order) => (
                     <tr key={order.id} className="border-b last:border-0">
-                      <td className="py-3 px-2 text-sm">{order.id}</td>
-                      <td className="py-3 px-2 text-sm">{order.customer}</td>
-                      <td className="py-3 px-2 text-sm">{order.course}</td>
+                      <td className="py-3 px-2 text-sm">{order.order_number}</td>
+                      <td className="py-3 px-2 text-sm">{order.customer_name}</td>
+                      <td className="py-3 px-2 text-sm">
+                        {order.items?.map((item) => item.title).join(", ") || "-"}
+                      </td>
                       <td className="py-3 px-2">
                         <span
-                          className={`text-xs px-2 py-1 rounded-full ${getStatusColor(
-                            order.status
-                          )}`}
+                          className={`text-xs px-2 py-1 rounded-full ${getStatusColor(order.status)}`}
                         >
                           {order.status}
                         </span>
                       </td>
                       <td className="py-3 px-2 text-sm text-right font-medium">
-                        {order.amount}
+                        ৳{order.total_amount?.toLocaleString()}
                       </td>
                     </tr>
                   ))}

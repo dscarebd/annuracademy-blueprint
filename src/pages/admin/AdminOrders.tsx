@@ -8,21 +8,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Eye } from "lucide-react";
-import { useState } from "react";
+import { Eye, RefreshCw } from "lucide-react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface Order {
   id: string;
-  customer: string;
-  email: string;
-  phone: string;
-  course: string;
+  order_number: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  payment_method: string;
+  transaction_id: string;
   status: string;
-  amount: string;
-  date: string;
+  total_amount: number;
+  items: Array<{ id: number; title: string; price: number }>;
+  created_at: string;
 }
-
-const initialOrders: Order[] = [];
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -38,15 +41,77 @@ const getStatusColor = (status: string) => {
 };
 
 export default function AdminOrders() {
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
-  const updateStatus = (orderId: string, newStatus: string) => {
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching orders:", error);
+        toast({
+          title: "অর্ডার লোড করতে সমস্যা",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setOrders(data as unknown as Order[]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateStatus = async (orderId: string, newStatus: string) => {
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: newStatus })
+      .eq("id", orderId);
+
+    if (error) {
+      console.error("Error updating order:", error);
+      toast({
+        title: "স্ট্যাটাস আপডেট করতে সমস্যা",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setOrders(
       orders.map((order) =>
         order.id === orderId ? { ...order, status: newStatus } : order
       )
     );
+
+    toast({
+      title: "স্ট্যাটাস আপডেট হয়েছে",
+    });
   };
+
+  const formatDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("bn-BD");
+  };
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -56,6 +121,10 @@ export default function AdminOrders() {
             <h2 className="text-2xl font-bold text-primary">অর্ডার ম্যানেজমেন্ট</h2>
             <p className="text-muted-foreground">সকল অর্ডার দেখুন ও ম্যানেজ করুন</p>
           </div>
+          <Button variant="outline" onClick={fetchOrders}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            রিফ্রেশ
+          </Button>
         </div>
 
         <Card className="p-6">
@@ -86,23 +155,23 @@ export default function AdminOrders() {
                     <th className="text-right py-3 px-2 text-sm font-medium text-muted-foreground">
                       মূল্য
                     </th>
-                    <th className="text-right py-3 px-2 text-sm font-medium text-muted-foreground">
-                      অ্যাকশন
-                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {orders.map((order) => (
                     <tr key={order.id} className="border-b last:border-0">
-                      <td className="py-3 px-2 text-sm font-mono">{order.id}</td>
+                      <td className="py-3 px-2 text-sm font-mono">{order.order_number}</td>
                       <td className="py-3 px-2">
                         <div>
-                          <p className="text-sm font-medium">{order.customer}</p>
-                          <p className="text-xs text-muted-foreground">{order.phone}</p>
+                          <p className="text-sm font-medium">{order.customer_name}</p>
+                          <p className="text-xs text-muted-foreground">{order.customer_phone}</p>
+                          <p className="text-xs text-muted-foreground">{order.payment_method}: {order.transaction_id}</p>
                         </div>
                       </td>
-                      <td className="py-3 px-2 text-sm">{order.course}</td>
-                      <td className="py-3 px-2 text-sm">{order.date}</td>
+                      <td className="py-3 px-2 text-sm">
+                        {order.items?.map((item) => item.title).join(", ") || "-"}
+                      </td>
+                      <td className="py-3 px-2 text-sm">{formatDate(order.created_at)}</td>
                       <td className="py-3 px-2">
                         <Select
                           value={order.status}
@@ -119,12 +188,7 @@ export default function AdminOrders() {
                         </Select>
                       </td>
                       <td className="py-3 px-2 text-sm text-right font-medium">
-                        {order.amount}
-                      </td>
-                      <td className="py-3 px-2 text-right">
-                        <Button variant="ghost" size="icon">
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        ৳{order.total_amount?.toLocaleString()}
                       </td>
                     </tr>
                   ))}

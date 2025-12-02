@@ -10,6 +10,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
@@ -35,6 +36,13 @@ const Checkout = () => {
     rocket: { name: "রকেট", number: "01XXXXXXXXX", color: "bg-purple-600" },
   };
 
+  const generateOrderNumber = () => {
+    const date = new Date();
+    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
+    const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
+    return `ORD-${dateStr}-${random}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -49,11 +57,52 @@ const Checkout = () => {
 
     setIsProcessing(true);
     
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    
-    clearCart();
-    navigate("/thank-you");
+    try {
+      const orderNumber = generateOrderNumber();
+      
+      const orderItems = items.map(item => ({
+        id: item.id,
+        title: item.title,
+        price: item.price,
+        image: item.image,
+      }));
+
+      const { error } = await supabase
+        .from('orders')
+        .insert({
+          order_number: orderNumber,
+          customer_name: formData.name,
+          customer_email: formData.email,
+          customer_phone: formData.phone,
+          payment_method: paymentDetails[paymentMethod as keyof typeof paymentDetails].name,
+          transaction_id: formData.transactionId,
+          status: 'পেন্ডিং',
+          total_amount: totalPrice,
+          items: orderItems,
+        });
+
+      if (error) {
+        console.error('Order error:', error);
+        toast({
+          title: "অর্ডার সেভ করতে সমস্যা হয়েছে",
+          description: "দয়া করে আবার চেষ্টা করুন",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      clearCart();
+      navigate("/thank-you");
+    } catch (error) {
+      console.error('Order error:', error);
+      toast({
+        title: "অর্ডার সেভ করতে সমস্যা হয়েছে",
+        description: "দয়া করে আবার চেষ্টা করুন",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (items.length === 0) {
