@@ -86,11 +86,11 @@ const Contact = () => {
 
             <div className="grid md:grid-cols-2 gap-4">
               <a
-                href="mailto:support@alihossain.com"
+                href="mailto:support@annuracademy.com"
                 className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
               >
                 <Mail className="text-primary" size={24} />
-                <span className="text-foreground font-medium">support@alihossain.com</span>
+                <span className="text-foreground font-medium">support@annuracademy.com</span>
               </a>
               
               <a
@@ -220,7 +220,7 @@ const Contact = () => {
                   <p>
                     আপনার এই তথ্যগুলো পাঠানোর পর আমরা আপনার সমস্যার দ্রুত সমাধানে কাজ শুরু করব। ইনশাআল্লাহ, আমরা আপনার enroll করা কোর্সেট ২৪ ঘন্টার মধ্যে সক্রিয় করে দেব।
                   </p>
-                  <p className="font-semibold">ইমেইল: support@alihossain.com</p>
+                  <p className="font-semibold">ইমেইল: support@annuracademy.com</p>
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -231,18 +231,7 @@ const Contact = () => {
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
                 <p>
-                  পেমেন্ট সফল হওয়ার সাথে সাথেই আপনি কোর্সে এক্সেস পাবেন। যদি কোনো কারণে পেমেন্ট ভেরিফাই না হয়, তাহলে ২৪ ঘন্টার মধ্যে ম্যানুয়ালি আপনার এক্সেস দেওয়া হবে। সমস্যা হলে support@alihossain.com এ ইমেইল করুন।
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-3" className="bg-card border border-border rounded-lg px-6">
-              <AccordionTrigger className="text-left">
-                কোর্স সার্টিফিকেট কিভাবে পাব?
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">
-                <p>
-                  কোর্সের সব মডিউল সম্পন্ন করার পর এবং অ্যাসাইনমেন্টগুলো জমা দেওয়ার পর আপনি আপনার সার্টিফিকেট পাবেন। সার্টিফিকেট আপনার ড্যাশবোর্ড থেকে ডাউনলোড করতে পারবেন।
+                  পেমেন্ট সফল হওয়ার সাথে সাথেই আপনি কোর্সে এক্সেস পাবেন। যদি কোনো কারণে পেমেন্ট ভেরিফাই না হয়, তাহলে ২৪ ঘন্টার মধ্যে ম্যানুয়ালি আপনার এক্সেস দেওয়া হবে। সমস্যা হলে support@annuracademy.com এ ইমেইল করুন।
                 </p>
               </AccordionContent>
             </AccordionItem>
@@ -269,24 +258,13 @@ const Contact = () => {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-6" className="bg-card border border-border rounded-lg px-6">
-              <AccordionTrigger className="text-left">
-                রিফান্ড পলিসি কি?
-              </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">
-                <p>
-                  কোর্সে এনরোল করার ৭ দিনের মধ্যে এবং কোর্সের ২৫% এর কম সম্পন্ন করলে আপনি রিফান্ড রিকোয়েস্ট করতে পারবেন। রিফান্ড প্রসেস হতে ৭-১৪ কর্মদিবস সময় লাগতে পারে।
-                </p>
-              </AccordionContent>
-            </AccordionItem>
-
             <AccordionItem value="item-7" className="bg-card border border-border rounded-lg px-6">
               <AccordionTrigger className="text-left">
                 কোর্সের সাপোর্ট কিভাবে পাব?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
                 <p>
-                  প্রতিটি কোর্সের একটি ডেডিকেটেড টেলিগ্রাম গ্রুপ রয়েছে যেখানে আপনি প্রশ্ন করতে পারবেন। এছাড়াও কোর্সের প্রতিটি ভিডিওর নিচে কমেন্ট সেকশনে প্রশ্ন করতে পারবেন। জরুরি বিষয়ের জন্য support@alihossain.com এ ইমেইল করুন।
+                  প্রতিটি কোর্সের একটি ডেডিকেটেড টেলিগ্রাম গ্রুপ রয়েছে যেখানে আপনি প্রশ্ন করতে পারবেন। এছাড়াও কোর্সের প্রতিটি ভিডিওর নিচে কমেন্ট সেকশনে প্রশ্ন করতে পারবেন। জরুরি বিষয়ের জন্য support@annuracademy.com এ ইমেইল করুন।
                 </p>
               </AccordionContent>
             </AccordionItem>
