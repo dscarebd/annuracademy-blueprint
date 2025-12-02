@@ -167,6 +167,10 @@ const Checkout = () => {
                       <h3 className="font-medium text-foreground">মোবাইলে কোর্স দেখা যাবে?</h3>
                       <p className="text-sm text-muted-foreground mt-1">হ্যাঁ, যেকোনো ডিভাইস থেকে কোর্স অ্যাক্সেস করতে পারবেন।</p>
                     </div>
+                    <div>
+                      <h3 className="font-medium text-foreground">সার্টিফিকেট পাওয়া যাবে?</h3>
+                      <p className="text-sm text-muted-foreground mt-1">হ্যাঁ, কোর্স সম্পন্ন করার পর সার্টিফিকেট পাবেন।</p>
+                    </div>
                   </div>
                 </Card>
               </div>
