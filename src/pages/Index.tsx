@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import WhySection from "@/components/WhySection";
 import CourseFeaturesSection from "@/components/CourseFeaturesSection";
 import AboutMeSection from "@/components/AboutMeSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
 import CourseCard from "@/components/CourseCard";
 import PurpleCallout from "@/components/PurpleCallout";
 import Footer from "@/components/Footer";
@@ -108,6 +109,8 @@ const Index = () => {
       <CourseFeaturesSection />
 
       <AboutMeSection />
+
+      <TestimonialsSection />
 
       <Footer />
     </div>
