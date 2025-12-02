@@ -71,7 +71,6 @@ const Index = () => {
       <TopBanner />
       <Navbar />
       <Hero />
-      <WhySection />
       
       {/* Purple Callout */}
       <PurpleCallout>
@@ -101,6 +100,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <WhySection />
 
       <Footer />
     </div>
