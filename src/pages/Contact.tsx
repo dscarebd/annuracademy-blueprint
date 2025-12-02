@@ -94,7 +94,7 @@ const Contact = () => {
               </a>
               
               <a
-                href="https://t.me/alihossainacademy"
+                href="https://t.me/annuracademy"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
@@ -104,7 +104,7 @@ const Contact = () => {
               </a>
               
               <a
-                href="https://www.facebook.com/aliH0ssainAcademy"
+                href="https://www.facebook.com/annuracademy"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
@@ -114,13 +114,13 @@ const Contact = () => {
               </a>
               
               <a
-                href="https://www.instagram.com/alihossainacademy/"
+                href="https://www.youtube.com/@annuracademy"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-4 bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors"
               >
                 <MessageCircle className="text-primary" size={24} />
-                <span className="text-foreground font-medium">Follow Us on Instagram</span>
+                <span className="text-foreground font-medium">Follow Us on YouTube</span>
               </a>
             </div>
           </div>
