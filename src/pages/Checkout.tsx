@@ -94,27 +94,8 @@ const Checkout = () => {
             </Link>
 
             <div className="grid md:grid-cols-2 gap-8">
-              {/* Left Side - Forms */}
+              {/* Left Side - Personal Info & FAQ */}
               <div className="space-y-6">
-                {/* FAQ Card */}
-                <Card className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">সাধারণ জিজ্ঞাসা</h2>
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="font-medium text-foreground">কোর্স কতদিন অ্যাক্সেস করতে পারবো?</h3>
-                      <p className="text-sm text-muted-foreground mt-1">একবার কেনার পর আজীবন অ্যাক্সেস পাবেন।</p>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-foreground">পেমেন্ট করার পর কতক্ষণে অ্যাক্সেস পাবো?</h3>
-                      <p className="text-sm text-muted-foreground mt-1">পেমেন্ট ভেরিফাই হওয়ার ২৪ ঘন্টার মধ্যে অ্যাক্সেস পাবেন।</p>
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-foreground">সমস্যা হলে কোথায় যোগাযোগ করবো?</h3>
-                      <p className="text-sm text-muted-foreground mt-1">আমাদের সাপোর্ট ইমেইল বা ফেসবুক পেজে যোগাযোগ করুন।</p>
-                    </div>
-                  </div>
-                </Card>
-
                 {/* Personal Info Card */}
                 <Card className="p-6">
                   <h2 className="text-xl font-semibold mb-4">প্রয়োজনীয় তথ্য দিন</h2>
@@ -154,6 +135,58 @@ const Checkout = () => {
                         placeholder="01XXXXXXXXX"
                         required
                       />
+                    </div>
+                  </div>
+                </Card>
+
+                {/* FAQ Card */}
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">সাধারণ জিজ্ঞাসা</h2>
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-medium text-foreground">কোর্স কতদিন অ্যাক্সেস করতে পারবো?</h3>
+                      <p className="text-sm text-muted-foreground mt-1">একবার কেনার পর আজীবন অ্যাক্সেস পাবেন।</p>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-foreground">পেমেন্ট করার পর কতক্ষণে অ্যাক্সেস পাবো?</h3>
+                      <p className="text-sm text-muted-foreground mt-1">পেমেন্ট ভেরিফাই হওয়ার ২৪ ঘন্টার মধ্যে অ্যাক্সেস পাবেন।</p>
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-foreground">সমস্যা হলে কোথায় যোগাযোগ করবো?</h3>
+                      <p className="text-sm text-muted-foreground mt-1">আমাদের সাপোর্ট ইমেইল বা ফেসবুক পেজে যোগাযোগ করুন।</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Right Side - Order Summary & Payment Method */}
+              <div className="space-y-6">
+                {/* Order Summary Card */}
+                <Card className="p-6">
+                  <h2 className="text-xl font-semibold mb-4">অর্ডার সামারি</h2>
+                
+                  <div className="space-y-3 mb-4">
+                    {items.map((item) => (
+                      <div key={item.id} className="flex gap-3">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-16 h-12 object-cover rounded"
+                        />
+                        <div className="flex-grow">
+                          <p className="text-sm font-medium line-clamp-1">{item.title}</p>
+                          <p className="text-sm text-primary font-semibold">
+                            {item.price.toLocaleString()}৳
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t pt-4">
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>মোট:</span>
+                      <span className="text-primary">{totalPrice.toLocaleString()}৳</span>
                     </div>
                   </div>
                 </Card>
@@ -221,38 +254,6 @@ const Checkout = () => {
                       {isProcessing ? "প্রসেসিং..." : "পেমেন্ট কনফার্ম করুন"}
                     </Button>
                   </form>
-                </Card>
-              </div>
-
-              {/* Right Side - Order Summary */}
-              <div>
-                <Card className="p-6 sticky top-24">
-                  <h2 className="text-xl font-semibold mb-4">অর্ডার সামারি</h2>
-                
-                  <div className="space-y-3 mb-4">
-                    {items.map((item) => (
-                      <div key={item.id} className="flex gap-3">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-16 h-12 object-cover rounded"
-                        />
-                        <div className="flex-grow">
-                          <p className="text-sm font-medium line-clamp-1">{item.title}</p>
-                          <p className="text-sm text-primary font-semibold">
-                            {item.price.toLocaleString()}৳
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between text-lg font-bold">
-                      <span>মোট:</span>
-                      <span className="text-primary">{totalPrice.toLocaleString()}৳</span>
-                    </div>
-                  </div>
                 </Card>
               </div>
             </div>
