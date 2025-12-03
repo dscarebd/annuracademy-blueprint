@@ -312,16 +312,51 @@ const defaultModules: CourseModule[] = [
   { 
     title: "পরিচিতি", 
     lessons: [
-      { name: "কোর্স ওভারভিউ", duration: "04:02", preview: false },
-      { name: "সফটওয়্যার ইনস্টলেশন", duration: "02:14", preview: false },
-      { name: "ইন্টারফেস পরিচিতি", duration: "06:53", preview: false },
+      { name: "কোর্স ওভারভিউ", duration: "04:02", preview: true },
+      { name: "সফটওয়্যার ইনস্টলেশন", duration: "08:14", preview: true },
+      { name: "ইন্টারফেস পরিচিতি", duration: "12:53", preview: false },
     ]
   },
   { 
     title: "বেসিক কনসেপ্ট", 
     lessons: [
-      { name: "ফান্ডামেন্টাল ধারণা", duration: "10:20", preview: false },
-      { name: "টুলস ও টেকনিক", duration: "08:45", preview: false },
+      { name: "ফান্ডামেন্টাল ধারণা", duration: "15:20", preview: false },
+      { name: "টুলস ও টেকনিক", duration: "18:45", preview: false },
+      { name: "প্র্যাক্টিক্যাল এক্সারসাইজ", duration: "22:10", preview: false },
+    ]
+  },
+  { 
+    title: "ইন্টারমিডিয়েট লেভেল", 
+    lessons: [
+      { name: "অ্যাডভান্সড ফিচার্স", duration: "20:30", preview: false },
+      { name: "প্রজেক্ট সেটআপ", duration: "16:15", preview: false },
+      { name: "ওয়ার্কফ্লো অপ্টিমাইজেশন", duration: "14:45", preview: false },
+      { name: "টিপস ও ট্রিকস", duration: "12:20", preview: false },
+    ]
+  },
+  { 
+    title: "অ্যাডভান্সড টেকনিক", 
+    lessons: [
+      { name: "প্রফেশনাল টেকনিক", duration: "25:00", preview: false },
+      { name: "ইন্ডাস্ট্রি স্ট্যান্ডার্ড", duration: "18:30", preview: false },
+      { name: "কেস স্টাডি বিশ্লেষণ", duration: "22:15", preview: false },
+    ]
+  },
+  { 
+    title: "প্রজেক্ট ওয়ার্ক", 
+    lessons: [
+      { name: "রিয়েল প্রজেক্ট ১", duration: "35:00", preview: false },
+      { name: "রিয়েল প্রজেক্ট ২", duration: "40:20", preview: false },
+      { name: "পোর্টফোলিও তৈরি", duration: "28:45", preview: false },
+    ]
+  },
+  { 
+    title: "ক্যারিয়ার গাইডলাইন", 
+    lessons: [
+      { name: "জব মার্কেট অ্যানালাইসিস", duration: "15:00", preview: false },
+      { name: "ইন্টারভিউ প্রিপারেশন", duration: "20:30", preview: false },
+      { name: "ফ্রিল্যান্সিং গাইড", duration: "25:15", preview: false },
+      { name: "সাকসেস টিপস", duration: "10:00", preview: false },
     ]
   },
 ];
