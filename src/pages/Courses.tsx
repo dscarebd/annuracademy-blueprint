@@ -112,16 +112,14 @@ const Courses = () => {
                       </div>
 
                       {/* Title */}
-                      <h3 className="font-semibold text-foreground text-lg mb-2 line-clamp-2 min-h-[56px]">
+                      <h3 className="font-semibold text-foreground text-lg mb-1 line-clamp-2 min-h-[56px]">
                         {course.title}
                       </h3>
 
                       {/* Students Count */}
-                      {(course.students_count || 0) > 0 && (
-                        <p className="text-muted-foreground text-sm mb-2">
-                          {course.students_count} শিক্ষার্থী
-                        </p>
-                      )}
+                      <p className="text-muted-foreground text-sm mb-2">
+                        {course.students_count || 0} শিক্ষার্থী
+                      </p>
 
                       {/* Duration */}
                       {course.duration && (
