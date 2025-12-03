@@ -285,6 +285,41 @@ export default function AdminCourses() {
   );
 }
 
+// Default values that match the course detail page
+const defaultLearningOutcomes = [
+  "বেসিক থেকে অ্যাডভান্সড লেভেল পর্যন্ত সম্পূর্ণ ধারণা",
+  "রিয়েল-ওয়ার্ল্ড প্রজেক্ট তৈরির অভিজ্ঞতা",
+  "ইন্ডাস্ট্রি স্ট্যান্ডার্ড বেস্ট প্র্যাক্টিস",
+  "প্রফেশনাল পোর্টফোলিও তৈরি",
+  "জব রেডি স্কিল ডেভেলপমেন্ট",
+  "লাইফটাইম সাপোর্ট ও আপডেট",
+];
+
+const defaultRequirements = [
+  "কম্পিউটার বা ল্যাপটপ (উইন্ডোজ/ম্যাক)",
+  "ইন্টারনেট কানেকশন",
+  "বেসিক কম্পিউটার স্কিল",
+  "শেখার আগ্রহ ও ধৈর্য",
+];
+
+const defaultModules: CourseModule[] = [
+  { 
+    title: "পরিচিতি", 
+    lessons: [
+      { name: "কোর্স ওভারভিউ", duration: "04:02", preview: false },
+      { name: "সফটওয়্যার ইনস্টলেশন", duration: "02:14", preview: false },
+      { name: "ইন্টারফেস পরিচিতি", duration: "06:53", preview: false },
+    ]
+  },
+  { 
+    title: "বেসিক কনসেপ্ট", 
+    lessons: [
+      { name: "ফান্ডামেন্টাল ধারণা", duration: "10:20", preview: false },
+      { name: "টুলস ও টেকনিক", duration: "08:45", preview: false },
+    ]
+  },
+];
+
 function CourseForm({
   course,
   onSave,
@@ -296,31 +331,37 @@ function CourseForm({
   onCancel: () => void;
   isLoading: boolean;
 }) {
-  const [formData, setFormData] = useState<CourseFormData>(
-    course
-      ? {
-          title: course.title,
-          slug: course.slug || "",
-          description: course.description || "",
-          price: course.price,
-          original_price: course.original_price,
-          image_url: course.image_url || "",
-          duration: course.duration || "",
-          instructor: course.instructor,
-          category: course.category,
-          level: course.level || "Beginner",
-          students_count: course.students_count || 0,
-          lessons_count: course.lessons_count || 0,
-          rating: course.rating || 0,
-          review_count: course.review_count || 0,
-          is_free: course.is_free || false,
-          is_published: course.is_published ?? true,
-          learning_outcomes: (course.learning_outcomes as string[]) || [],
-          requirements: (course.requirements as string[]) || [],
-          modules: (course.modules as CourseModule[]) || [],
-        }
-      : emptyFormData
-  );
+  const getInitialFormData = (): CourseFormData => {
+    if (!course) return emptyFormData;
+    
+    const outcomes = course.learning_outcomes as string[] | null;
+    const reqs = course.requirements as string[] | null;
+    const mods = course.modules as CourseModule[] | null;
+    
+    return {
+      title: course.title,
+      slug: course.slug || "",
+      description: course.description || "",
+      price: course.price,
+      original_price: course.original_price,
+      image_url: course.image_url || "",
+      duration: course.duration || "",
+      instructor: course.instructor,
+      category: course.category,
+      level: course.level || "Beginner",
+      students_count: course.students_count || 0,
+      lessons_count: course.lessons_count || 0,
+      rating: course.rating || 0,
+      review_count: course.review_count || 0,
+      is_free: course.is_free || false,
+      is_published: course.is_published ?? true,
+      learning_outcomes: outcomes && outcomes.length > 0 ? outcomes : defaultLearningOutcomes,
+      requirements: reqs && reqs.length > 0 ? reqs : defaultRequirements,
+      modules: mods && mods.length > 0 ? mods : defaultModules,
+    };
+  };
+
+  const [formData, setFormData] = useState<CourseFormData>(getInitialFormData());
 
   const [newOutcome, setNewOutcome] = useState("");
   const [newRequirement, setNewRequirement] = useState("");
