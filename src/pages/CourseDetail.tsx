@@ -122,9 +122,9 @@ const CourseDetail = () => {
         {/* Main Content */}
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-[60%_40%] gap-8">
+            <div className="grid lg:grid-cols-[1fr_400px] gap-8">
               {/* Left Side - Course Details */}
-              <div className="space-y-6">
+              <div className="space-y-6 min-w-0">
                 {/* Course Header */}
                 <div>
                   <Badge className="mb-4">{course.category}</Badge>
