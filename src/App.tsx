@@ -22,6 +22,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCourses from "./pages/admin/AdminCourses";
 import AdminBlogs from "./pages/admin/AdminBlogs";
 import AdminTestimonials from "./pages/admin/AdminTestimonials";
+import AdminExpenses from "./pages/admin/AdminExpenses";
 import AdminAuth from "./pages/admin/AdminAuth";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/admin" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
               <Route path="/admin/orders" element={<ProtectedAdminRoute><AdminOrders /></ProtectedAdminRoute>} />
               <Route path="/admin/courses" element={<ProtectedAdminRoute><AdminCourses /></ProtectedAdminRoute>} />
+              <Route path="/admin/expenses" element={<ProtectedAdminRoute><AdminExpenses /></ProtectedAdminRoute>} />
               <Route path="/admin/blogs" element={<ProtectedAdminRoute><AdminBlogs /></ProtectedAdminRoute>} />
               <Route path="/admin/testimonials" element={<ProtectedAdminRoute><AdminTestimonials /></ProtectedAdminRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -6,9 +6,11 @@ import {
   CheckCircle,
   XCircle,
   TrendingUp,
+  Wallet,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTotalExpenses } from "@/hooks/useExpenses";
 
 interface Order {
   id: string;
@@ -27,7 +29,6 @@ interface Stats {
   confirmed: number;
   cancelled: number;
   totalRevenue: number;
-  confirmedRevenue: number;
 }
 
 const getStatusColor = (status: string) => {
@@ -51,9 +52,9 @@ export default function AdminDashboard() {
     confirmed: 0,
     cancelled: 0,
     totalRevenue: 0,
-    confirmedRevenue: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const { data: totalExpenses = 0 } = useTotalExpenses();
 
   useEffect(() => {
     fetchOrders();
@@ -79,16 +80,16 @@ export default function AdminDashboard() {
         const confirmed = data.filter((o) => o.status === "কনফার্মড").length;
         const cancelled = data.filter((o) => o.status === "ক্যান্সেল্ড").length;
         const totalRevenue = data.reduce((sum, o) => sum + (o.total_amount || 0), 0);
-        const confirmedRevenue = data
-          .filter((o) => o.status === "কনফার্মড")
-          .reduce((sum, o) => sum + (o.total_amount || 0), 0);
 
-        setStats({ total, pending, confirmed, cancelled, totalRevenue, confirmedRevenue });
+        setStats({ total, pending, confirmed, cancelled, totalRevenue });
       }
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Calculate confirmed revenue (Total Revenue - Total Expenses)
+  const confirmedRevenue = stats.totalRevenue - totalExpenses;
 
   const statCards = [
     { label: "মোট অর্ডার", value: stats.total, icon: ShoppingCart, color: "text-blue-500" },
@@ -116,7 +117,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Revenue Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="p-6 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
             <div className="flex items-center justify-between">
               <div>
@@ -126,11 +127,25 @@ export default function AdminDashboard() {
               <TrendingUp className="h-8 w-8 text-primary" />
             </div>
           </Card>
+          <Card className="p-6 bg-gradient-to-r from-red-500/10 to-red-500/5 border-red-500/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">মোট ব্যয়</p>
+                <p className="text-3xl font-bold text-red-600">৳{totalExpenses.toLocaleString()}</p>
+              </div>
+              <Wallet className="h-8 w-8 text-red-500" />
+            </div>
+          </Card>
           <Card className="p-6 bg-gradient-to-r from-green-500/10 to-green-500/5 border-green-500/20">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">কনফার্মড রেভিনিউ</p>
-                <p className="text-3xl font-bold text-green-600">৳{stats.confirmedRevenue.toLocaleString()}</p>
+                <p className={`text-3xl font-bold ${confirmedRevenue >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  ৳{confirmedRevenue.toLocaleString()}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  (রেভিনিউ - ব্যয়)
+                </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
