@@ -2,18 +2,31 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trash2, ShoppingBag } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 
 const Cart = () => {
   const { items, removeFromCart, totalPrice } = useCart();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
 
       <main className="flex-grow">
+        {/* Back Button */}
+        <div className="container mx-auto px-4 py-4">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate(-1)}
+            className="text-muted-foreground hover:text-primary"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            ফিরে যান
+          </Button>
+        </div>
+
         <section className="bg-gradient-to-br from-primary/10 via-background to-primary/5 py-8 md:py-12">
           <div className="container mx-auto px-4">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center">
