@@ -152,6 +152,32 @@ const CourseDetail = () => {
     ? (course.modules as CourseModule[]) 
     : defaultModules;
 
+  // Calculate total lessons from modules
+  const totalLessons = modules.reduce((total, module) => total + module.lessons.length, 0);
+
+  // Calculate total duration from all lessons
+  const calculateTotalDuration = () => {
+    let totalMinutes = 0;
+    modules.forEach(module => {
+      module.lessons.forEach(lesson => {
+        if (lesson.duration) {
+          const parts = lesson.duration.split(':');
+          if (parts.length === 2) {
+            totalMinutes += parseInt(parts[0]) * 60 + parseInt(parts[1]);
+          }
+        }
+      });
+    });
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
+  };
+
+  const totalDuration = calculateTotalDuration();
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
@@ -230,12 +256,12 @@ const CourseDetail = () => {
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <BookOpen className="w-5 h-5" />
-                      <span>{course.lessons_count || 0} লেসন</span>
+                      <span>{totalLessons} লেসন</span>
                     </div>
-                    {course.duration && (
+                    {totalDuration && (
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Clock className="w-5 h-5" />
-                        <span>{course.duration}</span>
+                        <span>{totalDuration}</span>
                       </div>
                     )}
                     {course.level && (
