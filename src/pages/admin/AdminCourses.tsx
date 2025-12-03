@@ -454,11 +454,13 @@ function CourseForm({
 
   return (
     <Tabs defaultValue="basic" className="w-full">
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="grid w-full grid-cols-6">
         <TabsTrigger value="basic">বেসিক</TabsTrigger>
+        <TabsTrigger value="description">কোর্স বিবরণ</TabsTrigger>
         <TabsTrigger value="outcomes">যা শিখবেন</TabsTrigger>
         <TabsTrigger value="requirements">প্রয়োজনীয়তা</TabsTrigger>
         <TabsTrigger value="modules">মডিউল</TabsTrigger>
+        <TabsTrigger value="instructor">ইন্সট্রাক্টর</TabsTrigger>
       </TabsList>
 
       <TabsContent value="basic" className="space-y-4 mt-4">
@@ -479,16 +481,6 @@ function CourseForm({
           <p className="text-xs text-muted-foreground mt-1">
             খালি রাখলে টাইটেল থেকে অটো জেনারেট হবে
           </p>
-        </div>
-        <div>
-          <Label>বিবরণ</Label>
-          <Textarea
-            value={formData.description}
-            rows={4}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.target.value })
-            }
-          />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -533,26 +525,15 @@ function CourseForm({
             />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>সময়কাল</Label>
-            <Input
-              value={formData.duration}
-              placeholder="e.g. 2h 30m"
-              onChange={(e) =>
-                setFormData({ ...formData, duration: e.target.value })
-              }
-            />
-          </div>
-          <div>
-            <Label>ইন্সট্রাক্টর</Label>
-            <Input
-              value={formData.instructor}
-              onChange={(e) =>
-                setFormData({ ...formData, instructor: e.target.value })
-              }
-            />
-          </div>
+        <div>
+          <Label>সময়কাল</Label>
+          <Input
+            value={formData.duration}
+            placeholder="e.g. 2h 30m"
+            onChange={(e) =>
+              setFormData({ ...formData, duration: e.target.value })
+            }
+          />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -613,6 +594,24 @@ function CourseForm({
             />
             <Label htmlFor="is_published">পাবলিশড</Label>
           </div>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="description" className="space-y-4 mt-4">
+        <div>
+          <Label>কোর্স বিবরণ (Course Description)</Label>
+          <Textarea
+            value={formData.description}
+            rows={10}
+            placeholder="এই কোর্সের বিস্তারিত বিবরণ লিখুন..."
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+            className="mt-2"
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            এই বিবরণ কোর্স ডিটেইল পেজে দেখানো হবে
+          </p>
         </div>
       </TabsContent>
 
@@ -772,6 +771,47 @@ function CourseForm({
               কোনো মডিউল যোগ করা হয়নি
             </p>
           )}
+        </div>
+      </TabsContent>
+
+      <TabsContent value="instructor" className="space-y-4 mt-4">
+        <div>
+          <Label>ইন্সট্রাক্টরের নাম</Label>
+          <Input
+            value={formData.instructor}
+            placeholder="ইন্সট্রাক্টরের নাম"
+            onChange={(e) =>
+              setFormData({ ...formData, instructor: e.target.value })
+            }
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label>রেটিং</Label>
+            <Input
+              type="number"
+              step="0.1"
+              min="0"
+              max="5"
+              value={formData.rating}
+              onChange={(e) =>
+                setFormData({ ...formData, rating: parseFloat(e.target.value) || 0 })
+              }
+            />
+          </div>
+          <div>
+            <Label>রিভিউ সংখ্যা</Label>
+            <Input
+              type="number"
+              value={formData.review_count}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  review_count: parseInt(e.target.value) || 0,
+                })
+              }
+            />
+          </div>
         </div>
       </TabsContent>
 
