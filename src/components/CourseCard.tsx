@@ -118,20 +118,21 @@ const CourseCard = ({
               variant="outline"
               className="border-primary text-primary hover:bg-primary hover:text-white"
             >
-              Enroll
+              এনরোল করুন
             </Button>
           ) : inCart ? (
             <Button size="sm" variant="secondary" className="gap-2" disabled>
               <Check className="w-4 h-4" />
-              Added
+              যোগ হয়েছে
             </Button>
           ) : (
             <Button
               size="sm"
-              className="gradient-purple text-white hover:opacity-90"
+              className="gradient-purple text-white hover:opacity-90 gap-2"
               onClick={handleAddToCart}
             >
               <ShoppingCart className="w-4 h-4" />
+              কার্টে যোগ করুন
             </Button>
           )}
         </div>
