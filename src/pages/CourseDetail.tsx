@@ -249,7 +249,7 @@ const CourseDetail = () => {
               <div>
                 <div className="sticky top-4 space-y-6">
                   {/* Price Card */}
-                  <Card className="overflow-hidden">
+                  <Card id="price-card" className="overflow-hidden">
                     <img
                       src={course.image_url || ''}
                       alt={course.title}
@@ -354,7 +354,20 @@ const CourseDetail = () => {
                           <AccordionContent className="pb-0">
                             <ul className="border-l-2 border-primary/30 ml-4">
                               {module.lessons.map((lesson, lessonIndex) => (
-                                <li key={lessonIndex} className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors">
+                                <li 
+                                  key={lessonIndex} 
+                                  className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors cursor-pointer"
+                                  onClick={() => {
+                                    const priceCard = document.getElementById('price-card');
+                                    if (priceCard) {
+                                      priceCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                      priceCard.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
+                                      setTimeout(() => {
+                                        priceCard.classList.remove('ring-2', 'ring-primary', 'ring-offset-2');
+                                      }, 2000);
+                                    }
+                                  }}
+                                >
                                   <div className="flex items-center gap-3">
                                     <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center">
                                       <Play className="w-3 h-3 text-primary" />
