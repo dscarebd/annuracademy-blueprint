@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      blogs: {
+        Row: {
+          author: string
+          category: string
+          category_color: string | null
+          content: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          is_published: boolean | null
+          link: string | null
+          published_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author?: string
+          category: string
+          category_color?: string | null
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          link?: string | null
+          published_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author?: string
+          category?: string
+          category_color?: string | null
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          link?: string | null
+          published_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           category: string
@@ -145,6 +193,42 @@ export type Database = {
           status?: string
           total_amount?: number
           transaction_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          content: string
+          course: string | null
+          created_at: string
+          id: string
+          image_url: string | null
+          is_published: boolean | null
+          name: string
+          rating: number | null
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          course?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          name: string
+          rating?: number | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          course?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          name?: string
+          rating?: number | null
           updated_at?: string
         }
         Relationships: []
