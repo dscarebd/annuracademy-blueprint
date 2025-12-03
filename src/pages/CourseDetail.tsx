@@ -346,14 +346,20 @@ const CourseDetail = () => {
                   {/* Course Modules */}
                   <Card className="p-0 overflow-hidden">
                     <div className="p-4 border-b">
-                      <h3 className="text-lg font-semibold">কোর্স মডিউল</h3>
+                      <h3 className="text-lg font-semibold">কোর্স মডিউল ({modules.length}টি)</h3>
                     </div>
                     <Accordion type="single" collapsible className="w-full">
                       {modules.map((module, index) => (
                         <AccordionItem key={index} value={`module-${index}`} className="border-b last:border-b-0">
                           <AccordionTrigger className="hover:no-underline px-4 py-4 hover:bg-muted/30 [&[data-state=open]]:text-primary [&[data-state=open]]:bg-primary/5 [&>svg]:hidden">
                             <div className="flex items-center justify-between w-full">
-                              <span className="font-medium">{module.title}</span>
+                              <div className="flex items-center gap-3">
+                                <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-semibold flex items-center justify-center">
+                                  {index + 1}
+                                </span>
+                                <span className="font-medium">{module.title}</span>
+                                <span className="text-xs text-muted-foreground">({module.lessons.length}টি লেসন)</span>
+                              </div>
                               <ChevronRight className="w-5 h-5 transition-transform duration-200 [[data-state=open]>&]:rotate-90" />
                             </div>
                           </AccordionTrigger>
