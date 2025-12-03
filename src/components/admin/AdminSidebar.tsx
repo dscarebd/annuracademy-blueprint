@@ -26,10 +26,10 @@ import { useAuth } from "@/hooks/useAuth";
 const menuItems = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard },
   { title: "অর্ডার", url: "/admin/orders", icon: ShoppingCart },
-  { title: "কোর্স", url: "/admin/courses", icon: BookOpen },
   { title: "ব্যয়", url: "/admin/expenses", icon: Wallet },
-  { title: "ব্লগ", url: "/admin/blogs", icon: FileText },
+  { title: "কোর্স", url: "/admin/courses", icon: BookOpen },
   { title: "টেস্টিমোনিয়াল", url: "/admin/testimonials", icon: MessageSquare },
+  { title: "ব্লগ", url: "/admin/blogs", icon: FileText },
 ];
 
 export function AdminSidebar() {
@@ -46,7 +46,7 @@ export function AdminSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-lg font-semibold text-primary px-4 py-6">
-            মেনু
+            আন-নুর একাডেমী
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
