@@ -276,11 +276,10 @@ const CourseDetail = () => {
                 <iframe
                   width="100%"
                   height="100%"
-                  src={`https://www.youtube.com/embed/${getYouTubeVideoId(activeVideo.url)}?autoplay=1`}
+                  src={`https://www.youtube.com/embed/${getYouTubeVideoId(activeVideo.url)}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&fs=0&disablekb=0&cc_load_policy=0`}
                   title={activeVideo.name}
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
+                  allow="accelerometer; autoplay; encrypted-media"
                   className="w-full h-full"
                 />
               </div>
