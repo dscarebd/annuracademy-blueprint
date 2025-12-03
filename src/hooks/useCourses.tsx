@@ -21,6 +21,9 @@ export interface Course {
   original_price: number | null;
   duration: string | null;
   instructor: string;
+  instructor_subtitle: string | null;
+  instructor_description: string | null;
+  instructor_image_url: string | null;
   category: string;
   level: string | null;
   rating: number | null;

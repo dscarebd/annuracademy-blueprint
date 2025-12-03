@@ -116,6 +116,9 @@ export type Database = {
           id: string
           image_url: string | null
           instructor: string
+          instructor_description: string | null
+          instructor_image_url: string | null
+          instructor_subtitle: string | null
           is_free: boolean | null
           is_published: boolean | null
           learning_outcomes: Json | null
@@ -140,6 +143,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           instructor?: string
+          instructor_description?: string | null
+          instructor_image_url?: string | null
+          instructor_subtitle?: string | null
           is_free?: boolean | null
           is_published?: boolean | null
           learning_outcomes?: Json | null
@@ -164,6 +170,9 @@ export type Database = {
           id?: string
           image_url?: string | null
           instructor?: string
+          instructor_description?: string | null
+          instructor_image_url?: string | null
+          instructor_subtitle?: string | null
           is_free?: boolean | null
           is_published?: boolean | null
           learning_outcomes?: Json | null
