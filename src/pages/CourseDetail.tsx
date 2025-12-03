@@ -155,21 +155,21 @@ const CourseDetail = () => {
   // Calculate total lessons from modules
   const totalLessons = modules.reduce((total, module) => total + module.lessons.length, 0);
 
-  // Calculate total duration from all lessons
+  // Calculate total duration from all lessons (format: MM:SS)
   const calculateTotalDuration = () => {
-    let totalMinutes = 0;
+    let totalSeconds = 0;
     modules.forEach(module => {
       module.lessons.forEach(lesson => {
         if (lesson.duration) {
           const parts = lesson.duration.split(':');
           if (parts.length === 2) {
-            totalMinutes += parseInt(parts[0]) * 60 + parseInt(parts[1]);
+            totalSeconds += parseInt(parts[0]) * 60 + parseInt(parts[1]);
           }
         }
       });
     });
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
     if (hours > 0) {
       return `${hours}h ${minutes}m`;
     }
