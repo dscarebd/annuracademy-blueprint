@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, User, Loader2, ArrowLeft, Facebook, Youtube, BookOpen } from "lucide-react";
+import { Calendar, User, Loader2, ArrowLeft, Facebook, Youtube, BookOpen, Send, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBlogBySlug } from "@/hooks/useBlogs";
 import { useCourses } from "@/hooks/useCourses";
@@ -15,11 +15,13 @@ const BlogDetail = () => {
   const { data: blog, isLoading, error } = useBlogBySlug(slug || "");
   const { data: courses } = useCourses();
 
-  const popularCourses = courses?.slice(0, 3) || [];
+  const popularCourses = courses?.slice(0, 5) || [];
 
   const socialLinks = [
     { name: "Facebook", icon: Facebook, url: "https://facebook.com", color: "bg-blue-600 hover:bg-blue-700" },
+    { name: "Telegram", icon: Send, url: "https://t.me", color: "bg-sky-500 hover:bg-sky-600" },
     { name: "YouTube", icon: Youtube, url: "https://youtube.com", color: "bg-red-600 hover:bg-red-700" },
+    { name: "Email", icon: Mail, url: "mailto:contact@example.com", color: "bg-emerald-600 hover:bg-emerald-700" },
   ];
 
   if (isLoading) {
