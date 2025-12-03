@@ -95,14 +95,9 @@ const CourseCard = ({
           {title}
         </h3>
 
-        {/* Students Count */}
+        {/* Students & Instructor */}
         <p className="text-sm text-muted-foreground">
-          {studentsCount} শিক্ষার্থী
-        </p>
-
-        {/* Instructor & Category */}
-        <p className="text-sm text-muted-foreground">
-          By {instructor} · {category}
+          {studentsCount} শিক্ষার্থী · {instructor}
         </p>
 
         {/* Price & Button */}
