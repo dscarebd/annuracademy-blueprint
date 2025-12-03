@@ -84,18 +84,18 @@ const Navbar = () => {
             {!isLoggedIn && (
               <Link
                 to="/admin/auth"
-                className="hidden md:flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md transition-colors"
+                className="hidden md:flex gradient-purple text-white font-semibold hover:opacity-90 px-4 py-2 rounded-md items-center gap-2"
               >
-                <User className="w-4 h-4" />
+                <User className="w-5 h-5" />
                 লগইন
               </Link>
             )}
             {isLoggedIn && (
               <Link
                 to="/my-courses"
-                className="hidden md:flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-primary border border-primary hover:bg-primary/10 rounded-md transition-colors"
+                className="hidden md:flex gradient-purple text-white font-semibold hover:opacity-90 px-4 py-2 rounded-md items-center gap-2"
               >
-                <GraduationCap className="w-4 h-4" />
+                <GraduationCap className="w-5 h-5" />
                 আমার কোর্স
               </Link>
             )}
