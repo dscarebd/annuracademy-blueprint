@@ -1,13 +1,11 @@
-import { ShoppingCart, X, Trash2, ShoppingBag } from "lucide-react";
+import { ShoppingCart, Trash2, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useCart } from "@/context/CartContext";
 import { useState } from "react";
 
@@ -22,8 +20,8 @@ const CartSidebar = () => {
   };
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
         <button className="relative gradient-purple text-white font-semibold hover:opacity-90 px-4 py-2 rounded-md flex items-center gap-2">
           <ShoppingCart className="w-5 h-5" />
           <span>কার্ট</span>
@@ -33,69 +31,63 @@ const CartSidebar = () => {
             </span>
           )}
         </button>
-      </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md flex flex-col">
-        <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5" />
+      </PopoverTrigger>
+      <PopoverContent className="w-80 p-0" align="end">
+        <div className="p-4 border-b">
+          <h4 className="font-semibold flex items-center gap-2">
+            <ShoppingBag className="w-4 h-4" />
             আপনার কার্ট ({itemCount})
-          </SheetTitle>
-        </SheetHeader>
+          </h4>
+        </div>
 
         {items.length === 0 ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-center py-10">
-            <ShoppingCart className="w-16 h-16 text-muted-foreground/50 mb-4" />
-            <p className="text-muted-foreground text-lg">আপনার কার্ট খালি</p>
-            <p className="text-sm text-muted-foreground mt-1">
-              কোর্স যোগ করতে ব্রাউজ করুন
-            </p>
+          <div className="p-6 text-center">
+            <ShoppingCart className="w-10 h-10 text-muted-foreground/50 mx-auto mb-2" />
+            <p className="text-muted-foreground text-sm">আপনার কার্ট খালি</p>
           </div>
         ) : (
           <>
             {/* Cart Items */}
-            <div className="flex-1 overflow-y-auto py-4 space-y-4">
+            <div className="max-h-64 overflow-y-auto p-2 space-y-2">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex gap-3 p-3 bg-muted/30 rounded-lg"
+                  className="flex gap-2 p-2 bg-muted/30 rounded-lg"
                 >
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-20 h-14 object-cover rounded"
+                    className="w-14 h-10 object-cover rounded"
                   />
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm line-clamp-2">
+                    <h4 className="font-medium text-xs line-clamp-1">
                       {item.title}
                     </h4>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {item.instructor}
-                    </p>
-                    <p className="text-primary font-semibold text-sm mt-1">
+                    <p className="text-primary font-semibold text-xs mt-0.5">
                       ৳{item.price.toLocaleString()}
                     </p>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-destructive hover:text-destructive"
+                    className="h-6 w-6 text-destructive hover:text-destructive"
                     onClick={() => removeFromCart(item.id)}
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3 h-3" />
                   </Button>
                 </div>
               ))}
             </div>
 
             {/* Footer */}
-            <div className="border-t pt-4 space-y-4">
-              <div className="flex justify-between items-center text-lg font-semibold">
-                <span>মোট:</span>
+            <div className="border-t p-3 space-y-3">
+              <div className="flex justify-between items-center font-semibold">
+                <span className="text-sm">মোট:</span>
                 <span className="text-primary">৳{totalPrice.toLocaleString()}</span>
               </div>
               <Button
                 className="w-full gradient-purple text-white hover:opacity-90"
-                size="lg"
+                size="sm"
                 onClick={handleCheckout}
               >
                 চেকআউট করুন
@@ -103,8 +95,8 @@ const CartSidebar = () => {
             </div>
           </>
         )}
-      </SheetContent>
-    </Sheet>
+      </PopoverContent>
+    </Popover>
   );
 };
 
