@@ -41,6 +41,23 @@ export function useCourses() {
   });
 }
 
+export function useCourse(id: string) {
+  return useQuery({
+    queryKey: ["course", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("courses")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as Course | null;
+    },
+    enabled: !!id,
+  });
+}
+
 export function useAdminCourses() {
   return useQuery({
     queryKey: ["admin-courses"],
