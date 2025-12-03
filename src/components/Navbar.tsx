@@ -1,11 +1,8 @@
-import { ShoppingCart } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useCart } from "@/context/CartContext";
+import CartSidebar from "@/components/CartSidebar";
 
 const Navbar = () => {
-  const { itemCount } = useCart();
-
   return (
     <nav className="bg-white border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-white/95">
       <div className="container mx-auto px-4">
@@ -40,17 +37,9 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Right Side */}
+          {/* Right Side - Cart Sidebar */}
           <div className="flex items-center gap-4">
-            <Link to="/cart" className="relative gradient-purple text-white font-semibold hover:opacity-90 px-4 py-2 rounded-md flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5" />
-              <span>কার্ট</span>
-              {itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-white text-primary text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
-                  {itemCount}
-                </span>
-              )}
-            </Link>
+            <CartSidebar />
           </div>
         </div>
       </div>
