@@ -11,6 +11,7 @@ import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { checkoutFormSchema } from "@/lib/validation";
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
@@ -36,19 +37,25 @@ const Checkout = () => {
     rocket: { name: "রকেট", number: "01XXXXXXXXX", color: "bg-purple-600" },
   };
 
-  const generateOrderNumber = () => {
-    const date = new Date();
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
-    const random = Math.floor(Math.random() * 9999).toString().padStart(4, '0');
-    return `ORD-${dateStr}-${random}`;
-  };
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFieldErrors({});
     
-    if (!formData.name || !formData.email || !formData.phone || !formData.transactionId) {
+    // Validate with zod
+    const validation = checkoutFormSchema.safeParse(formData);
+    
+    if (!validation.success) {
+      const errors: Record<string, string> = {};
+      validation.error.errors.forEach((err) => {
+        if (err.path[0]) {
+          errors[err.path[0] as string] = err.message;
+        }
+      });
+      setFieldErrors(errors);
       toast({
-        title: "সব ফিল্ড পূরণ করুন",
+        title: "তথ্য সঠিক নয়",
         description: "দয়া করে সকল তথ্য সঠিকভাবে পূরণ করুন",
         variant: "destructive",
       });
@@ -58,8 +65,6 @@ const Checkout = () => {
     setIsProcessing(true);
     
     try {
-      const orderNumber = generateOrderNumber();
-      
       const orderItems = items.map(item => ({
         id: item.id,
         title: item.title,
@@ -67,25 +72,22 @@ const Checkout = () => {
         image: item.image,
       }));
 
-      const { error } = await supabase
-        .from('orders')
-        .insert({
-          order_number: orderNumber,
+      const { data, error } = await supabase.functions.invoke('create-order', {
+        body: {
           customer_name: formData.name,
           customer_email: formData.email,
           customer_phone: formData.phone,
           payment_method: paymentDetails[paymentMethod as keyof typeof paymentDetails].name,
           transaction_id: formData.transactionId,
-          status: 'পেন্ডিং',
           total_amount: totalPrice,
           items: orderItems,
-        });
+        },
+      });
 
-      if (error) {
-        console.error('Order error:', error);
+      if (error || (data && data.error)) {
         toast({
           title: "অর্ডার সেভ করতে সমস্যা হয়েছে",
-          description: "দয়া করে আবার চেষ্টা করুন",
+          description: data?.error || "দয়া করে আবার চেষ্টা করুন",
           variant: "destructive",
         });
         return;
@@ -94,7 +96,6 @@ const Checkout = () => {
       clearCart();
       navigate("/thank-you");
     } catch (error) {
-      console.error('Order error:', error);
       toast({
         title: "অর্ডার সেভ করতে সমস্যা হয়েছে",
         description: "দয়া করে আবার চেষ্টা করুন",
@@ -158,7 +159,11 @@ const Checkout = () => {
                         onChange={handleInputChange}
                         placeholder="পুরো নাম লিখুন"
                         required
+                        className={fieldErrors.name ? "border-destructive" : ""}
                       />
+                      {fieldErrors.name && (
+                        <p className="text-sm text-destructive mt-1">{fieldErrors.name}</p>
+                      )}
                     </div>
                     
                     <div>
@@ -171,7 +176,11 @@ const Checkout = () => {
                         onChange={handleInputChange}
                         placeholder="email@example.com"
                         required
+                        className={fieldErrors.email ? "border-destructive" : ""}
                       />
+                      {fieldErrors.email && (
+                        <p className="text-sm text-destructive mt-1">{fieldErrors.email}</p>
+                      )}
                     </div>
                     
                     <div>
@@ -183,7 +192,11 @@ const Checkout = () => {
                         onChange={handleInputChange}
                         placeholder="01XXXXXXXXX"
                         required
+                        className={fieldErrors.phone ? "border-destructive" : ""}
                       />
+                      {fieldErrors.phone && (
+                        <p className="text-sm text-destructive mt-1">{fieldErrors.phone}</p>
+                      )}
                     </div>
                   </div>
                 </Card>
@@ -312,7 +325,11 @@ const Checkout = () => {
                         onChange={handleInputChange}
                         placeholder="যেমন: TRX1234567890"
                         required
+                        className={fieldErrors.transactionId ? "border-destructive" : ""}
                       />
+                      {fieldErrors.transactionId && (
+                        <p className="text-sm text-destructive mt-1">{fieldErrors.transactionId}</p>
+                      )}
                     </div>
 
                     <Button type="submit" className="w-full" size="lg" disabled={isProcessing}>
