@@ -8,6 +8,7 @@ import {
   MessageSquare,
   Home,
   LogOut,
+  Wallet,
 } from "lucide-react";
 import {
   Sidebar,
@@ -26,6 +27,7 @@ const menuItems = [
   { title: "ড্যাশবোর্ড", url: "/admin", icon: LayoutDashboard },
   { title: "অর্ডার", url: "/admin/orders", icon: ShoppingCart },
   { title: "কোর্স", url: "/admin/courses", icon: BookOpen },
+  { title: "ব্যয়", url: "/admin/expenses", icon: Wallet },
   { title: "ব্লগ", url: "/admin/blogs", icon: FileText },
   { title: "টেস্টিমোনিয়াল", url: "/admin/testimonials", icon: MessageSquare },
 ];
