@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import TopBanner from "@/components/TopBanner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -31,11 +31,11 @@ import { useCourseBySlug } from "@/hooks/useCourses";
 
 const CourseDetail = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { addToCart, isInCart } = useCart();
-  const { toast } = useToast();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
   const { data: course, isLoading, error } = useCourseBySlug(slug || "");
 
-  const handleAddToCart = () => {
+  const handleJoinNow = () => {
     if (!course || course.is_free) return;
     
     addToCart({
@@ -47,10 +47,7 @@ const CourseDetail = () => {
       category: course.category,
     });
     
-    toast({
-      title: "কার্টে যোগ করা হয়েছে",
-      description: course.title,
-    });
+    navigate('/checkout');
   };
 
   const renderStars = (rating: number) => {
@@ -271,15 +268,9 @@ const CourseDetail = () => {
                         <Button className="w-full" size="lg">
                           ফ্রি এনরোল করুন
                         </Button>
-                      ) : isInCart(course.id) ? (
-                        <Button className="w-full" size="lg" variant="secondary" disabled>
-                          <Check className="w-5 h-5 mr-2" />
-                          কার্টে আছে
-                        </Button>
                       ) : (
-                        <Button className="w-full" size="lg" onClick={handleAddToCart}>
-                          <ShoppingCart className="w-5 h-5 mr-2" />
-                          কার্টে যোগ করুন
+                        <Button className="w-full" size="lg" onClick={handleJoinNow}>
+                          এখনোই জয়েন করুন
                         </Button>
                       )}
                     </div>
