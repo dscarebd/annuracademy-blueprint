@@ -311,6 +311,16 @@ function BlogForm({
         <Textarea
           value={formData.excerpt}
           onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+          rows={2}
+        />
+      </div>
+      <div>
+        <Label>পূর্ণ কন্টেন্ট</Label>
+        <Textarea
+          value={formData.content}
+          onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+          rows={8}
+          placeholder="ব্লগের পূর্ণ কন্টেন্ট এখানে লিখুন..."
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
