@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      courses: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          duration: string | null
+          id: string
+          image_url: string | null
+          instructor: string
+          is_free: boolean | null
+          is_published: boolean | null
+          lessons_count: number | null
+          level: string | null
+          original_price: number | null
+          price: number
+          rating: number | null
+          review_count: number | null
+          students_count: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          image_url?: string | null
+          instructor?: string
+          is_free?: boolean | null
+          is_published?: boolean | null
+          lessons_count?: number | null
+          level?: string | null
+          original_price?: number | null
+          price?: number
+          rating?: number | null
+          review_count?: number | null
+          students_count?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          image_url?: string | null
+          instructor?: string
+          is_free?: boolean | null
+          is_published?: boolean | null
+          lessons_count?: number | null
+          level?: string | null
+          original_price?: number | null
+          price?: number
+          rating?: number | null
+          review_count?: number | null
+          students_count?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string
