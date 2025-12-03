@@ -115,9 +115,9 @@ const CourseDetail = () => {
         {/* Main Content */}
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div className="grid lg:grid-cols-[60%_40%] gap-8">
               {/* Left Side - Course Details */}
-              <div className="lg:col-span-2 space-y-6">
+              <div className="space-y-6">
                 {/* Course Header */}
                 <div>
                   <Badge className="mb-4">{course.category}</Badge>
@@ -236,7 +236,7 @@ const CourseDetail = () => {
               </div>
 
               {/* Right Side - Price Card & Modules */}
-              <div className="lg:col-span-1">
+              <div>
                 <div className="sticky top-4 space-y-6">
                   {/* Price Card */}
                   <Card className="overflow-hidden">
