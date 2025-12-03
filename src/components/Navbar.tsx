@@ -42,15 +42,15 @@ const Navbar = () => {
 
           {/* Right Side */}
           <div className="flex items-center gap-4">
-            <Link to="/cart" className="relative p-2 hover:bg-muted rounded-full transition-colors">
+            <Link to="/cart" className="relative gradient-purple text-white font-semibold hover:opacity-90 px-4 py-2 rounded-md flex items-center gap-2">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {itemCount}
-              </span>
+              <span>কার্ট</span>
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-white text-primary text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+                  {itemCount}
+                </span>
+              )}
             </Link>
-            <Button className="gradient-purple text-white font-semibold hover:opacity-90">
-              লগ ইন
-            </Button>
           </div>
         </div>
       </div>
