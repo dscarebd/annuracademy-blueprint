@@ -1,4 +1,4 @@
-import { Star, ShoppingCart, Check } from "lucide-react";
+import { Star, ShoppingCart, Check, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useCart } from "@/context/CartContext";
@@ -16,6 +16,7 @@ interface CourseCardProps {
   category: string;
   isFree?: boolean;
   studentsCount?: number;
+  duration?: string;
 }
 
 const CourseCard = ({
@@ -30,6 +31,7 @@ const CourseCard = ({
   category,
   isFree = false,
   studentsCount = 0,
+  duration,
 }: CourseCardProps) => {
   const { addToCart, isInCart } = useCart();
   const { toast } = useToast();
@@ -95,10 +97,16 @@ const CourseCard = ({
           {title}
         </h3>
 
-        {/* Students & Instructor */}
-        <p className="text-sm text-muted-foreground">
-          {studentsCount} শিক্ষার্থী · {instructor}
-        </p>
+        {/* Students & Duration */}
+        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+          <span>{studentsCount} শিক্ষার্থী</span>
+          {duration && (
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>{duration}</span>
+            </div>
+          )}
+        </div>
 
         {/* Price & Button */}
         <div className="flex items-center justify-between pt-3 border-t">
