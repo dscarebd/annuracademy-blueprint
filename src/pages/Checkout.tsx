@@ -394,21 +394,19 @@ const Checkout = () => {
                       className="grid grid-cols-3 gap-2"
                     >
                       {Object.entries(paymentDetails).map(([key, value]) => (
-                        <div
+                        <Label
                           key={key}
-                          className={`flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer ${
-                            paymentMethod === key ? "border-primary bg-primary/5" : "border-border"
+                          htmlFor={key}
+                          className={`flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer transition-colors ${
+                            paymentMethod === key ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
                           }`}
-                          onClick={() => setPaymentMethod(key)}
                         >
                           <RadioGroupItem value={key} id={key} className="sr-only" />
-                          <Label htmlFor={key} className="flex flex-col items-center gap-1 cursor-pointer">
-                            <span className={`w-10 h-10 ${value.color} rounded-full flex items-center justify-center text-white text-sm font-bold`}>
-                              {value.name.charAt(0)}
-                            </span>
-                            <span className="text-sm font-medium">{value.name}</span>
-                          </Label>
-                        </div>
+                          <span className={`w-10 h-10 ${value.color} rounded-full flex items-center justify-center text-white text-sm font-bold`}>
+                            {value.name.charAt(0)}
+                          </span>
+                          <span className="text-sm font-medium mt-1">{value.name}</span>
+                        </Label>
                       ))}
                     </RadioGroup>
 
