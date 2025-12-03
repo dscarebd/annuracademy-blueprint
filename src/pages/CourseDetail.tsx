@@ -13,8 +13,15 @@ import {
   ShoppingCart, 
   Check, 
   Loader2,
-  ArrowLeft
+  ArrowLeft,
+  PlayCircle
 } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { useCourseBySlug } from "@/hooks/useCourses";
@@ -279,23 +286,89 @@ const CourseDetail = () => {
                   <Card>
                     <div className="p-6">
                       <h3 className="text-lg font-semibold mb-4">কোর্স মডিউল</h3>
-                      <div className="space-y-3">
+                      <Accordion type="single" collapsible className="w-full">
                         {[
-                          { title: "মডিউল ১: পরিচিতি", lessons: 5 },
-                          { title: "মডিউল ২: বেসিক কনসেপ্ট", lessons: 8 },
-                          { title: "মডিউল ৩: প্র্যাক্টিক্যাল প্রজেক্ট", lessons: 10 },
-                          { title: "মডিউল ৪: অ্যাডভান্সড টপিক", lessons: 7 },
-                          { title: "মডিউল ৫: ফাইনাল প্রজেক্ট", lessons: 5 },
+                          { 
+                            title: "মডিউল ১: পরিচিতি", 
+                            lessons: [
+                              "কোর্স ওভারভিউ",
+                              "সফটওয়্যার ইনস্টলেশন",
+                              "ইন্টারফেস পরিচিতি",
+                              "বেসিক সেটআপ",
+                              "প্রথম প্রজেক্ট"
+                            ]
+                          },
+                          { 
+                            title: "মডিউল ২: বেসিক কনসেপ্ট", 
+                            lessons: [
+                              "ফান্ডামেন্টাল ধারণা",
+                              "টুলস ও টেকনিক",
+                              "ওয়ার্কফ্লো সেটআপ",
+                              "প্র্যাক্টিস সেশন ১",
+                              "প্র্যাক্টিস সেশন ২",
+                              "প্র্যাক্টিস সেশন ৩",
+                              "কুইজ ও এসাইনমেন্ট",
+                              "রিভিউ সেশন"
+                            ]
+                          },
+                          { 
+                            title: "মডিউল ৩: প্র্যাক্টিক্যাল প্রজেক্ট", 
+                            lessons: [
+                              "প্রজেক্ট প্ল্যানিং",
+                              "ডিজাইন ফেজ",
+                              "ডেভেলপমেন্ট পার্ট ১",
+                              "ডেভেলপমেন্ট পার্ট ২",
+                              "ডেভেলপমেন্ট পার্ট ৩",
+                              "টেস্টিং",
+                              "ডিবাগিং",
+                              "অপটিমাইজেশন",
+                              "ফাইনাল টাচ",
+                              "প্রজেক্ট সাবমিশন"
+                            ]
+                          },
+                          { 
+                            title: "মডিউল ৪: অ্যাডভান্সড টপিক", 
+                            lessons: [
+                              "অ্যাডভান্সড টেকনিক ১",
+                              "অ্যাডভান্সড টেকনিক ২",
+                              "পারফরম্যান্স অপটিমাইজেশন",
+                              "বেস্ট প্র্যাক্টিস",
+                              "ইন্ডাস্ট্রি স্ট্যান্ডার্ড",
+                              "কেস স্টাডি",
+                              "লাইভ সেশন"
+                            ]
+                          },
+                          { 
+                            title: "মডিউল ৫: ফাইনাল প্রজেক্ট", 
+                            lessons: [
+                              "ফাইনাল প্রজেক্ট ব্রিফিং",
+                              "প্রজেক্ট এক্সিকিউশন",
+                              "রিভিউ ও ফিডব্যাক",
+                              "সার্টিফিকেট প্রিপারেশন",
+                              "কোর্স সমাপ্তি"
+                            ]
+                          },
                         ].map((module, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                          >
-                            <span className="font-medium text-sm">{module.title}</span>
-                            <Badge variant="secondary">{module.lessons} লেসন</Badge>
-                          </div>
+                          <AccordionItem key={index} value={`module-${index}`} className="border-b-0">
+                            <AccordionTrigger className="hover:no-underline py-3 px-4 bg-muted/50 rounded-lg mb-2 [&[data-state=open]]:rounded-b-none [&[data-state=open]]:mb-0">
+                              <div className="flex items-center justify-between w-full pr-2">
+                                <span className="font-medium text-sm">{module.title}</span>
+                                <Badge variant="secondary">{module.lessons.length} লেসন</Badge>
+                              </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="bg-muted/30 rounded-b-lg mb-2 px-4 pb-3">
+                              <ul className="space-y-2 pt-2">
+                                {module.lessons.map((lesson, lessonIndex) => (
+                                  <li key={lessonIndex} className="flex items-center gap-3 text-sm text-muted-foreground">
+                                    <PlayCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                                    <span>{lesson}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </AccordionContent>
+                          </AccordionItem>
                         ))}
-                      </div>
+                      </Accordion>
                     </div>
                   </Card>
                 </div>
