@@ -130,7 +130,7 @@ const Courses = () => {
                         )}
                       </div>
 
-                      {/* Instructor & Category */}
+                      {/* Instructor */}
                       <div className="flex items-center gap-2 mb-4">
                         <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">
                           {course.instructor.charAt(0)}
@@ -138,8 +138,6 @@ const Courses = () => {
                         <div className="text-sm">
                           <span className="text-muted-foreground">By </span>
                           <span className="text-foreground font-medium">{course.instructor}</span>
-                          <span className="text-muted-foreground"> In </span>
-                          <span className="text-primary">{course.category}</span>
                         </div>
                       </div>
 
