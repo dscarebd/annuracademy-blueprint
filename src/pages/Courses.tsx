@@ -92,7 +92,7 @@ const Courses = () => {
                     className="overflow-hidden border border-border hover:shadow-lg transition-all duration-300 group"
                   >
                     {/* Course Image */}
-                    <Link to={`/courses/${course.id}`} className="relative overflow-hidden block">
+                    <Link to={`/courses/${course.slug}`} className="relative overflow-hidden block">
                       <img
                         src={course.image_url || ''}
                         alt={course.title}
@@ -113,7 +113,7 @@ const Courses = () => {
                       </div>
 
                       {/* Title */}
-                      <Link to={`/courses/${course.id}`}>
+                      <Link to={`/courses/${course.slug}`}>
                         <h3 className="font-semibold text-foreground text-lg mb-1 line-clamp-2 min-h-[56px] hover:text-primary transition-colors">
                           {course.title}
                         </h3>

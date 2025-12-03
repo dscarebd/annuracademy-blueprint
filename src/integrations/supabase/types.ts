@@ -124,6 +124,7 @@ export type Database = {
           price: number
           rating: number | null
           review_count: number | null
+          slug: string | null
           students_count: number | null
           title: string
           updated_at: string
@@ -144,6 +145,7 @@ export type Database = {
           price?: number
           rating?: number | null
           review_count?: number | null
+          slug?: string | null
           students_count?: number | null
           title: string
           updated_at?: string
@@ -164,6 +166,7 @@ export type Database = {
           price?: number
           rating?: number | null
           review_count?: number | null
+          slug?: string | null
           students_count?: number | null
           title?: string
           updated_at?: string
@@ -304,6 +307,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_course_slug: { Args: { title: string }; Returns: string }
       generate_order_number: { Args: never; Returns: string }
       generate_slug: { Args: { title: string }; Returns: string }
       has_role: {

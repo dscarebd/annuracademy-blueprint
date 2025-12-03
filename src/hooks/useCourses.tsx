@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface Course {
   id: string;
   title: string;
+  slug: string | null;
   description: string | null;
   image_url: string | null;
   price: number;
@@ -23,7 +24,7 @@ export interface Course {
   updated_at: string;
 }
 
-export type CourseInsert = Omit<Course, 'id' | 'created_at' | 'updated_at'>;
+export type CourseInsert = Omit<Course, 'id' | 'created_at' | 'updated_at' | 'slug'>;
 export type CourseUpdate = Partial<CourseInsert>;
 
 export function useCourses() {
@@ -41,20 +42,20 @@ export function useCourses() {
   });
 }
 
-export function useCourse(id: string) {
+export function useCourseBySlug(slug: string) {
   return useQuery({
-    queryKey: ["course", id],
+    queryKey: ["course", slug],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("courses")
         .select("*")
-        .eq("id", id)
+        .eq("slug", slug)
         .maybeSingle();
 
       if (error) throw error;
       return data as Course | null;
     },
-    enabled: !!id,
+    enabled: !!slug,
   });
 }
 

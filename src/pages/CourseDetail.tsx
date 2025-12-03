@@ -17,13 +17,13 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { useCourse } from "@/hooks/useCourses";
+import { useCourseBySlug } from "@/hooks/useCourses";
 
 const CourseDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const { addToCart, isInCart } = useCart();
   const { toast } = useToast();
-  const { data: course, isLoading, error } = useCourse(id || "");
+  const { data: course, isLoading, error } = useCourseBySlug(slug || "");
 
   const handleAddToCart = () => {
     if (!course || course.is_free) return;
