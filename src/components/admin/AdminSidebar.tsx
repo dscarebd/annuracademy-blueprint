@@ -10,6 +10,7 @@ import {
   LogOut,
   Wallet,
   Tag,
+  Share2,
 } from "lucide-react";
 import {
   Sidebar,
@@ -32,6 +33,7 @@ const menuItems = [
   { title: "কুপন", url: "/admin/coupons", icon: Tag },
   { title: "টেস্টিমোনিয়াল", url: "/admin/testimonials", icon: MessageSquare },
   { title: "ব্লগ", url: "/admin/blogs", icon: FileText },
+  { title: "সোশ্যাল লিংক", url: "/admin/social-links", icon: Share2 },
 ];
 
 export function AdminSidebar() {

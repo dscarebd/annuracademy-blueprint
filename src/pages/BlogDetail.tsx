@@ -4,25 +4,29 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, User, Loader2, ArrowLeft, Facebook, Youtube, BookOpen, Send, Mail } from "lucide-react";
+import { Calendar, User, Loader2, ArrowLeft, Facebook, Youtube, BookOpen, Send, Mail, Instagram, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBlogBySlug } from "@/hooks/useBlogs";
 import { useCourses } from "@/hooks/useCourses";
+import { useSocialLinks } from "@/hooks/useSocialLinks";
 import { format } from "date-fns";
+
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Facebook,
+  Youtube,
+  Send,
+  Mail,
+  Instagram,
+  Twitter,
+};
 
 const BlogDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: blog, isLoading, error } = useBlogBySlug(slug || "");
   const { data: courses } = useCourses();
+  const { data: socialLinks } = useSocialLinks();
 
   const popularCourses = courses?.slice(0, 5) || [];
-
-  const socialLinks = [
-    { name: "Facebook", icon: Facebook, url: "https://facebook.com", color: "bg-blue-600 hover:bg-blue-700" },
-    { name: "Telegram", icon: Send, url: "https://t.me", color: "bg-sky-500 hover:bg-sky-600" },
-    { name: "YouTube", icon: Youtube, url: "https://youtube.com", color: "bg-red-600 hover:bg-red-700" },
-    { name: "Email", icon: Mail, url: "mailto:contact@example.com", color: "bg-emerald-600 hover:bg-emerald-700" },
-  ];
 
   if (isLoading) {
     return (
@@ -187,18 +191,21 @@ const BlogDetail = () => {
                   <CardTitle className="text-lg">আমাদের সাথে যুক্ত থাকুন</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {socialLinks.map((social) => (
-                    <a
-                      key={social.name}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg text-white transition-colors ${social.color}`}
-                    >
-                      <social.icon className="w-5 h-5" />
-                      <span className="font-medium">{social.name}</span>
-                    </a>
-                  ))}
+                  {socialLinks?.map((social) => {
+                    const IconComponent = iconMap[social.icon] || Facebook;
+                    return (
+                      <a
+                        key={social.id}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg text-white transition-colors ${social.color}`}
+                      >
+                        <IconComponent className="w-5 h-5" />
+                        <span className="font-medium">{social.name}</span>
+                      </a>
+                    );
+                  })}
                 </CardContent>
               </Card>
             </aside>
