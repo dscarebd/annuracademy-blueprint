@@ -9,9 +9,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Tag, X, Loader2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { checkoutFormSchema } from "@/lib/validation";
+import { useValidateCoupon, useIncrementCouponUsage, Coupon } from "@/hooks/useCoupons";
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
@@ -26,9 +27,51 @@ const Checkout = () => {
     transactionId: "",
   });
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const validateCoupon = useValidateCoupon();
+  const incrementCouponUsage = useIncrementCouponUsage();
+
+  // Calculate discount
+  const calculateDiscount = () => {
+    if (!appliedCoupon) return 0;
+    if (appliedCoupon.discount_type === "percentage") {
+      return Math.round((totalPrice * appliedCoupon.discount_value) / 100);
+    }
+    return appliedCoupon.discount_value;
+  };
+
+  const discount = calculateDiscount();
+  const finalPrice = totalPrice - discount;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    
+    try {
+      const coupon = await validateCoupon.mutateAsync({
+        code: couponCode,
+        orderAmount: totalPrice,
+      });
+      setAppliedCoupon(coupon);
+      toast({ title: "কুপন প্রয়োগ করা হয়েছে" });
+    } catch (error: any) {
+      toast({
+        title: "কুপন প্রয়োগ করা যায়নি",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
   };
 
   const paymentDetails = {
@@ -79,8 +122,10 @@ const Checkout = () => {
           customer_phone: formData.phone,
           payment_method: paymentDetails[paymentMethod as keyof typeof paymentDetails].name,
           transaction_id: formData.transactionId,
-          total_amount: totalPrice,
+          total_amount: finalPrice,
           items: orderItems,
+          coupon_code: appliedCoupon?.code || null,
+          discount_amount: discount,
         },
       });
 
@@ -91,6 +136,15 @@ const Checkout = () => {
           variant: "destructive",
         });
         return;
+      }
+
+      // Increment coupon usage if applied
+      if (appliedCoupon) {
+        try {
+          await incrementCouponUsage.mutateAsync(appliedCoupon.id);
+        } catch (e) {
+          // Non-critical, don't block order
+        }
       }
 
       clearCart();
@@ -261,10 +315,71 @@ const Checkout = () => {
                     ))}
                   </div>
 
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between text-lg font-bold">
+                  {/* Coupon Section */}
+                  <div className="border-t pt-4 mb-4">
+                    <Label className="text-sm font-medium mb-2 block">কুপন কোড</Label>
+                    {appliedCoupon ? (
+                      <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
+                        <div className="flex items-center gap-2">
+                          <Check className="w-4 h-4 text-green-600" />
+                          <span className="font-mono font-semibold text-green-700">{appliedCoupon.code}</span>
+                          <span className="text-sm text-green-600">
+                            ({appliedCoupon.discount_type === "percentage" 
+                              ? `${appliedCoupon.discount_value}% ছাড়` 
+                              : `${appliedCoupon.discount_value}৳ ছাড়`})
+                          </span>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleRemoveCoupon}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <div className="relative flex-grow">
+                          <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <Input
+                            value={couponCode}
+                            onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                            placeholder="কুপন কোড লিখুন"
+                            className="pl-10 uppercase"
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={handleApplyCoupon}
+                          disabled={validateCoupon.isPending || !couponCode.trim()}
+                        >
+                          {validateCoupon.isPending ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            "প্রয়োগ"
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="border-t pt-4 space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>সাবটোটাল:</span>
+                      <span>{totalPrice.toLocaleString()}৳</span>
+                    </div>
+                    {discount > 0 && (
+                      <div className="flex justify-between text-sm text-green-600">
+                        <span>ডিসকাউন্ট:</span>
+                        <span>-{discount.toLocaleString()}৳</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-lg font-bold pt-2 border-t">
                       <span>মোট:</span>
-                      <span className="text-primary">{totalPrice.toLocaleString()}৳</span>
+                      <span className="text-primary">{finalPrice.toLocaleString()}৳</span>
                     </div>
                   </div>
                 </Card>
@@ -310,7 +425,7 @@ const Checkout = () => {
                           </span>
                         </li>
                         <li>
-                          পরিমাণ: <span className="font-semibold text-foreground">{totalPrice.toLocaleString()}৳</span>
+                          পরিমাণ: <span className="font-semibold text-foreground">{finalPrice.toLocaleString()}৳</span>
                         </li>
                         <li>পেমেন্ট সম্পন্ন করে Transaction ID কপি করুন</li>
                       </ol>
