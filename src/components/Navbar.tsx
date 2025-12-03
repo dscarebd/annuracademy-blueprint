@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
 import CartSidebar from "@/components/CartSidebar";
 import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,54 +53,30 @@ const Navbar = () => {
             
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <Sheet open={isOpen} onOpenChange={setIsOpen}>
-                <SheetTrigger asChild>
+              <Popover open={isOpen} onOpenChange={setIsOpen}>
+                <PopoverTrigger asChild>
                   <button className="p-2 hover:bg-muted rounded-lg transition-colors">
                     <Menu className="h-6 w-6 text-foreground" />
                   </button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-[280px] p-0">
-                  <div className="flex flex-col h-full">
-                    {/* Sidebar Header */}
-                    <div className="p-4 border-b border-border">
-                      <Link 
-                        to="/" 
-                        className="flex items-center gap-2"
+                </PopoverTrigger>
+                <PopoverContent 
+                  align="end" 
+                  className="w-[200px] p-2 bg-background border border-border shadow-lg"
+                >
+                  <div className="flex flex-col">
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.to}
+                        to={link.to}
                         onClick={() => setIsOpen(false)}
+                        className="px-4 py-2.5 text-foreground hover:bg-muted hover:text-primary rounded-md transition-colors font-medium"
                       >
-                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                          A
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-xl font-bold text-foreground">An-Nur</span>
-                          <span className="text-xs text-primary font-semibold">ACADEMY</span>
-                        </div>
+                        {link.label}
                       </Link>
-                    </div>
-
-                    {/* Navigation Links */}
-                    <div className="flex-1 py-4">
-                      {navLinks.map((link) => (
-                        <Link
-                          key={link.to}
-                          to={link.to}
-                          onClick={() => setIsOpen(false)}
-                          className="flex items-center px-6 py-3 text-foreground hover:bg-muted hover:text-primary transition-colors font-medium"
-                        >
-                          {link.label}
-                        </Link>
-                      ))}
-                    </div>
-
-                    {/* Footer */}
-                    <div className="p-4 border-t border-border">
-                      <p className="text-sm text-muted-foreground text-center">
-                        © 2024 An-Nur Academy
-                      </p>
-                    </div>
+                    ))}
                   </div>
-                </SheetContent>
-              </Sheet>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
         </div>
