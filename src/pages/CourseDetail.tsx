@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import TopBanner from "@/components/TopBanner";
 import Navbar from "@/components/Navbar";
@@ -16,8 +15,7 @@ import {
   ArrowLeft,
   Play,
   Lock,
-  ChevronRight,
-  X
+  ChevronRight
 } from "lucide-react";
 import {
   Accordion,
@@ -28,39 +26,11 @@ import {
 import { useCart } from "@/context/CartContext";
 import { useCourseBySlug, CourseModule } from "@/hooks/useCourses";
 
-// Helper to extract YouTube video ID from various URL formats
-const getYouTubeVideoId = (url: string): string | null => {
-  if (!url) return null;
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\s?]+)/,
-    /^([a-zA-Z0-9_-]{11})$/
-  ];
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) return match[1];
-  }
-  return null;
-};
-
 const CourseDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const { data: course, isLoading, error } = useCourseBySlug(slug || "");
-  const [activeVideo, setActiveVideo] = useState<{ url: string; name: string } | null>(null);
-
-  const handleLessonClick = (lesson: { name: string; video_url?: string }) => {
-    if (lesson.video_url) {
-      const videoId = getYouTubeVideoId(lesson.video_url);
-      if (videoId) {
-        setActiveVideo({ url: lesson.video_url, name: lesson.name });
-        // Scroll to video player
-        setTimeout(() => {
-          document.getElementById('video-player')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-      }
-    }
-  };
 
   const handleJoinNow = () => {
     if (!course || course.is_free) return;
@@ -254,39 +224,6 @@ const CourseDetail = () => {
           </Link>
         </div>
 
-        {/* Video Player Section */}
-        {activeVideo && getYouTubeVideoId(activeVideo.url) && (
-          <div id="video-player" className="container mx-auto px-4 pb-6">
-            <Card className="overflow-hidden">
-              <div className="p-4 border-b flex items-center justify-between bg-muted/30">
-                <div className="flex items-center gap-3">
-                  <Play className="w-5 h-5 text-primary" />
-                  <span className="font-medium">{activeVideo.name}</span>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setActiveVideo(null)}
-                  className="hover:bg-destructive/10 hover:text-destructive"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-              <div className="aspect-video">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src={`https://www.youtube.com/embed/${getYouTubeVideoId(activeVideo.url)}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3&fs=0&disablekb=0&cc_load_policy=0`}
-                  title={activeVideo.name}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; encrypted-media"
-                  className="w-full h-full"
-                />
-              </div>
-            </Card>
-          </div>
-        )}
-
         {/* Main Content */}
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4">
@@ -387,21 +324,17 @@ const CourseDetail = () => {
                           {module.lessons.map((lesson, lessonIndex) => (
                             <li 
                               key={lessonIndex} 
-                              className={`flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors ${lesson.video_url ? 'cursor-pointer' : ''}`}
-                              onClick={() => handleLessonClick(lesson)}
+                              className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors"
                             >
                               <div className="flex items-center gap-3">
-                                <div className={`w-6 h-6 rounded flex items-center justify-center ${lesson.video_url ? 'bg-primary text-primary-foreground' : 'bg-primary/10'}`}>
-                                  <Play className={`w-3 h-3 ${lesson.video_url ? '' : 'text-primary'}`} />
+                                <div className="w-6 h-6 rounded flex items-center justify-center bg-primary/10">
+                                  <Play className="w-3 h-3 text-primary" />
                                 </div>
                                 <span className="text-sm">{lesson.name}</span>
-                                {lesson.video_url && (
-                                  <Badge variant="secondary" className="text-xs">ভিডিও</Badge>
-                                )}
                               </div>
                               <div className="flex items-center gap-3 text-muted-foreground">
                                 <span className="text-xs">{lesson.duration}</span>
-                                {!lesson.video_url && <Lock className="w-4 h-4" />}
+                                <Lock className="w-4 h-4" />
                               </div>
                             </li>
                           ))}
@@ -620,21 +553,17 @@ const CourseDetail = () => {
                               {module.lessons.map((lesson, lessonIndex) => (
                                 <li 
                                   key={lessonIndex} 
-                                  className={`flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors ${lesson.video_url ? 'cursor-pointer' : ''}`}
-                                  onClick={() => handleLessonClick(lesson)}
+                                  className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors"
                                 >
                                   <div className="flex items-center gap-3">
-                                    <div className={`w-6 h-6 rounded flex items-center justify-center ${lesson.video_url ? 'bg-primary text-primary-foreground' : 'bg-primary/10'}`}>
-                                      <Play className={`w-3 h-3 ${lesson.video_url ? '' : 'text-primary'}`} />
+                                    <div className="w-6 h-6 rounded flex items-center justify-center bg-primary/10">
+                                      <Play className="w-3 h-3 text-primary" />
                                     </div>
                                     <span className="text-sm">{lesson.name}</span>
-                                    {lesson.video_url && (
-                                      <Badge variant="secondary" className="text-xs">ভিডিও</Badge>
-                                    )}
                                   </div>
                                   <div className="flex items-center gap-3 text-muted-foreground">
                                     <span className="text-xs">{lesson.duration}</span>
-                                    {!lesson.video_url && <Lock className="w-4 h-4" />}
+                                    <Lock className="w-4 h-4" />
                                   </div>
                                 </li>
                               ))}
