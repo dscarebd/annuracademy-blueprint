@@ -139,12 +139,9 @@ export default function AdminDashboard() {
           <Card className="p-6 bg-gradient-to-r from-green-500/10 to-green-500/5 border-green-500/20">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">কনফার্মড রেভিনিউ</p>
+                <p className="text-sm text-muted-foreground">মোট আয়</p>
                 <p className={`text-3xl font-bold ${confirmedRevenue >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   ৳{confirmedRevenue.toLocaleString()}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  (রেভিনিউ - ব্যয়)
                 </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
