@@ -37,7 +37,9 @@ import {
 
 interface BlogFormData {
   title: string;
+  slug: string;
   excerpt: string;
+  content: string;
   category: string;
   category_color: string;
   image_url: string;
@@ -49,7 +51,9 @@ interface BlogFormData {
 
 const emptyFormData: BlogFormData = {
   title: "",
+  slug: "",
   excerpt: "",
+  content: "",
   category: "",
   category_color: "bg-blue-500",
   image_url: "",
@@ -268,7 +272,9 @@ function BlogForm({
     blog
       ? {
           title: blog.title,
+          slug: blog.slug || "",
           excerpt: blog.excerpt || "",
+          content: blog.content || "",
           category: blog.category,
           category_color: blog.category_color || "bg-blue-500",
           image_url: blog.image_url || "",
@@ -288,6 +294,17 @@ function BlogForm({
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
         />
+      </div>
+      <div>
+        <Label>স্লাগ (URL)</Label>
+        <Input
+          value={formData.slug}
+          placeholder="auto-generated-if-empty"
+          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          খালি রাখলে টাইটেল থেকে অটো জেনারেট হবে
+        </p>
       </div>
       <div>
         <Label>সংক্ষেপ</Label>

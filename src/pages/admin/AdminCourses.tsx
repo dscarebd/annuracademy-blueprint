@@ -36,6 +36,7 @@ import {
 
 interface CourseFormData {
   title: string;
+  slug: string;
   description: string;
   price: number;
   original_price: number | null;
@@ -46,12 +47,15 @@ interface CourseFormData {
   level: string;
   students_count: number;
   lessons_count: number;
+  rating: number;
+  review_count: number;
   is_free: boolean;
   is_published: boolean;
 }
 
 const emptyFormData: CourseFormData = {
   title: "",
+  slug: "",
   description: "",
   price: 0,
   original_price: null,
@@ -62,6 +66,8 @@ const emptyFormData: CourseFormData = {
   level: "Beginner",
   students_count: 0,
   lessons_count: 0,
+  rating: 0,
+  review_count: 0,
   is_free: false,
   is_published: true,
 };
@@ -281,6 +287,7 @@ function CourseForm({
     course
       ? {
           title: course.title,
+          slug: course.slug || "",
           description: course.description || "",
           price: course.price,
           original_price: course.original_price,
@@ -291,6 +298,8 @@ function CourseForm({
           level: course.level || "Beginner",
           students_count: course.students_count || 0,
           lessons_count: course.lessons_count || 0,
+          rating: course.rating || 0,
+          review_count: course.review_count || 0,
           is_free: course.is_free || false,
           is_published: course.is_published ?? true,
         }
@@ -305,6 +314,17 @@ function CourseForm({
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
         />
+      </div>
+      <div>
+        <Label>স্লাগ (URL)</Label>
+        <Input
+          value={formData.slug}
+          placeholder="auto-generated-if-empty"
+          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          খালি রাখলে টাইটেল থেকে অটো জেনারেট হবে
+        </p>
       </div>
       <div>
         <Label>বিবরণ</Label>
