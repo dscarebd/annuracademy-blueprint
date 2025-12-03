@@ -377,6 +377,33 @@ const CourseDetail = () => {
                       ))}
                     </Accordion>
                   </Card>
+
+                  {/* Instructor Card */}
+                  <Card>
+                    <div className="p-6">
+                      <h3 className="text-lg font-semibold mb-4">ইন্সট্রাক্টর</h3>
+                      <div className="flex flex-col items-center text-center">
+                        <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-primary text-2xl font-bold mb-4">
+                          {course.instructor.charAt(0)}
+                        </div>
+                        <h4 className="font-semibold text-lg">{course.instructor}</h4>
+                        <p className="text-sm text-muted-foreground mb-4">{course.category} এক্সপার্ট</p>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                          <div className="flex items-center gap-1">
+                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                            <span>4.9 রেটিং</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Users className="w-4 h-4" />
+                            <span>5000+ শিক্ষার্থী</span>
+                          </div>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          দীর্ঘ অভিজ্ঞতা সম্পন্ন পেশাদার ইন্সট্রাক্টর। শত শত শিক্ষার্থীকে সফলভাবে ট্রেনিং দিয়েছেন এবং তাদের ক্যারিয়ার গড়তে সাহায্য করেছেন।
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
                 </div>
               </div>
             </div>
