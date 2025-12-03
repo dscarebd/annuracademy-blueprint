@@ -10,12 +10,10 @@ import {
   Clock, 
   Users, 
   BookOpen, 
-  ShoppingCart, 
   Check, 
   Loader2,
   ArrowLeft,
   Play,
-  Eye,
   Lock,
   ChevronRight
 } from "lucide-react";
@@ -26,8 +24,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useCart } from "@/context/CartContext";
-import { useToast } from "@/hooks/use-toast";
-import { useCourseBySlug } from "@/hooks/useCourses";
+import { useCourseBySlug, CourseModule } from "@/hooks/useCourses";
 
 const CourseDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -72,6 +69,53 @@ const CourseDetail = () => {
     }
     return stars;
   };
+
+  // Default data for fallback
+  const defaultLearningOutcomes = [
+    "বেসিক থেকে অ্যাডভান্সড লেভেল পর্যন্ত সম্পূর্ণ ধারণা",
+    "রিয়েল-ওয়ার্ল্ড প্রজেক্ট তৈরির অভিজ্ঞতা",
+    "ইন্ডাস্ট্রি স্ট্যান্ডার্ড বেস্ট প্র্যাক্টিস",
+    "প্রফেশনাল পোর্টফোলিও তৈরি",
+    "জব রেডি স্কিল ডেভেলপমেন্ট",
+    "লাইফটাইম সাপোর্ট ও আপডেট",
+  ];
+
+  const defaultRequirements = [
+    "কম্পিউটার বা ল্যাপটপ (উইন্ডোজ/ম্যাক)",
+    "ইন্টারনেট কানেকশন",
+    "বেসিক কম্পিউটার স্কিল",
+    "শেখার আগ্রহ ও ধৈর্য",
+  ];
+
+  const defaultModules: CourseModule[] = [
+    { 
+      title: "পরিচিতি", 
+      lessons: [
+        { name: "কোর্স ওভারভিউ", duration: "04:02", preview: false },
+        { name: "সফটওয়্যার ইনস্টলেশন", duration: "02:14", preview: false },
+        { name: "ইন্টারফেস পরিচিতি", duration: "06:53", preview: false },
+      ]
+    },
+    { 
+      title: "বেসিক কনসেপ্ট", 
+      lessons: [
+        { name: "ফান্ডামেন্টাল ধারণা", duration: "10:20", preview: false },
+        { name: "টুলস ও টেকনিক", duration: "08:45", preview: false },
+      ]
+    },
+  ];
+
+  const learningOutcomes = course?.learning_outcomes?.length 
+    ? (course.learning_outcomes as string[]) 
+    : defaultLearningOutcomes;
+
+  const requirements = course?.requirements?.length 
+    ? (course.requirements as string[]) 
+    : defaultRequirements;
+
+  const modules = course?.modules?.length 
+    ? (course.modules as CourseModule[]) 
+    : defaultModules;
 
   if (isLoading) {
     return (
@@ -184,14 +228,7 @@ const CourseDetail = () => {
                       যা শিখবেন
                     </h3>
                     <ul className="grid md:grid-cols-2 gap-3">
-                      {[
-                        "বেসিক থেকে অ্যাডভান্সড লেভেল পর্যন্ত সম্পূর্ণ ধারণা",
-                        "রিয়েল-ওয়ার্ল্ড প্রজেক্ট তৈরির অভিজ্ঞতা",
-                        "ইন্ডাস্ট্রি স্ট্যান্ডার্ড বেস্ট প্র্যাক্টিস",
-                        "প্রফেশনাল পোর্টফোলিও তৈরি",
-                        "জব রেডি স্কিল ডেভেলপমেন্ট",
-                        "লাইফটাইম সাপোর্ট ও আপডেট",
-                      ].map((item, index) => (
+                      {learningOutcomes.map((item, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                           <span className="text-muted-foreground">{item}</span>
@@ -209,12 +246,7 @@ const CourseDetail = () => {
                       প্রয়োজনীয়তা
                     </h3>
                     <ul className="space-y-3">
-                      {[
-                        "কম্পিউটার বা ল্যাপটপ (উইন্ডোজ/ম্যাক)",
-                        "ইন্টারনেট কানেকশন",
-                        "বেসিক কম্পিউটার স্কিল",
-                        "শেখার আগ্রহ ও ধৈর্য",
-                      ].map((item, index) => (
+                      {requirements.map((item, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
                           <span className="text-muted-foreground">{item}</span>
@@ -282,59 +314,7 @@ const CourseDetail = () => {
                       <h3 className="text-lg font-semibold">কোর্স মডিউল</h3>
                     </div>
                     <Accordion type="single" collapsible className="w-full">
-                      {[
-                    { 
-                      title: "পরিচিতি", 
-                      lessons: [
-                        { name: "কোর্স ওভারভিউ", duration: "04:02", preview: false },
-                        { name: "সফটওয়্যার ইনস্টলেশন", duration: "02:14", preview: false },
-                            { name: "ইন্টারফেস পরিচিতি", duration: "06:53", preview: false },
-                            { name: "বেসিক সেটআপ", duration: "05:30", preview: false },
-                            { name: "প্রথম প্রজেক্ট", duration: "08:15", preview: false }
-                          ]
-                        },
-                        { 
-                          title: "বেসিক কনসেপ্ট", 
-                          lessons: [
-                            { name: "ফান্ডামেন্টাল ধারণা", duration: "10:20", preview: false },
-                            { name: "টুলস ও টেকনিক", duration: "08:45", preview: false },
-                            { name: "ওয়ার্কফ্লো সেটআপ", duration: "12:30", preview: false },
-                            { name: "প্র্যাক্টিস সেশন ১", duration: "15:00", preview: false },
-                            { name: "প্র্যাক্টিস সেশন ২", duration: "14:25", preview: false },
-                            { name: "কুইজ ও এসাইনমেন্ট", duration: "05:00", preview: false },
-                            { name: "রিভিউ সেশন", duration: "20:00", preview: false }
-                          ]
-                        },
-                        { 
-                          title: "প্র্যাক্টিক্যাল প্রজেক্ট", 
-                          lessons: [
-                            { name: "প্রজেক্ট প্ল্যানিং", duration: "08:00", preview: false },
-                            { name: "ডিজাইন ফেজ", duration: "18:30", preview: false },
-                            { name: "ডেভেলপমেন্ট পার্ট ১", duration: "25:00", preview: false },
-                            { name: "ডেভেলপমেন্ট পার্ট ২", duration: "22:15", preview: false },
-                            { name: "টেস্টিং ও ডিবাগিং", duration: "15:45", preview: false },
-                            { name: "ফাইনাল টাচ", duration: "10:00", preview: false }
-                          ]
-                        },
-                        { 
-                          title: "অ্যাডভান্সড টপিক", 
-                          lessons: [
-                            { name: "অ্যাডভান্সড টেকনিক", duration: "20:00", preview: false },
-                            { name: "পারফরম্যান্স অপটিমাইজেশন", duration: "18:30", preview: false },
-                            { name: "বেস্ট প্র্যাক্টিস", duration: "15:00", preview: false },
-                            { name: "কেস স্টাডি", duration: "25:00", preview: false }
-                          ]
-                        },
-                        { 
-                          title: "ফাইনাল প্রজেক্ট", 
-                          lessons: [
-                            { name: "ফাইনাল প্রজেক্ট ব্রিফিং", duration: "10:00", preview: false },
-                            { name: "প্রজেক্ট এক্সিকিউশন", duration: "45:00", preview: false },
-                            { name: "রিভিউ ও ফিডব্যাক", duration: "20:00", preview: false },
-                            { name: "কোর্স সমাপ্তি", duration: "05:00", preview: false }
-                          ]
-                        },
-                      ].map((module, index) => (
+                      {modules.map((module, index) => (
                         <AccordionItem key={index} value={`module-${index}`} className="border-b last:border-b-0">
                           <AccordionTrigger className="hover:no-underline px-4 py-4 hover:bg-muted/30 [&[data-state=open]]:text-primary [&[data-state=open]]:bg-primary/5 [&>svg]:hidden">
                             <div className="flex items-center justify-between w-full">
@@ -367,11 +347,7 @@ const CourseDetail = () => {
                                   </div>
                                   <div className="flex items-center gap-3 text-muted-foreground">
                                     <span className="text-xs">{lesson.duration}</span>
-                                    {lesson.preview ? (
-                                      <Eye className="w-4 h-4" />
-                                    ) : (
-                                      <Lock className="w-4 h-4" />
-                                    )}
+                                    <Lock className="w-4 h-4" />
                                   </div>
                                 </li>
                               ))}

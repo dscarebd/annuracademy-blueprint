@@ -118,11 +118,14 @@ export type Database = {
           instructor: string
           is_free: boolean | null
           is_published: boolean | null
+          learning_outcomes: Json | null
           lessons_count: number | null
           level: string | null
+          modules: Json | null
           original_price: number | null
           price: number
           rating: number | null
+          requirements: Json | null
           review_count: number | null
           slug: string | null
           students_count: number | null
@@ -139,11 +142,14 @@ export type Database = {
           instructor?: string
           is_free?: boolean | null
           is_published?: boolean | null
+          learning_outcomes?: Json | null
           lessons_count?: number | null
           level?: string | null
+          modules?: Json | null
           original_price?: number | null
           price?: number
           rating?: number | null
+          requirements?: Json | null
           review_count?: number | null
           slug?: string | null
           students_count?: number | null
@@ -160,11 +166,14 @@ export type Database = {
           instructor?: string
           is_free?: boolean | null
           is_published?: boolean | null
+          learning_outcomes?: Json | null
           lessons_count?: number | null
           level?: string | null
+          modules?: Json | null
           original_price?: number | null
           price?: number
           rating?: number | null
+          requirements?: Json | null
           review_count?: number | null
           slug?: string | null
           students_count?: number | null

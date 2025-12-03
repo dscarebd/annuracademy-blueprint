@@ -22,7 +22,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Edit, Trash2, Loader2 } from "lucide-react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import { Plus, Edit, Trash2, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -32,6 +38,7 @@ import {
   useDeleteCourse,
   Course,
   CourseInsert,
+  CourseModule,
 } from "@/hooks/useCourses";
 
 interface CourseFormData {
@@ -51,6 +58,9 @@ interface CourseFormData {
   review_count: number;
   is_free: boolean;
   is_published: boolean;
+  learning_outcomes: string[];
+  requirements: string[];
+  modules: CourseModule[];
 }
 
 const emptyFormData: CourseFormData = {
@@ -70,6 +80,9 @@ const emptyFormData: CourseFormData = {
   review_count: 0,
   is_free: false,
   is_published: true,
+  learning_outcomes: [],
+  requirements: [],
+  modules: [],
 };
 
 export default function AdminCourses() {
@@ -167,7 +180,7 @@ export default function AdminCourses() {
                 নতুন কোর্স
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>
                   {editingCourse ? "কোর্স এডিট করুন" : "নতুন কোর্স যোগ করুন"}
@@ -302,164 +315,426 @@ function CourseForm({
           review_count: course.review_count || 0,
           is_free: course.is_free || false,
           is_published: course.is_published ?? true,
+          learning_outcomes: (course.learning_outcomes as string[]) || [],
+          requirements: (course.requirements as string[]) || [],
+          modules: (course.modules as CourseModule[]) || [],
         }
       : emptyFormData
   );
 
+  const [newOutcome, setNewOutcome] = useState("");
+  const [newRequirement, setNewRequirement] = useState("");
+
+  const addOutcome = () => {
+    if (newOutcome.trim()) {
+      setFormData({
+        ...formData,
+        learning_outcomes: [...formData.learning_outcomes, newOutcome.trim()],
+      });
+      setNewOutcome("");
+    }
+  };
+
+  const removeOutcome = (index: number) => {
+    setFormData({
+      ...formData,
+      learning_outcomes: formData.learning_outcomes.filter((_, i) => i !== index),
+    });
+  };
+
+  const addRequirement = () => {
+    if (newRequirement.trim()) {
+      setFormData({
+        ...formData,
+        requirements: [...formData.requirements, newRequirement.trim()],
+      });
+      setNewRequirement("");
+    }
+  };
+
+  const removeRequirement = (index: number) => {
+    setFormData({
+      ...formData,
+      requirements: formData.requirements.filter((_, i) => i !== index),
+    });
+  };
+
+  const addModule = () => {
+    setFormData({
+      ...formData,
+      modules: [...formData.modules, { title: "নতুন মডিউল", lessons: [] }],
+    });
+  };
+
+  const updateModuleTitle = (index: number, title: string) => {
+    const updated = [...formData.modules];
+    updated[index].title = title;
+    setFormData({ ...formData, modules: updated });
+  };
+
+  const removeModule = (index: number) => {
+    setFormData({
+      ...formData,
+      modules: formData.modules.filter((_, i) => i !== index),
+    });
+  };
+
+  const addLesson = (moduleIndex: number) => {
+    const updated = [...formData.modules];
+    updated[moduleIndex].lessons.push({
+      name: "নতুন লেসন",
+      duration: "00:00",
+      preview: false,
+    });
+    setFormData({ ...formData, modules: updated });
+  };
+
+  const updateLesson = (
+    moduleIndex: number,
+    lessonIndex: number,
+    field: string,
+    value: string | boolean
+  ) => {
+    const updated = [...formData.modules];
+    updated[moduleIndex].lessons[lessonIndex] = {
+      ...updated[moduleIndex].lessons[lessonIndex],
+      [field]: value,
+    };
+    setFormData({ ...formData, modules: updated });
+  };
+
+  const removeLesson = (moduleIndex: number, lessonIndex: number) => {
+    const updated = [...formData.modules];
+    updated[moduleIndex].lessons = updated[moduleIndex].lessons.filter(
+      (_, i) => i !== lessonIndex
+    );
+    setFormData({ ...formData, modules: updated });
+  };
+
   return (
-    <div className="space-y-4">
-      <div>
-        <Label>কোর্সের নাম</Label>
-        <Input
-          value={formData.title}
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-        />
-      </div>
-      <div>
-        <Label>স্লাগ (URL)</Label>
-        <Input
-          value={formData.slug}
-          placeholder="auto-generated-if-empty"
-          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-        />
-        <p className="text-xs text-muted-foreground mt-1">
-          খালি রাখলে টাইটেল থেকে অটো জেনারেট হবে
-        </p>
-      </div>
-      <div>
-        <Label>বিবরণ</Label>
-        <Textarea
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-4">
+    <Tabs defaultValue="basic" className="w-full">
+      <TabsList className="grid w-full grid-cols-4">
+        <TabsTrigger value="basic">বেসিক</TabsTrigger>
+        <TabsTrigger value="outcomes">যা শিখবেন</TabsTrigger>
+        <TabsTrigger value="requirements">প্রয়োজনীয়তা</TabsTrigger>
+        <TabsTrigger value="modules">মডিউল</TabsTrigger>
+      </TabsList>
+
+      <TabsContent value="basic" className="space-y-4 mt-4">
         <div>
-          <Label>মূল্য (৳)</Label>
+          <Label>কোর্সের নাম</Label>
           <Input
-            type="number"
-            value={formData.price}
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+          />
+        </div>
+        <div>
+          <Label>স্লাগ (URL)</Label>
+          <Input
+            value={formData.slug}
+            placeholder="auto-generated-if-empty"
+            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+          />
+          <p className="text-xs text-muted-foreground mt-1">
+            খালি রাখলে টাইটেল থেকে অটো জেনারেট হবে
+          </p>
+        </div>
+        <div>
+          <Label>বিবরণ</Label>
+          <Textarea
+            value={formData.description}
+            rows={4}
             onChange={(e) =>
-              setFormData({ ...formData, price: parseInt(e.target.value) || 0 })
+              setFormData({ ...formData, description: e.target.value })
             }
           />
         </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label>মূল্য (৳)</Label>
+            <Input
+              type="number"
+              value={formData.price}
+              onChange={(e) =>
+                setFormData({ ...formData, price: parseInt(e.target.value) || 0 })
+              }
+            />
+          </div>
+          <div>
+            <Label>আগের মূল্য (৳)</Label>
+            <Input
+              type="number"
+              value={formData.original_price || ""}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  original_price: e.target.value ? parseInt(e.target.value) : null,
+                })
+              }
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label>ক্যাটেগরি</Label>
+            <Input
+              value={formData.category}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
+            />
+          </div>
+          <div>
+            <Label>লেভেল</Label>
+            <Input
+              value={formData.level}
+              onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label>সময়কাল</Label>
+            <Input
+              value={formData.duration}
+              placeholder="e.g. 2h 30m"
+              onChange={(e) =>
+                setFormData({ ...formData, duration: e.target.value })
+              }
+            />
+          </div>
+          <div>
+            <Label>ইন্সট্রাক্টর</Label>
+            <Input
+              value={formData.instructor}
+              onChange={(e) =>
+                setFormData({ ...formData, instructor: e.target.value })
+              }
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label>লেসন সংখ্যা</Label>
+            <Input
+              type="number"
+              value={formData.lessons_count}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  lessons_count: parseInt(e.target.value) || 0,
+                })
+              }
+            />
+          </div>
+          <div>
+            <Label>শিক্ষার্থী সংখ্যা</Label>
+            <Input
+              type="number"
+              value={formData.students_count}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  students_count: parseInt(e.target.value) || 0,
+                })
+              }
+            />
+          </div>
+        </div>
         <div>
-          <Label>আগের মূল্য (৳)</Label>
+          <Label>ছবির URL</Label>
           <Input
-            type="number"
-            value={formData.original_price || ""}
+            value={formData.image_url}
+            placeholder="/src/assets/course-image.jpg"
             onChange={(e) =>
-              setFormData({
-                ...formData,
-                original_price: e.target.value ? parseInt(e.target.value) : null,
-              })
+              setFormData({ ...formData, image_url: e.target.value })
             }
           />
         </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="is_free"
+              checked={formData.is_free}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, is_free: checked })
+              }
+            />
+            <Label htmlFor="is_free">ফ্রি কোর্স</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="is_published"
+              checked={formData.is_published}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, is_published: checked })
+              }
+            />
+            <Label htmlFor="is_published">পাবলিশড</Label>
+          </div>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="outcomes" className="space-y-4 mt-4">
         <div>
-          <Label>ক্যাটেগরি</Label>
-          <Input
-            value={formData.category}
-            onChange={(e) =>
-              setFormData({ ...formData, category: e.target.value })
-            }
-          />
+          <Label>যা শিখবেন (Learning Outcomes)</Label>
+          <div className="flex gap-2 mt-2">
+            <Input
+              value={newOutcome}
+              onChange={(e) => setNewOutcome(e.target.value)}
+              placeholder="নতুন আইটেম যোগ করুন..."
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addOutcome())}
+            />
+            <Button type="button" onClick={addOutcome}>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
+        <div className="space-y-2">
+          {formData.learning_outcomes.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 p-2 bg-muted rounded"
+            >
+              <span className="flex-1">{item}</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeOutcome(index)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          {formData.learning_outcomes.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              কোনো আইটেম যোগ করা হয়নি
+            </p>
+          )}
+        </div>
+      </TabsContent>
+
+      <TabsContent value="requirements" className="space-y-4 mt-4">
         <div>
-          <Label>লেভেল</Label>
-          <Input
-            value={formData.level}
-            onChange={(e) => setFormData({ ...formData, level: e.target.value })}
-          />
+          <Label>প্রয়োজনীয়তা (Requirements)</Label>
+          <div className="flex gap-2 mt-2">
+            <Input
+              value={newRequirement}
+              onChange={(e) => setNewRequirement(e.target.value)}
+              placeholder="নতুন আইটেম যোগ করুন..."
+              onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addRequirement())}
+            />
+            <Button type="button" onClick={addRequirement}>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>সময়কাল</Label>
-          <Input
-            value={formData.duration}
-            placeholder="e.g. 2h 30m"
-            onChange={(e) =>
-              setFormData({ ...formData, duration: e.target.value })
-            }
-          />
+        <div className="space-y-2">
+          {formData.requirements.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 p-2 bg-muted rounded"
+            >
+              <span className="flex-1">{item}</span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeRequirement(index)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          {formData.requirements.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              কোনো আইটেম যোগ করা হয়নি
+            </p>
+          )}
         </div>
-        <div>
-          <Label>ইন্সট্রাক্টর</Label>
-          <Input
-            value={formData.instructor}
-            onChange={(e) =>
-              setFormData({ ...formData, instructor: e.target.value })
-            }
-          />
+      </TabsContent>
+
+      <TabsContent value="modules" className="space-y-4 mt-4">
+        <div className="flex justify-between items-center">
+          <Label>কোর্স মডিউল</Label>
+          <Button type="button" size="sm" onClick={addModule}>
+            <Plus className="h-4 w-4 mr-1" />
+            মডিউল যোগ করুন
+          </Button>
         </div>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>লেসন সংখ্যা</Label>
-          <Input
-            type="number"
-            value={formData.lessons_count}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                lessons_count: parseInt(e.target.value) || 0,
-              })
-            }
-          />
+        <div className="space-y-4">
+          {formData.modules.map((module, moduleIndex) => (
+            <Card key={moduleIndex} className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Input
+                  value={module.title}
+                  onChange={(e) => updateModuleTitle(moduleIndex, e.target.value)}
+                  placeholder="মডিউলের নাম"
+                  className="font-medium"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => removeModule(moduleIndex)}
+                >
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+              <div className="space-y-2 ml-4">
+                {module.lessons.map((lesson, lessonIndex) => (
+                  <div
+                    key={lessonIndex}
+                    className="flex items-center gap-2 p-2 bg-muted/50 rounded"
+                  >
+                    <Input
+                      value={lesson.name}
+                      onChange={(e) =>
+                        updateLesson(moduleIndex, lessonIndex, "name", e.target.value)
+                      }
+                      placeholder="লেসনের নাম"
+                      className="flex-1"
+                    />
+                    <Input
+                      value={lesson.duration}
+                      onChange={(e) =>
+                        updateLesson(moduleIndex, lessonIndex, "duration", e.target.value)
+                      }
+                      placeholder="00:00"
+                      className="w-20"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeLesson(moduleIndex, lessonIndex)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => addLesson(moduleIndex)}
+                >
+                  <Plus className="h-3 w-3 mr-1" />
+                  লেসন যোগ করুন
+                </Button>
+              </div>
+            </Card>
+          ))}
+          {formData.modules.length === 0 && (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              কোনো মডিউল যোগ করা হয়নি
+            </p>
+          )}
         </div>
-        <div>
-          <Label>শিক্ষার্থী সংখ্যা</Label>
-          <Input
-            type="number"
-            value={formData.students_count}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                students_count: parseInt(e.target.value) || 0,
-              })
-            }
-          />
-        </div>
-      </div>
-      <div>
-        <Label>ছবির URL</Label>
-        <Input
-          value={formData.image_url}
-          placeholder="/src/assets/course-image.jpg"
-          onChange={(e) =>
-            setFormData({ ...formData, image_url: e.target.value })
-          }
-        />
-      </div>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="is_free"
-            checked={formData.is_free}
-            onCheckedChange={(checked) =>
-              setFormData({ ...formData, is_free: checked })
-            }
-          />
-          <Label htmlFor="is_free">ফ্রি কোর্স</Label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="is_published"
-            checked={formData.is_published}
-            onCheckedChange={(checked) =>
-              setFormData({ ...formData, is_published: checked })
-            }
-          />
-          <Label htmlFor="is_published">পাবলিশড</Label>
-        </div>
-      </div>
-      <div className="flex gap-2 justify-end">
+      </TabsContent>
+
+      <div className="flex gap-2 justify-end mt-6 pt-4 border-t">
         <Button variant="outline" onClick={onCancel} disabled={isLoading}>
           বাতিল
         </Button>
@@ -468,6 +743,6 @@ function CourseForm({
           সেভ করুন
         </Button>
       </div>
-    </div>
+    </Tabs>
   );
 }
