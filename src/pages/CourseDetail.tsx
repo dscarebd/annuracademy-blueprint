@@ -14,7 +14,10 @@ import {
   Check, 
   Loader2,
   ArrowLeft,
-  PlayCircle
+  Play,
+  Eye,
+  Lock,
+  ChevronRight
 } from "lucide-react";
 import {
   Accordion,
@@ -283,93 +286,96 @@ const CourseDetail = () => {
                   </Card>
 
                   {/* Course Modules */}
-                  <Card>
-                    <div className="p-6">
-                      <h3 className="text-lg font-semibold mb-4">কোর্স মডিউল</h3>
-                      <Accordion type="single" collapsible className="w-full">
-                        {[
-                          { 
-                            title: "মডিউল ১: পরিচিতি", 
-                            lessons: [
-                              "কোর্স ওভারভিউ",
-                              "সফটওয়্যার ইনস্টলেশন",
-                              "ইন্টারফেস পরিচিতি",
-                              "বেসিক সেটআপ",
-                              "প্রথম প্রজেক্ট"
-                            ]
-                          },
-                          { 
-                            title: "মডিউল ২: বেসিক কনসেপ্ট", 
-                            lessons: [
-                              "ফান্ডামেন্টাল ধারণা",
-                              "টুলস ও টেকনিক",
-                              "ওয়ার্কফ্লো সেটআপ",
-                              "প্র্যাক্টিস সেশন ১",
-                              "প্র্যাক্টিস সেশন ২",
-                              "প্র্যাক্টিস সেশন ৩",
-                              "কুইজ ও এসাইনমেন্ট",
-                              "রিভিউ সেশন"
-                            ]
-                          },
-                          { 
-                            title: "মডিউল ৩: প্র্যাক্টিক্যাল প্রজেক্ট", 
-                            lessons: [
-                              "প্রজেক্ট প্ল্যানিং",
-                              "ডিজাইন ফেজ",
-                              "ডেভেলপমেন্ট পার্ট ১",
-                              "ডেভেলপমেন্ট পার্ট ২",
-                              "ডেভেলপমেন্ট পার্ট ৩",
-                              "টেস্টিং",
-                              "ডিবাগিং",
-                              "অপটিমাইজেশন",
-                              "ফাইনাল টাচ",
-                              "প্রজেক্ট সাবমিশন"
-                            ]
-                          },
-                          { 
-                            title: "মডিউল ৪: অ্যাডভান্সড টপিক", 
-                            lessons: [
-                              "অ্যাডভান্সড টেকনিক ১",
-                              "অ্যাডভান্সড টেকনিক ২",
-                              "পারফরম্যান্স অপটিমাইজেশন",
-                              "বেস্ট প্র্যাক্টিস",
-                              "ইন্ডাস্ট্রি স্ট্যান্ডার্ড",
-                              "কেস স্টাডি",
-                              "লাইভ সেশন"
-                            ]
-                          },
-                          { 
-                            title: "মডিউল ৫: ফাইনাল প্রজেক্ট", 
-                            lessons: [
-                              "ফাইনাল প্রজেক্ট ব্রিফিং",
-                              "প্রজেক্ট এক্সিকিউশন",
-                              "রিভিউ ও ফিডব্যাক",
-                              "সার্টিফিকেট প্রিপারেশন",
-                              "কোর্স সমাপ্তি"
-                            ]
-                          },
-                        ].map((module, index) => (
-                          <AccordionItem key={index} value={`module-${index}`} className="border-b-0">
-                            <AccordionTrigger className="hover:no-underline py-3 px-4 bg-muted/50 rounded-lg mb-2 [&[data-state=open]]:rounded-b-none [&[data-state=open]]:mb-0">
-                              <div className="flex items-center justify-between w-full pr-2">
-                                <span className="font-medium text-sm">{module.title}</span>
-                                <Badge variant="secondary">{module.lessons.length} লেসন</Badge>
-                              </div>
-                            </AccordionTrigger>
-                            <AccordionContent className="bg-muted/30 rounded-b-lg mb-2 px-4 pb-3">
-                              <ul className="space-y-2 pt-2">
-                                {module.lessons.map((lesson, lessonIndex) => (
-                                  <li key={lessonIndex} className="flex items-center gap-3 text-sm text-muted-foreground">
-                                    <PlayCircle className="w-4 h-4 text-primary flex-shrink-0" />
-                                    <span>{lesson}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            </AccordionContent>
-                          </AccordionItem>
-                        ))}
-                      </Accordion>
+                  <Card className="p-0 overflow-hidden">
+                    <div className="p-4 border-b">
+                      <h3 className="text-lg font-semibold">কোর্স মডিউল</h3>
                     </div>
+                    <Accordion type="single" collapsible className="w-full">
+                      {[
+                        { 
+                          title: "পরিচিতি", 
+                          lessons: [
+                            { name: "কোর্স ওভারভিউ", duration: "04:02", preview: true },
+                            { name: "সফটওয়্যার ইনস্টলেশন", duration: "02:14", preview: true },
+                            { name: "ইন্টারফেস পরিচিতি", duration: "06:53", preview: false },
+                            { name: "বেসিক সেটআপ", duration: "05:30", preview: false },
+                            { name: "প্রথম প্রজেক্ট", duration: "08:15", preview: false }
+                          ]
+                        },
+                        { 
+                          title: "বেসিক কনসেপ্ট", 
+                          lessons: [
+                            { name: "ফান্ডামেন্টাল ধারণা", duration: "10:20", preview: false },
+                            { name: "টুলস ও টেকনিক", duration: "08:45", preview: false },
+                            { name: "ওয়ার্কফ্লো সেটআপ", duration: "12:30", preview: false },
+                            { name: "প্র্যাক্টিস সেশন ১", duration: "15:00", preview: false },
+                            { name: "প্র্যাক্টিস সেশন ২", duration: "14:25", preview: false },
+                            { name: "কুইজ ও এসাইনমেন্ট", duration: "05:00", preview: false },
+                            { name: "রিভিউ সেশন", duration: "20:00", preview: false }
+                          ]
+                        },
+                        { 
+                          title: "প্র্যাক্টিক্যাল প্রজেক্ট", 
+                          lessons: [
+                            { name: "প্রজেক্ট প্ল্যানিং", duration: "08:00", preview: false },
+                            { name: "ডিজাইন ফেজ", duration: "18:30", preview: false },
+                            { name: "ডেভেলপমেন্ট পার্ট ১", duration: "25:00", preview: false },
+                            { name: "ডেভেলপমেন্ট পার্ট ২", duration: "22:15", preview: false },
+                            { name: "টেস্টিং ও ডিবাগিং", duration: "15:45", preview: false },
+                            { name: "ফাইনাল টাচ", duration: "10:00", preview: false }
+                          ]
+                        },
+                        { 
+                          title: "অ্যাডভান্সড টপিক", 
+                          lessons: [
+                            { name: "অ্যাডভান্সড টেকনিক", duration: "20:00", preview: false },
+                            { name: "পারফরম্যান্স অপটিমাইজেশন", duration: "18:30", preview: false },
+                            { name: "বেস্ট প্র্যাক্টিস", duration: "15:00", preview: false },
+                            { name: "কেস স্টাডি", duration: "25:00", preview: false }
+                          ]
+                        },
+                        { 
+                          title: "ফাইনাল প্রজেক্ট", 
+                          lessons: [
+                            { name: "ফাইনাল প্রজেক্ট ব্রিফিং", duration: "10:00", preview: false },
+                            { name: "প্রজেক্ট এক্সিকিউশন", duration: "45:00", preview: false },
+                            { name: "রিভিউ ও ফিডব্যাক", duration: "20:00", preview: false },
+                            { name: "কোর্স সমাপ্তি", duration: "05:00", preview: false }
+                          ]
+                        },
+                      ].map((module, index) => (
+                        <AccordionItem key={index} value={`module-${index}`} className="border-b last:border-b-0">
+                          <AccordionTrigger className="hover:no-underline px-4 py-4 hover:bg-muted/30 [&[data-state=open]]:text-primary [&[data-state=open]]:bg-primary/5 [&>svg]:hidden">
+                            <div className="flex items-center justify-between w-full">
+                              <span className="font-medium">{module.title}</span>
+                              <ChevronRight className="w-5 h-5 transition-transform duration-200 [[data-state=open]>&]:rotate-90" />
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="pb-0">
+                            <ul className="border-l-2 border-primary/30 ml-4">
+                              {module.lessons.map((lesson, lessonIndex) => (
+                                <li key={lessonIndex} className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors">
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center">
+                                      <Play className="w-3 h-3 text-primary" />
+                                    </div>
+                                    <span className="text-sm">{lesson.name}</span>
+                                  </div>
+                                  <div className="flex items-center gap-3 text-muted-foreground">
+                                    <span className="text-xs">{lesson.duration}</span>
+                                    {lesson.preview ? (
+                                      <Eye className="w-4 h-4" />
+                                    ) : (
+                                      <Lock className="w-4 h-4" />
+                                    )}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
                   </Card>
                 </div>
               </div>
