@@ -222,17 +222,6 @@ const CourseDetail = () => {
                     </span>
                   </div>
 
-                  {/* Instructor */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold">
-                      {course.instructor.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">ইন্সট্রাক্টর</p>
-                      <p className="font-medium">{course.instructor}</p>
-                    </div>
-                  </div>
-
                   {/* Stats */}
                   <div className="flex flex-wrap gap-4 mb-4">
                     <div className="flex items-center gap-2 text-muted-foreground">
