@@ -227,49 +227,216 @@ const CourseDetail = () => {
         {/* Main Content */}
         <section className="py-8 md:py-12">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-[1fr_400px] gap-8">
-              {/* Left Side - Course Details */}
-              <div className="space-y-6 min-w-0">
-                {/* Course Header */}
-                <div>
-                  <Badge className="mb-4">{course.category}</Badge>
-                  <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                    {course.title}
-                  </h1>
-                  <p className="text-muted-foreground mb-6">
-                    {course.description}
-                  </p>
-                  
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="flex">{renderStars(course.rating || 0)}</div>
-                    <span className="text-sm text-muted-foreground">
-                      {(course.rating || 0).toFixed(1)} ({course.review_count || 0} রিভিউ)
-                    </span>
-                  </div>
+            {/* Course Header - Always on top */}
+            <div className="mb-6">
+              <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                {course.title}
+              </h1>
+              <p className="text-muted-foreground mb-6">
+                {course.description}
+              </p>
+              
+              {/* Rating */}
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex">{renderStars(course.rating || 0)}</div>
+                <span className="text-sm text-muted-foreground">
+                  {(course.rating || 0).toFixed(1)} ({course.review_count || 0} রিভিউ)
+                </span>
+              </div>
 
-                  {/* Stats */}
-                  <div className="flex flex-wrap gap-4 mb-4">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Users className="w-5 h-5" />
-                      <span>{course.students_count || 0} শিক্ষার্থী</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <BookOpen className="w-5 h-5" />
-                      <span>{totalLessons} লেসন</span>
-                    </div>
-                    {totalDuration && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Clock className="w-5 h-5" />
-                        <span>{totalDuration}</span>
-                      </div>
+              {/* Stats */}
+              <div className="flex flex-wrap gap-4 mb-4">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Users className="w-5 h-5" />
+                  <span>{course.students_count || 0} শিক্ষার্থী</span>
+                </div>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <BookOpen className="w-5 h-5" />
+                  <span>{totalLessons} লেসন</span>
+                </div>
+                {totalDuration && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Clock className="w-5 h-5" />
+                    <span>{totalDuration}</span>
+                  </div>
+                )}
+                {course.level && (
+                  <Badge variant="outline">{course.level}</Badge>
+                )}
+              </div>
+            </div>
+
+            {/* Mobile Layout - Stack vertically */}
+            <div className="flex flex-col lg:hidden gap-6">
+              {/* 1. Price Card */}
+              <Card id="price-card-mobile" className="overflow-hidden">
+                <img
+                  src={course.image_url || ''}
+                  alt={course.title}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <div className="flex items-baseline gap-3 mb-6">
+                    <span className="text-3xl font-bold text-foreground">
+                      {course.is_free ? "ফ্রি" : `৳${course.price.toLocaleString()}`}
+                    </span>
+                    {course.original_price && (
+                      <span className="text-lg text-muted-foreground line-through">
+                        ৳{course.original_price.toLocaleString()}
+                      </span>
                     )}
-                    {course.level && (
-                      <Badge variant="outline">{course.level}</Badge>
-                    )}
+                  </div>
+                  
+                  {course.is_free ? (
+                    <Button className="w-full" size="lg">
+                      ফ্রি এনরোল করুন
+                    </Button>
+                  ) : (
+                    <Button className="w-full" size="lg" onClick={handleJoinNow}>
+                      এখনোই জয়েন করুন
+                    </Button>
+                  )}
+                </div>
+              </Card>
+
+              {/* 2. Course Modules */}
+              <Card className="p-0 overflow-hidden">
+                <div className="p-4 border-b">
+                  <h3 className="text-lg font-semibold">কোর্স মডিউল ({modules.length}টি)</h3>
+                </div>
+                <Accordion type="single" collapsible className="w-full">
+                  {modules.map((module, index) => (
+                    <AccordionItem key={index} value={`mobile-module-${index}`} className="border-b last:border-b-0">
+                      <AccordionTrigger className="hover:no-underline px-4 py-4 hover:bg-muted/30 [&[data-state=open]]:text-primary [&[data-state=open]]:bg-primary/5 [&>svg]:hidden">
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center gap-3">
+                            <span className="w-7 h-7 rounded-full bg-primary/10 text-primary text-sm font-semibold flex items-center justify-center">
+                              {index + 1}
+                            </span>
+                            <span className="font-medium text-left">{module.title}</span>
+                            <span className="text-xs text-muted-foreground">({module.lessons.length}টি লেসন)</span>
+                          </div>
+                          <ChevronRight className="w-5 h-5 transition-transform duration-200 [[data-state=open]>&]:rotate-90" />
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="pb-0">
+                        <ul className="border-l-2 border-primary/30 ml-4">
+                          {module.lessons.map((lesson, lessonIndex) => (
+                            <li key={lessonIndex} className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors">
+                              <div className="flex items-center gap-3">
+                                <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center">
+                                  <Play className="w-3 h-3 text-primary" />
+                                </div>
+                                <span className="text-sm">{lesson.name}</span>
+                              </div>
+                              <div className="flex items-center gap-3 text-muted-foreground">
+                                <span className="text-xs">{lesson.duration}</span>
+                                <Lock className="w-4 h-4" />
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </Card>
+
+              {/* 3. What You'll Learn */}
+              <Card>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                    <Check className="w-5 h-5 text-primary" />
+                    যা শিখবেন
+                  </h3>
+                  <ul className="space-y-3">
+                    {learningOutcomes.map((item, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span className="text-muted-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Card>
+
+              {/* 4. Requirements */}
+              <Card>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-primary" />
+                    প্রয়োজনীয়তা
+                  </h3>
+                  <ul className="space-y-3">
+                    {requirements.map((item, index) => (
+                      <li key={index} className="flex items-start gap-3">
+                        <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0" />
+                        <span className="text-muted-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Card>
+
+              {/* 5. Course Description */}
+              <Card>
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold mb-4">কোর্স বিবরণ</h3>
+                  <div className="prose prose-sm max-w-none text-muted-foreground">
+                    <p>
+                      এই কোর্সটি বিশেষভাবে ডিজাইন করা হয়েছে যারা {course.category} সেক্টরে ক্যারিয়ার গড়তে চান তাদের জন্য। 
+                      {course.instructor} এর তত্ত্বাবধানে আপনি শিখবেন সবচেয়ে আপডেটেড এবং ইন্ডাস্ট্রি-রিলেভেন্ট স্কিলস।
+                    </p>
+                    <p className="mt-4">
+                      কোর্সটিতে রয়েছে {course.lessons_count || 0}+ লেসন, প্র্যাক্টিক্যাল প্রজেক্ট, এবং লাইফটাইম অ্যাক্সেস। 
+                      আমাদের সাপোর্ট টিম সবসময় আপনার পাশে থাকবে।
+                    </p>
                   </div>
                 </div>
+              </Card>
 
+              {/* 6. Instructor */}
+              <Card>
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold mb-4">ইন্সট্রাক্টর</h3>
+                  <div className="flex flex-col items-center text-center">
+                    {course.instructor_image_url ? (
+                      <img 
+                        src={course.instructor_image_url} 
+                        alt={course.instructor}
+                        className="w-20 h-20 rounded-full object-cover mb-4"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-primary text-2xl font-bold mb-4">
+                        {course.instructor.charAt(0)}
+                      </div>
+                    )}
+                    <h4 className="font-semibold text-lg">{course.instructor}</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      {course.instructor_subtitle || `${course.category} এক্সপার্ট`}
+                    </p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span>{course.rating || 4.9} রেটিং</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Users className="w-4 h-4" />
+                        <span>{course.students_count || 5000}+ শিক্ষার্থী</span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {course.instructor_description || "দীর্ঘ অভিজ্ঞতা সম্পন্ন পেশাদার ইন্সট্রাক্টর। শত শত শিক্ষার্থীকে সফলভাবে ট্রেনিং দিয়েছেন এবং তাদের ক্যারিয়ার গড়তে সাহায্য করেছেন।"}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Desktop Layout - Two columns */}
+            <div className="hidden lg:grid lg:grid-cols-[1fr_400px] gap-8">
+              {/* Left Side - Course Details */}
+              <div className="space-y-6 min-w-0">
                 {/* What You'll Learn */}
                 <Card>
                   <div className="p-6">
