@@ -5,12 +5,12 @@ import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useBlog } from "@/hooks/useBlogs";
+import { useBlogBySlug } from "@/hooks/useBlogs";
 import { format } from "date-fns";
 
 const BlogDetail = () => {
-  const { id } = useParams<{ id: string }>();
-  const { data: blog, isLoading, error } = useBlog(id || "");
+  const { slug } = useParams<{ slug: string }>();
+  const { data: blog, isLoading, error } = useBlogBySlug(slug || "");
 
   if (isLoading) {
     return (
