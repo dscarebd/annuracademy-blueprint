@@ -9,6 +9,7 @@ import {
   Home,
   LogOut,
   Wallet,
+  Tag,
 } from "lucide-react";
 import {
   Sidebar,
@@ -28,6 +29,7 @@ const menuItems = [
   { title: "অর্ডার", url: "/admin/orders", icon: ShoppingCart },
   { title: "ব্যয়", url: "/admin/expenses", icon: Wallet },
   { title: "কোর্স", url: "/admin/courses", icon: BookOpen },
+  { title: "কুপন", url: "/admin/coupons", icon: Tag },
   { title: "টেস্টিমোনিয়াল", url: "/admin/testimonials", icon: MessageSquare },
   { title: "ব্লগ", url: "/admin/blogs", icon: FileText },
 ];
