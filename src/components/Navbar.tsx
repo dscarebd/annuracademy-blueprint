@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, Facebook, Youtube, Send, Mail } from "lucide-react";
+import { Menu, Facebook, Youtube, Send, Mail, GraduationCap, User } from "lucide-react";
 import CartSidebar from "@/components/CartSidebar";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Popover,
   PopoverContent,
@@ -10,6 +11,21 @@ import {
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setIsLoggedIn(!!user);
+    };
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const navLinks = [
     { to: "/", label: "হোম" },
@@ -52,10 +68,28 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            {isLoggedIn && (
+              <Link
+                to="/my-courses"
+                className="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-1"
+              >
+                <GraduationCap className="w-4 h-4" />
+                আমার কোর্স
+              </Link>
+            )}
           </div>
 
           {/* Right Side - Cart & Mobile Menu */}
           <div className="flex items-center gap-2">
+            {!isLoggedIn && (
+              <Link
+                to="/admin/auth"
+                className="hidden md:flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                <User className="w-4 h-4" />
+                লগইন
+              </Link>
+            )}
             <CartSidebar />
             
             {/* Mobile Menu Button */}
@@ -81,6 +115,26 @@ const Navbar = () => {
                         {link.label}
                       </Link>
                     ))}
+                    {isLoggedIn && (
+                      <Link
+                        to="/my-courses"
+                        onClick={() => setIsOpen(false)}
+                        className="px-4 py-2.5 text-foreground hover:bg-muted hover:text-primary rounded-md transition-colors font-medium flex items-center gap-2"
+                      >
+                        <GraduationCap className="w-4 h-4" />
+                        আমার কোর্স
+                      </Link>
+                    )}
+                    {!isLoggedIn && (
+                      <Link
+                        to="/admin/auth"
+                        onClick={() => setIsOpen(false)}
+                        className="px-4 py-2.5 text-foreground hover:bg-muted hover:text-primary rounded-md transition-colors font-medium flex items-center gap-2"
+                      >
+                        <User className="w-4 h-4" />
+                        লগইন
+                      </Link>
+                    )}
                     
                     {/* Social Media Icons */}
                     <div className="flex justify-center gap-3 pt-3 mt-2 border-t border-border">
