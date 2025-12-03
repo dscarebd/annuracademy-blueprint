@@ -1,6 +1,15 @@
-import * as React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Json } from "@/integrations/supabase/types";
+
+export interface CourseModule {
+  title: string;
+  lessons: {
+    name: string;
+    duration: string;
+    preview: boolean;
+  }[];
+}
 
 export interface Course {
   id: string;
@@ -20,12 +29,24 @@ export interface Course {
   lessons_count: number | null;
   is_free: boolean | null;
   is_published: boolean | null;
+  learning_outcomes: string[] | null;
+  requirements: string[] | null;
+  modules: CourseModule[] | null;
   created_at: string;
   updated_at: string;
 }
 
 export type CourseInsert = Omit<Course, 'id' | 'created_at' | 'updated_at' | 'slug'>;
 export type CourseUpdate = Partial<CourseInsert>;
+
+function transformCourse(data: Record<string, unknown>): Course {
+  return {
+    ...data,
+    learning_outcomes: data.learning_outcomes as string[] | null,
+    requirements: data.requirements as string[] | null,
+    modules: data.modules as CourseModule[] | null,
+  } as Course;
+}
 
 export function useCourses() {
   return useQuery({
@@ -37,7 +58,7 @@ export function useCourses() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Course[];
+      return (data || []).map(item => transformCourse(item as Record<string, unknown>));
     },
   });
 }
@@ -53,7 +74,7 @@ export function useCourseBySlug(slug: string) {
         .maybeSingle();
 
       if (error) throw error;
-      return data as Course | null;
+      return data ? transformCourse(data as Record<string, unknown>) : null;
     },
     enabled: !!slug,
   });
@@ -69,7 +90,7 @@ export function useAdminCourses() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Course[];
+      return (data || []).map(item => transformCourse(item as Record<string, unknown>));
     },
   });
 }
@@ -81,7 +102,12 @@ export function useCreateCourse() {
     mutationFn: async (course: CourseInsert) => {
       const { data, error } = await supabase
         .from("courses")
-        .insert(course)
+        .insert({
+          ...course,
+          learning_outcomes: course.learning_outcomes as unknown as Json,
+          requirements: course.requirements as unknown as Json,
+          modules: course.modules as unknown as Json,
+        })
         .select()
         .single();
 
@@ -100,9 +126,20 @@ export function useUpdateCourse() {
 
   return useMutation({
     mutationFn: async ({ id, ...course }: CourseUpdate & { id: string }) => {
+      const updateData: Record<string, unknown> = { ...course };
+      if (course.learning_outcomes !== undefined) {
+        updateData.learning_outcomes = course.learning_outcomes as unknown as Json;
+      }
+      if (course.requirements !== undefined) {
+        updateData.requirements = course.requirements as unknown as Json;
+      }
+      if (course.modules !== undefined) {
+        updateData.modules = course.modules as unknown as Json;
+      }
+
       const { data, error } = await supabase
         .from("courses")
-        .update(course)
+        .update(updateData)
         .eq("id", id)
         .select()
         .single();
