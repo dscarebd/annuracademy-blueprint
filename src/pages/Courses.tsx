@@ -130,17 +130,6 @@ const Courses = () => {
                         )}
                       </div>
 
-                      {/* Instructor */}
-                      <div className="flex items-center gap-2 mb-4">
-                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">
-                          {course.instructor.charAt(0)}
-                        </div>
-                        <div className="text-sm">
-                          <span className="text-muted-foreground">By </span>
-                          <span className="text-foreground font-medium">{course.instructor}</span>
-                        </div>
-                      </div>
-
                       {/* Price & Button */}
                       <div className="flex items-center justify-between pt-3 border-t border-border">
                         <span className="font-bold text-lg text-foreground">
