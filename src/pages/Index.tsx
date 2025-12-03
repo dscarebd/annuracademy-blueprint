@@ -61,6 +61,7 @@ const Index = () => {
                   category={course.category}
                   isFree={course.is_free || false}
                   studentsCount={course.students_count || 0}
+                  duration={course.duration || ''}
                 />
               ))}
             </div>
