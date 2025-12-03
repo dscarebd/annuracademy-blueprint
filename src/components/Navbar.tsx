@@ -68,14 +68,6 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
-            {isLoggedIn && (
-              <Link
-                to="/my-courses"
-                className="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-1"
-              >
-                আমার কোর্স
-              </Link>
-            )}
           </div>
 
           {/* Right Side - Cart & Mobile Menu */}
