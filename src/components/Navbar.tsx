@@ -73,7 +73,6 @@ const Navbar = () => {
                 to="/my-courses"
                 className="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-1"
               >
-                <GraduationCap className="w-4 h-4" />
                 আমার কোর্স
               </Link>
             )}
@@ -81,16 +80,25 @@ const Navbar = () => {
 
           {/* Right Side - Cart & Mobile Menu */}
           <div className="flex items-center gap-2">
+            <CartSidebar />
             {!isLoggedIn && (
               <Link
                 to="/admin/auth"
-                className="hidden md:flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+                className="hidden md:flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-primary-foreground bg-primary hover:bg-primary/90 rounded-md transition-colors"
               >
                 <User className="w-4 h-4" />
                 লগইন
               </Link>
             )}
-            <CartSidebar />
+            {isLoggedIn && (
+              <Link
+                to="/my-courses"
+                className="hidden md:flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-primary border border-primary hover:bg-primary/10 rounded-md transition-colors"
+              >
+                <GraduationCap className="w-4 h-4" />
+                আমার কোর্স
+              </Link>
+            )}
             
             {/* Mobile Menu Button */}
             <div className="md:hidden">
