@@ -5,14 +5,13 @@ import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 
 interface CourseCardProps {
-  id: number;
+  id: string;
   title: string;
   image: string;
   level: string;
   rating: number;
   reviewCount: number;
-  price: string;
-  priceNum: number;
+  price: number;
   instructor: string;
   category: string;
   isFree?: boolean;
@@ -26,7 +25,6 @@ const CourseCard = ({
   rating,
   reviewCount,
   price,
-  priceNum,
   instructor,
   category,
   isFree = false,
@@ -41,7 +39,7 @@ const CourseCard = ({
       id,
       title,
       image,
-      price: priceNum,
+      price,
       instructor,
       category,
     });
@@ -105,7 +103,7 @@ const CourseCard = ({
           {isFree ? (
             <span className="text-primary font-bold text-lg">Free</span>
           ) : (
-            <span className="text-primary font-bold text-lg">{price}৳</span>
+            <span className="text-primary font-bold text-lg">{price.toLocaleString()}৳</span>
           )}
           {isFree ? (
             <Button
