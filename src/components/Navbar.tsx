@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu } from "lucide-react";
+import { Menu, Facebook, Youtube, Send, Mail } from "lucide-react";
 import CartSidebar from "@/components/CartSidebar";
 import {
   Popover,
@@ -18,6 +18,13 @@ const Navbar = () => {
     { to: "/blog", label: "ব্লগ" },
     { to: "/contact", label: "যোগাযোগ" },
   ];
+
+  const socialLinks = {
+    facebook: "https://facebook.com/annuracademy",
+    telegram: "https://t.me/annuracademy",
+    youtube: "https://youtube.com/@annuracademy",
+    email: "mailto:support@annuracademy.com"
+  };
 
   return (
     <nav className="bg-white border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-white/95">
@@ -61,7 +68,7 @@ const Navbar = () => {
                 </PopoverTrigger>
                 <PopoverContent 
                   align="end" 
-                  className="w-[200px] p-2 bg-background border border-border shadow-lg"
+                  className="w-[220px] p-2 bg-background border border-border shadow-lg"
                 >
                   <div className="flex flex-col">
                     {navLinks.map((link) => (
@@ -74,6 +81,40 @@ const Navbar = () => {
                         {link.label}
                       </Link>
                     ))}
+                    
+                    {/* Social Media Icons */}
+                    <div className="flex justify-center gap-3 pt-3 mt-2 border-t border-border">
+                      <a 
+                        href={socialLinks.facebook} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="w-9 h-9 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300"
+                      >
+                        <Facebook className="w-4 h-4" />
+                      </a>
+                      <a 
+                        href={socialLinks.telegram} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="w-9 h-9 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300"
+                      >
+                        <Send className="w-4 h-4" />
+                      </a>
+                      <a 
+                        href={socialLinks.youtube} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="w-9 h-9 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300"
+                      >
+                        <Youtube className="w-4 h-4" />
+                      </a>
+                      <a 
+                        href={socialLinks.email}
+                        className="w-9 h-9 rounded-full border border-primary/20 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300"
+                      >
+                        <Mail className="w-4 h-4" />
+                      </a>
+                    </div>
                   </div>
                 </PopoverContent>
               </Popover>
