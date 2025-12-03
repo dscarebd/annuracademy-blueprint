@@ -50,6 +50,9 @@ interface CourseFormData {
   image_url: string;
   duration: string;
   instructor: string;
+  instructor_subtitle: string;
+  instructor_description: string;
+  instructor_image_url: string;
   category: string;
   level: string;
   students_count: number;
@@ -72,6 +75,9 @@ const emptyFormData: CourseFormData = {
   image_url: "",
   duration: "",
   instructor: "NUR AL-AMIN",
+  instructor_subtitle: "ফ্রিল্যান্সার ও ডিজিটাল মার্কেটিং বিশেষজ্ঞ",
+  instructor_description: "৫+ বছরের অভিজ্ঞতা সম্পন্ন ফ্রিল্যান্সার ও ইনস্ট্রাক্টর। বিভিন্ন আন্তর্জাতিক প্রজেক্টে কাজ করার অভিজ্ঞতা রয়েছে।",
+  instructor_image_url: "",
   category: "",
   level: "Beginner",
   students_count: 0,
@@ -347,6 +353,9 @@ function CourseForm({
       image_url: course.image_url || "",
       duration: course.duration || "",
       instructor: course.instructor,
+      instructor_subtitle: course.instructor_subtitle || "ফ্রিল্যান্সার ও ডিজিটাল মার্কেটিং বিশেষজ্ঞ",
+      instructor_description: course.instructor_description || "৫+ বছরের অভিজ্ঞতা সম্পন্ন ফ্রিল্যান্সার ও ইনস্ট্রাক্টর। বিভিন্ন আন্তর্জাতিক প্রজেক্টে কাজ করার অভিজ্ঞতা রয়েছে।",
+      instructor_image_url: course.instructor_image_url || "",
       category: course.category,
       level: course.level || "Beginner",
       students_count: course.students_count || 0,
@@ -782,6 +791,37 @@ function CourseForm({
             placeholder="ইন্সট্রাক্টরের নাম"
             onChange={(e) =>
               setFormData({ ...formData, instructor: e.target.value })
+            }
+          />
+        </div>
+        <div>
+          <Label>ইন্সট্রাক্টরের উপাধি/পদবী</Label>
+          <Input
+            value={formData.instructor_subtitle}
+            placeholder="যেমন: ফ্রিল্যান্সার ও ডিজিটাল মার্কেটিং বিশেষজ্ঞ"
+            onChange={(e) =>
+              setFormData({ ...formData, instructor_subtitle: e.target.value })
+            }
+          />
+        </div>
+        <div>
+          <Label>ইন্সট্রাক্টরের বিবরণ</Label>
+          <Textarea
+            value={formData.instructor_description}
+            rows={4}
+            placeholder="ইন্সট্রাক্টরের অভিজ্ঞতা ও পরিচিতি..."
+            onChange={(e) =>
+              setFormData({ ...formData, instructor_description: e.target.value })
+            }
+          />
+        </div>
+        <div>
+          <Label>ইন্সট্রাক্টরের ছবি URL</Label>
+          <Input
+            value={formData.instructor_image_url}
+            placeholder="/src/assets/instructor.jpg"
+            onChange={(e) =>
+              setFormData({ ...formData, instructor_image_url: e.target.value })
             }
           />
         </div>
