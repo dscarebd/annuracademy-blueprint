@@ -32,7 +32,10 @@ const CartSidebar = () => {
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
+      <PopoverContent 
+        className="w-80 p-0 animate-in slide-in-from-top-2 fade-in-0 duration-200" 
+        align="end"
+      >
         <div className="p-4 border-b">
           <h4 className="font-semibold flex items-center gap-2">
             <ShoppingBag className="w-4 h-4" />
