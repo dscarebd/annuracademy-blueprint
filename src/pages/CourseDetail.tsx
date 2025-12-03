@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import TopBanner from "@/components/TopBanner";
 import Navbar from "@/components/Navbar";
@@ -15,7 +16,8 @@ import {
   ArrowLeft,
   Play,
   Lock,
-  ChevronRight
+  ChevronRight,
+  ShoppingCart
 } from "lucide-react";
 import {
   Accordion,
@@ -23,6 +25,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useCart } from "@/context/CartContext";
 import { useCourseBySlug, CourseModule } from "@/hooks/useCourses";
 
@@ -31,6 +40,31 @@ const CourseDetail = () => {
   const { addToCart } = useCart();
   const navigate = useNavigate();
   const { data: course, isLoading, error } = useCourseBySlug(slug || "");
+  const [showBuyDialog, setShowBuyDialog] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState<string>("");
+
+  const handleLessonClick = (lessonName: string) => {
+    if (course && !course.is_free) {
+      setSelectedLesson(lessonName);
+      setShowBuyDialog(true);
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (!course || course.is_free) return;
+    
+    addToCart({
+      id: course.id,
+      title: course.title,
+      image: course.image_url || '',
+      price: course.price,
+      instructor: course.instructor,
+      category: course.category,
+    });
+    
+    setShowBuyDialog(false);
+    navigate('/checkout');
+  };
 
   const handleJoinNow = () => {
     if (!course || course.is_free) return;
@@ -324,7 +358,8 @@ const CourseDetail = () => {
                           {module.lessons.map((lesson, lessonIndex) => (
                             <li 
                               key={lessonIndex} 
-                              className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors"
+                              className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors cursor-pointer"
+                              onClick={() => handleLessonClick(lesson.name)}
                             >
                               <div className="flex items-center gap-3">
                                 <div className="w-6 h-6 rounded flex items-center justify-center bg-primary/10">
@@ -553,7 +588,8 @@ const CourseDetail = () => {
                               {module.lessons.map((lesson, lessonIndex) => (
                                 <li 
                                   key={lessonIndex} 
-                                  className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors"
+                                  className="flex items-center justify-between py-3 px-4 hover:bg-muted/20 transition-colors cursor-pointer"
+                                  onClick={() => handleLessonClick(lesson.name)}
                                 >
                                   <div className="flex items-center gap-3">
                                     <div className="w-6 h-6 rounded flex items-center justify-center bg-primary/10">
@@ -616,6 +652,43 @@ const CourseDetail = () => {
           </div>
         </section>
       </main>
+
+      {/* Buy Now Dialog */}
+      <Dialog open={showBuyDialog} onOpenChange={setShowBuyDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="w-5 h-5 text-primary" />
+              লকড কন্টেন্ট
+            </DialogTitle>
+            <DialogDescription>
+              "{selectedLesson}" দেখতে কোর্সটি কিনতে হবে।
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="bg-muted/50 rounded-lg p-4">
+              <h4 className="font-semibold text-foreground mb-1">{course?.title}</h4>
+              <p className="text-2xl font-bold text-primary">
+                ৳{course?.price.toLocaleString()}
+                {course?.original_price && (
+                  <span className="text-sm text-muted-foreground line-through ml-2">
+                    ৳{course.original_price.toLocaleString()}
+                  </span>
+                )}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" className="flex-1" onClick={() => setShowBuyDialog(false)}>
+                বাদ দিন
+              </Button>
+              <Button className="flex-1" onClick={handleBuyNow}>
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                এখনই কিনুন
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
