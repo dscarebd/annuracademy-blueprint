@@ -8,6 +8,7 @@ export interface CourseModule {
     name: string;
     duration: string;
     preview: boolean;
+    video_url?: string;
   }[];
 }
 

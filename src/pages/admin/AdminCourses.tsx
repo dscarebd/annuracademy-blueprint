@@ -470,6 +470,7 @@ function CourseForm({
       name: "নতুন লেসন",
       duration: "00:00",
       preview: false,
+      video_url: "",
     });
     setFormData({ ...formData, modules: updated });
   };
@@ -770,32 +771,42 @@ function CourseForm({
                 {module.lessons.map((lesson, lessonIndex) => (
                   <div
                     key={lessonIndex}
-                    className="flex items-center gap-2 p-2 bg-muted/50 rounded"
+                    className="flex flex-col gap-2 p-3 bg-muted/50 rounded"
                   >
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={lesson.name}
+                        onChange={(e) =>
+                          updateLesson(moduleIndex, lessonIndex, "name", e.target.value)
+                        }
+                        placeholder="লেসনের নাম"
+                        className="flex-1"
+                      />
+                      <Input
+                        value={lesson.duration}
+                        onChange={(e) =>
+                          updateLesson(moduleIndex, lessonIndex, "duration", e.target.value)
+                        }
+                        placeholder="00:00"
+                        className="w-20"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeLesson(moduleIndex, lessonIndex)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                     <Input
-                      value={lesson.name}
+                      value={lesson.video_url || ""}
                       onChange={(e) =>
-                        updateLesson(moduleIndex, lessonIndex, "name", e.target.value)
+                        updateLesson(moduleIndex, lessonIndex, "video_url", e.target.value)
                       }
-                      placeholder="লেসনের নাম"
-                      className="flex-1"
+                      placeholder="YouTube ভিডিও URL (যেমন: https://www.youtube.com/watch?v=...)"
+                      className="text-sm"
                     />
-                    <Input
-                      value={lesson.duration}
-                      onChange={(e) =>
-                        updateLesson(moduleIndex, lessonIndex, "duration", e.target.value)
-                      }
-                      placeholder="00:00"
-                      className="w-20"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeLesson(moduleIndex, lessonIndex)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
                   </div>
                 ))}
                 <Button
