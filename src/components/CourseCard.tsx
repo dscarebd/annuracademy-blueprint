@@ -91,16 +91,14 @@ const CourseCard = ({
         </div>
 
         {/* Title */}
-        <h3 className="font-bold text-lg line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="font-bold text-lg line-clamp-2 group-hover:text-primary transition-colors mb-1">
           {title}
         </h3>
 
         {/* Students Count */}
-        {studentsCount > 0 && (
-          <p className="text-sm text-muted-foreground">
-            {studentsCount} শিক্ষার্থী
-          </p>
-        )}
+        <p className="text-sm text-muted-foreground">
+          {studentsCount} শিক্ষার্থী
+        </p>
 
         {/* Instructor & Category */}
         <p className="text-sm text-muted-foreground">
