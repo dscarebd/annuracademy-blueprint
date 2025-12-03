@@ -49,7 +49,7 @@ const Blog = () => {
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   {/* Featured Image */}
-                  <Link to={`/blog/${post.id}`} className="block relative overflow-hidden aspect-video">
+                  <Link to={`/blog/${post.slug}`} className="block relative overflow-hidden aspect-video">
                     <img
                       src={post.image_url || ''}
                       alt={post.title}
@@ -68,7 +68,7 @@ const Blog = () => {
                     </Badge>
 
                     {/* Title */}
-                    <Link to={`/blog/${post.id}`}>
+                    <Link to={`/blog/${post.slug}`}>
                       <h2 className="text-xl font-bold text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
                         {post.title}
                       </h2>

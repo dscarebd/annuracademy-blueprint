@@ -27,6 +27,7 @@ export type Database = {
           is_published: boolean | null
           link: string | null
           published_at: string | null
+          slug: string | null
           title: string
           updated_at: string
         }
@@ -42,6 +43,7 @@ export type Database = {
           is_published?: boolean | null
           link?: string | null
           published_at?: string | null
+          slug?: string | null
           title: string
           updated_at?: string
         }
@@ -57,6 +59,7 @@ export type Database = {
           is_published?: boolean | null
           link?: string | null
           published_at?: string | null
+          slug?: string | null
           title?: string
           updated_at?: string
         }
@@ -302,6 +305,7 @@ export type Database = {
     }
     Functions: {
       generate_order_number: { Args: never; Returns: string }
+      generate_slug: { Args: { title: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

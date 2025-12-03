@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface Blog {
   id: string;
   title: string;
+  slug: string | null;
   excerpt: string | null;
   content: string | null;
   category: string;
@@ -18,7 +19,7 @@ export interface Blog {
   updated_at: string;
 }
 
-export type BlogInsert = Omit<Blog, 'id' | 'created_at' | 'updated_at'>;
+export type BlogInsert = Omit<Blog, 'id' | 'created_at' | 'updated_at' | 'slug'>;
 
 export function useBlogs() {
   return useQuery({
@@ -35,20 +36,20 @@ export function useBlogs() {
   });
 }
 
-export function useBlog(id: string) {
+export function useBlogBySlug(slug: string) {
   return useQuery({
-    queryKey: ["blog", id],
+    queryKey: ["blog", slug],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blogs")
         .select("*")
-        .eq("id", id)
+        .eq("slug", slug)
         .maybeSingle();
 
       if (error) throw error;
       return data as Blog | null;
     },
-    enabled: !!id,
+    enabled: !!slug,
   });
 }
 
