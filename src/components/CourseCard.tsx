@@ -15,6 +15,7 @@ interface CourseCardProps {
   instructor: string;
   category: string;
   isFree?: boolean;
+  studentsCount?: number;
 }
 
 const CourseCard = ({
@@ -28,6 +29,7 @@ const CourseCard = ({
   instructor,
   category,
   isFree = false,
+  studentsCount = 0,
 }: CourseCardProps) => {
   const { addToCart, isInCart } = useCart();
   const { toast } = useToast();
@@ -92,6 +94,13 @@ const CourseCard = ({
         <h3 className="font-bold text-lg line-clamp-2 group-hover:text-primary transition-colors">
           {title}
         </h3>
+
+        {/* Students Count */}
+        {studentsCount > 0 && (
+          <p className="text-sm text-muted-foreground">
+            {studentsCount} শিক্ষার্থী
+          </p>
+        )}
 
         {/* Instructor & Category */}
         <p className="text-sm text-muted-foreground">

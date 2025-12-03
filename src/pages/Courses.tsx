@@ -116,18 +116,20 @@ const Courses = () => {
                         {course.title}
                       </h3>
 
-                      {/* Students & Duration */}
-                      <div className="flex items-center gap-4 text-muted-foreground text-sm mb-3">
-                        {(course.students_count || 0) > 0 && (
-                          <span>{course.students_count} শিক্ষার্থী</span>
-                        )}
-                        {course.duration && (
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
-                            <span>{course.duration}</span>
-                          </div>
-                        )}
-                      </div>
+                      {/* Students Count */}
+                      {(course.students_count || 0) > 0 && (
+                        <p className="text-muted-foreground text-sm mb-2">
+                          {course.students_count} শিক্ষার্থী
+                        </p>
+                      )}
+
+                      {/* Duration */}
+                      {course.duration && (
+                        <div className="flex items-center gap-1 text-muted-foreground text-sm mb-3">
+                          <Clock className="w-4 h-4" />
+                          <span>{course.duration}</span>
+                        </div>
+                      )}
 
                       {/* Instructor & Category */}
                       <div className="flex items-center gap-2 mb-4">
