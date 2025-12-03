@@ -1,6 +1,13 @@
 import { Facebook, Youtube, Send, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCourses } from "@/hooks/useCourses";
+
 const Footer = () => {
+  const { data: courses } = useCourses();
+  
+  // Get first 4 courses as popular courses
+  const popularCourses = courses?.slice(0, 4) || [];
+
   // All editable content
   const content = {
     // Brand section
@@ -12,20 +19,6 @@ const Footer = () => {
       youtube: "https://youtube.com/@annuracademy",
       email: "mailto:support@annuracademy.com"
     },
-    // All Courses
-    allCourses: [{
-      name: "WordPress Customization Mastery",
-      url: "#courses"
-    }, {
-      name: "Mastering AI Chatbot",
-      url: "#courses"
-    }, {
-      name: "Remote Job – MasterClass",
-      url: "#courses"
-    }, {
-      name: "Figma Essentials Training",
-      url: "#courses"
-    }],
     // Quick Links
     quickLinks: [{
       name: "আমাদের সম্পর্কে",
@@ -87,17 +80,25 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* All Courses */}
+          {/* Popular Courses */}
           <div>
             <h3 className="text-foreground font-bold text-lg mb-6">
-              সকল কোর্স
+              জনপ্রিয় কোর্স
             </h3>
             <ul className="space-y-3">
-              {content.allCourses.map((course, index) => <li key={index}>
-                  <a href={course.url} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
-                    {course.name}
-                  </a>
-                </li>)}
+              {popularCourses.map((course) => (
+                <li key={course.id}>
+                  <Link 
+                    to={`/courses/${course.slug}`} 
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors duration-300"
+                  >
+                    {course.title}
+                  </Link>
+                </li>
+              ))}
+              {popularCourses.length === 0 && (
+                <li className="text-sm text-muted-foreground">কোর্স লোড হচ্ছে...</li>
+              )}
             </ul>
           </div>
 
