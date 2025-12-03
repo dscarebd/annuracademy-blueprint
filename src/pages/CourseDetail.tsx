@@ -283,11 +283,11 @@ const CourseDetail = () => {
                     </div>
                     <Accordion type="single" collapsible className="w-full">
                       {[
-                        { 
-                          title: "পরিচিতি", 
-                          lessons: [
-                            { name: "কোর্স ওভারভিউ", duration: "04:02", preview: true },
-                            { name: "সফটওয়্যার ইনস্টলেশন", duration: "02:14", preview: true },
+                    { 
+                      title: "পরিচিতি", 
+                      lessons: [
+                        { name: "কোর্স ওভারভিউ", duration: "04:02", preview: false },
+                        { name: "সফটওয়্যার ইনস্টলেশন", duration: "02:14", preview: false },
                             { name: "ইন্টারফেস পরিচিতি", duration: "06:53", preview: false },
                             { name: "বেসিক সেটআপ", duration: "05:30", preview: false },
                             { name: "প্রথম প্রজেক্ট", duration: "08:15", preview: false }
