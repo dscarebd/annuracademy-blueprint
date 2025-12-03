@@ -1,4 +1,5 @@
 import { Calendar, User, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import TopBanner from "@/components/TopBanner";
 import Footer from "@/components/Footer";
@@ -48,14 +49,14 @@ const Blog = () => {
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   {/* Featured Image */}
-                  <a href={post.link || "#"} className="block relative overflow-hidden aspect-video">
+                  <Link to={`/blog/${post.id}`} className="block relative overflow-hidden aspect-video">
                     <img
                       src={post.image_url || ''}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  </a>
+                  </Link>
 
                   {/* Content */}
                   <div className="p-6">
@@ -67,11 +68,11 @@ const Blog = () => {
                     </Badge>
 
                     {/* Title */}
-                    <a href={post.link || "#"}>
+                    <Link to={`/blog/${post.id}`}>
                       <h2 className="text-xl font-bold text-foreground mb-3 line-clamp-2 group-hover:text-primary transition-colors">
                         {post.title}
                       </h2>
-                    </a>
+                    </Link>
 
                     {/* Excerpt */}
                     <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-3">

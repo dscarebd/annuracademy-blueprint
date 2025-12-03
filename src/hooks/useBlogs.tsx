@@ -35,6 +35,23 @@ export function useBlogs() {
   });
 }
 
+export function useBlog(id: string) {
+  return useQuery({
+    queryKey: ["blog", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blogs")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data as Blog | null;
+    },
+    enabled: !!id,
+  });
+}
+
 export function useAdminBlogs() {
   return useQuery({
     queryKey: ["admin-blogs"],

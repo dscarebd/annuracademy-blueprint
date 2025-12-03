@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Clock, ShoppingCart, Check, Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { useCourses, Course } from "@/hooks/useCourses";
@@ -91,13 +92,13 @@ const Courses = () => {
                     className="overflow-hidden border border-border hover:shadow-lg transition-all duration-300 group"
                   >
                     {/* Course Image */}
-                    <div className="relative overflow-hidden">
+                    <Link to={`/courses/${course.id}`} className="relative overflow-hidden block">
                       <img
                         src={course.image_url || ''}
                         alt={course.title}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                    </div>
+                    </Link>
 
                     {/* Course Content */}
                     <div className="p-4">
@@ -112,9 +113,11 @@ const Courses = () => {
                       </div>
 
                       {/* Title */}
-                      <h3 className="font-semibold text-foreground text-lg mb-1 line-clamp-2 min-h-[56px]">
-                        {course.title}
-                      </h3>
+                      <Link to={`/courses/${course.id}`}>
+                        <h3 className="font-semibold text-foreground text-lg mb-1 line-clamp-2 min-h-[56px] hover:text-primary transition-colors">
+                          {course.title}
+                        </h3>
+                      </Link>
 
                       {/* Students Count */}
                       <p className="text-muted-foreground text-sm mb-2">
