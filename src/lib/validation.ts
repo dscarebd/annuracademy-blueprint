@@ -11,6 +11,10 @@ export const checkoutFormSchema = z.object({
     .trim()
     .email("সঠিক ইমেইল দিন")
     .max(255, "ইমেইল ২৫৫ অক্ষরের বেশি হতে পারবে না"),
+  password: z
+    .string()
+    .min(6, "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে")
+    .max(100, "পাসওয়ার্ড ১০০ অক্ষরের বেশি হতে পারবে না"),
   phone: z
     .string()
     .trim()

@@ -23,6 +23,7 @@ const Checkout = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    password: "",
     phone: "",
     transactionId: "",
   });
@@ -119,6 +120,7 @@ const Checkout = () => {
         body: {
           customer_name: formData.name,
           customer_email: formData.email,
+          customer_password: formData.password,
           customer_phone: formData.phone,
           payment_method: paymentDetails[paymentMethod as keyof typeof paymentDetails].name,
           transaction_id: formData.transactionId,
@@ -235,6 +237,26 @@ const Checkout = () => {
                       {fieldErrors.email && (
                         <p className="text-sm text-destructive mt-1">{fieldErrors.email}</p>
                       )}
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="password">পাসওয়ার্ড <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড"
+                        required
+                        className={fieldErrors.password ? "border-destructive" : ""}
+                      />
+                      {fieldErrors.password && (
+                        <p className="text-sm text-destructive mt-1">{fieldErrors.password}</p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        এই পাসওয়ার্ড দিয়ে আপনি পরে লগইন করতে পারবেন
+                      </p>
                     </div>
                     
                     <div>
