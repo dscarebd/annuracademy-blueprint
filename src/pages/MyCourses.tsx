@@ -8,7 +8,6 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { 
   BookOpen, 
-  ArrowLeft, 
   Play, 
   Loader2,
   GraduationCap,
@@ -18,16 +17,23 @@ import {
   Calendar,
   BarChart3,
   LogOut,
-  ShoppingBag
+  ShoppingBag,
+  Package,
+  XCircle,
+  User
 } from "lucide-react";
 import { useEnrollments } from "@/hooks/useEnrollments";
+import { useUserOrders } from "@/hooks/useUserOrders";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 const MyCourses = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const { data: enrollments, isLoading } = useEnrollments();
+  const { data: orders, isLoading: ordersLoading } = useUserOrders();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -59,6 +65,32 @@ const MyCourses = () => {
     });
   };
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "কনফার্মড":
+        return (
+          <Badge className="bg-green-100 text-green-700 hover:bg-green-100 text-xs">
+            <CheckCircle2 className="w-3 h-3 mr-1" />
+            কনফার্মড
+          </Badge>
+        );
+      case "বাতিল":
+        return (
+          <Badge className="bg-red-100 text-red-700 hover:bg-red-100 text-xs">
+            <XCircle className="w-3 h-3 mr-1" />
+            বাতিল
+          </Badge>
+        );
+      default:
+        return (
+          <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 text-xs">
+            <Clock className="w-3 h-3 mr-1" />
+            পেন্ডিং
+          </Badge>
+        );
+    }
+  };
+
   // Calculate stats
   const totalCourses = enrollments?.length || 0;
   const completedCourses = enrollments?.filter(e => e.progress >= 100).length || 0;
@@ -81,202 +113,231 @@ const MyCourses = () => {
       <Navbar />
 
       <main className="flex-grow">
-        {/* Header Section */}
-        <section className="bg-gradient-to-br from-primary/10 via-background to-primary/5 py-8 md:py-12">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-6">
-              <Button 
-                variant="ghost" 
-                onClick={() => navigate("/")}
-                className="text-muted-foreground hover:text-primary"
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                হোমে যান
-              </Button>
-              <div className="flex items-center gap-2">
-                <Link to="/my-orders">
-                  <Button 
-                    variant="outline" 
-                    className="text-muted-foreground hover:text-primary hover:border-primary"
-                  >
-                    <ShoppingBag className="w-4 h-4 mr-2" />
-                    অর্ডার
-                  </Button>
-                </Link>
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Left Sidebar */}
+            <aside className="lg:w-72 shrink-0 space-y-4">
+              {/* User Profile Card */}
+              <Card className="p-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <User className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm truncate">
+                      {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Student'}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                  </div>
+                </div>
                 <Button 
                   variant="outline" 
                   onClick={handleLogout}
-                  className="text-muted-foreground hover:text-destructive hover:border-destructive"
+                  className="w-full text-muted-foreground hover:text-destructive hover:border-destructive"
+                  size="sm"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
-                  লগআউট
+                  লগ আউট
                 </Button>
-              </div>
-            </div>
-            
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center flex items-center justify-center gap-3">
-              <GraduationCap className="w-10 h-10 text-primary" />
-              আমার কোর্সসমূহ
-            </h1>
-            <p className="text-muted-foreground text-center mt-2">
-              আপনার এনরোল করা সব কোর্স এখানে দেখুন
-            </p>
+              </Card>
 
-            {/* Stats Cards */}
-            {totalCourses > 0 && (
-              <div className="grid grid-cols-3 gap-4 mt-8 max-w-2xl mx-auto">
-                <Card className="p-4 text-center bg-background/80 backdrop-blur">
-                  <div className="text-2xl md:text-3xl font-bold text-primary">{totalCourses}</div>
-                  <div className="text-xs md:text-sm text-muted-foreground">মোট কোর্স</div>
-                </Card>
-                <Card className="p-4 text-center bg-background/80 backdrop-blur">
-                  <div className="text-2xl md:text-3xl font-bold text-amber-500">{inProgressCourses}</div>
-                  <div className="text-xs md:text-sm text-muted-foreground">চলমান</div>
-                </Card>
-                <Card className="p-4 text-center bg-background/80 backdrop-blur">
-                  <div className="text-2xl md:text-3xl font-bold text-green-500">{completedCourses}</div>
-                  <div className="text-xs md:text-sm text-muted-foreground">সম্পন্ন</div>
-                </Card>
-              </div>
-            )}
-          </div>
-        </section>
+              {/* Stats Card */}
+              <Card className="p-4">
+                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                  <GraduationCap className="w-4 h-4 text-primary" />
+                  কোর্স স্ট্যাটিস্টিক্স
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">মোট কোর্স</span>
+                    <span className="font-semibold text-primary">{totalCourses}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">চলমান</span>
+                    <span className="font-semibold text-amber-500">{inProgressCourses}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">সম্পন্ন</span>
+                    <span className="font-semibold text-green-500">{completedCourses}</span>
+                  </div>
+                </div>
+              </Card>
 
-        <section className="py-8 md:py-12">
-          <div className="container mx-auto px-4">
-            {!enrollments || enrollments.length === 0 ? (
-              <div className="text-center py-16">
-                <BookOpen className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                <h2 className="text-xl font-semibold text-foreground mb-2">
-                  কোনো কোর্স নেই
-                </h2>
-                <p className="text-muted-foreground mb-6">
-                  আপনি এখনো কোনো কোর্সে এনরোল করেননি
+              {/* Recent Orders Card */}
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-sm flex items-center gap-2">
+                    <ShoppingBag className="w-4 h-4 text-primary" />
+                    সাম্প্রতিক অর্ডার
+                  </h3>
+                  <Link to="/my-orders" className="text-xs text-primary hover:underline">
+                    সব দেখুন
+                  </Link>
+                </div>
+                
+                {ordersLoading ? (
+                  <div className="flex justify-center py-4">
+                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                  </div>
+                ) : orders && orders.length > 0 ? (
+                  <div className="space-y-3">
+                    {orders.slice(0, 3).map((order) => (
+                      <div key={order.id} className="border-b border-border pb-3 last:border-0 last:pb-0">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <span className="font-mono text-xs text-muted-foreground">
+                            {order.order_number}
+                          </span>
+                          {getStatusBadge(order.status)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDate(order.created_at)}
+                        </p>
+                        <p className="text-sm font-semibold text-primary mt-1">
+                          {order.total_amount.toLocaleString()}৳
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <Package className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-xs text-muted-foreground">কোনো অর্ডার নেই</p>
+                  </div>
+                )}
+              </Card>
+            </aside>
+
+            {/* Main Content */}
+            <div className="flex-1">
+              {/* Header */}
+              <div className="mb-6">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
+                  <GraduationCap className="w-8 h-8 text-primary" />
+                  আমার কোর্সসমূহ
+                </h1>
+                <p className="text-muted-foreground text-sm mt-1">
+                  আপনার এনরোল করা সব কোর্স এখানে দেখুন
                 </p>
-                <Link to="/courses">
-                  <Button className="gradient-purple text-white">কোর্স দেখুন</Button>
-                </Link>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {enrollments.map((enrollment) => (
-                  <Card key={enrollment.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                    <div className="relative">
-                      <Link to={`/courses/${enrollment.course?.slug}`}>
-                        <img
-                          src={enrollment.course?.image_url || '/placeholder.svg'}
-                          alt={enrollment.course?.title}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </Link>
-                      {/* Status Badge */}
-                      <div className="absolute top-3 right-3">
-                        {enrollment.progress >= 100 ? (
-                          <Badge className="bg-green-500 hover:bg-green-600">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            সম্পন্ন
-                          </Badge>
-                        ) : enrollment.progress > 0 ? (
-                          <Badge className="bg-amber-500 hover:bg-amber-600">
-                            <BarChart3 className="w-3 h-3 mr-1" />
-                            চলমান
-                          </Badge>
-                        ) : (
-                          <Badge variant="secondary">
-                            নতুন
-                          </Badge>
-                        )}
-                      </div>
-                      {/* Category Badge */}
-                      <div className="absolute top-3 left-3">
-                        <Badge variant="secondary" className="bg-background/90 backdrop-blur">
-                          {enrollment.course?.category}
-                        </Badge>
-                      </div>
-                    </div>
-                    
-                    <div className="p-4">
-                      <Link to={`/courses/${enrollment.course?.slug}`}>
-                        <h3 className="font-semibold text-foreground mb-2 hover:text-primary transition-colors line-clamp-2">
-                          {enrollment.course?.title}
-                        </h3>
-                      </Link>
-                      
-                      <p className="text-sm text-muted-foreground mb-3">
-                        {enrollment.course?.instructor}
-                      </p>
 
-                      {/* Course Meta */}
-                      <div className="flex flex-wrap gap-3 text-xs text-muted-foreground mb-4">
-                        {enrollment.course?.duration && (
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            {enrollment.course.duration}
-                          </span>
-                        )}
-                        {enrollment.course?.lessons_count && (
-                          <span className="flex items-center gap-1">
-                            <BookText className="w-3 h-3" />
-                            {enrollment.course.lessons_count} লেসন
-                          </span>
-                        )}
-                        {enrollment.course?.level && (
-                          <span className="flex items-center gap-1">
-                            <BarChart3 className="w-3 h-3" />
-                            {enrollment.course.level}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Last Watched / Continue Info */}
-                      {enrollment.last_watched_at && enrollment.progress > 0 && enrollment.progress < 100 && (
-                        <div className="flex items-center gap-1 text-xs text-primary mb-2">
-                          <Play className="w-3 h-3" />
-                          <span>
-                            মডিউল {(enrollment.last_module_index ?? 0) + 1}, লেসন {(enrollment.last_lesson_index ?? 0) + 1} থেকে শুরু করুন
-                          </span>
+              {/* Course Grid */}
+              {!enrollments || enrollments.length === 0 ? (
+                <Card className="p-8 text-center">
+                  <BookOpen className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                  <h2 className="text-xl font-semibold text-foreground mb-2">
+                    কোনো কোর্স নেই
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    আপনি এখনো কোনো কোর্সে এনরোল করেননি
+                  </p>
+                  <Link to="/courses">
+                    <Button className="gradient-purple text-white">কোর্স দেখুন</Button>
+                  </Link>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {enrollments.map((enrollment) => (
+                    <Card key={enrollment.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
+                      <div className="relative">
+                        <Link to={`/courses/${enrollment.course?.slug}`}>
+                          <img
+                            src={enrollment.course?.image_url || '/placeholder.svg'}
+                            alt={enrollment.course?.title}
+                            className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </Link>
+                        {/* Status Badge */}
+                        <div className="absolute top-2 right-2">
+                          {enrollment.progress >= 100 ? (
+                            <Badge className="bg-green-500 hover:bg-green-600 text-xs">
+                              <CheckCircle2 className="w-3 h-3 mr-1" />
+                              সম্পন্ন
+                            </Badge>
+                          ) : enrollment.progress > 0 ? (
+                            <Badge className="bg-amber-500 hover:bg-amber-600 text-xs">
+                              <BarChart3 className="w-3 h-3 mr-1" />
+                              চলমান
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary" className="text-xs">
+                              নতুন
+                            </Badge>
+                          )}
                         </div>
-                      )}
-
-                      {/* Enrolled Date */}
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-4">
-                        <Calendar className="w-3 h-3" />
-                        এনরোল: {formatDate(enrollment.enrolled_at)}
                       </div>
                       
-                      {/* Progress */}
-                      <div className="mb-4">
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-muted-foreground">অগ্রগতি</span>
-                          <span className="font-medium text-primary">{enrollment.progress}%</span>
-                        </div>
-                        <Progress 
-                          value={enrollment.progress} 
-                          className="h-2"
-                        />
-                      </div>
+                      <div className="p-4">
+                        <Link to={`/courses/${enrollment.course?.slug}`}>
+                          <h3 className="font-semibold text-foreground mb-1 hover:text-primary transition-colors line-clamp-2 text-sm">
+                            {enrollment.course?.title}
+                          </h3>
+                        </Link>
+                        
+                        <p className="text-xs text-muted-foreground mb-2">
+                          {enrollment.course?.instructor}
+                        </p>
 
-                      <Link to={`/learn/${enrollment.course?.slug}`}>
-                        <Button 
-                          className={`w-full ${enrollment.progress >= 100 ? '' : 'gradient-purple text-white'}`}
-                          variant={enrollment.progress >= 100 ? "outline" : "default"}
-                        >
-                          <Play className="w-4 h-4 mr-2" />
-                          {enrollment.progress >= 100 
-                            ? "আবার দেখুন" 
-                            : enrollment.progress > 0 
-                              ? "শেখা চালিয়ে যান" 
-                              : "শেখা শুরু করুন"
-                          }
-                        </Button>
-                      </Link>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            )}
+                        {/* Course Meta */}
+                        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground mb-3">
+                          {enrollment.course?.duration && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {enrollment.course.duration}
+                            </span>
+                          )}
+                          {enrollment.course?.lessons_count && (
+                            <span className="flex items-center gap-1">
+                              <BookText className="w-3 h-3" />
+                              {enrollment.course.lessons_count} লেসন
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Last Watched / Continue Info */}
+                        {enrollment.last_watched_at && enrollment.progress > 0 && enrollment.progress < 100 && (
+                          <div className="flex items-center gap-1 text-xs text-primary mb-2">
+                            <Play className="w-3 h-3" />
+                            <span>
+                              মডিউল {(enrollment.last_module_index ?? 0) + 1}, লেসন {(enrollment.last_lesson_index ?? 0) + 1}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* Progress */}
+                        <div className="mb-3">
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-muted-foreground">অগ্রগতি</span>
+                            <span className="font-medium text-primary">{enrollment.progress}%</span>
+                          </div>
+                          <Progress 
+                            value={enrollment.progress} 
+                            className="h-1.5"
+                          />
+                        </div>
+
+                        <Link to={`/learn/${enrollment.course?.slug}`}>
+                          <Button 
+                            className={`w-full text-sm ${enrollment.progress >= 100 ? '' : 'gradient-purple text-white'}`}
+                            variant={enrollment.progress >= 100 ? "outline" : "default"}
+                            size="sm"
+                          >
+                            <Play className="w-4 h-4 mr-2" />
+                            {enrollment.progress >= 100 
+                              ? "আবার দেখুন" 
+                              : enrollment.progress > 0 
+                                ? "চালিয়ে যান" 
+                                : "শুরু করুন"
+                            }
+                          </Button>
+                        </Link>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />
