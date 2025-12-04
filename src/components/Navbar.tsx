@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, Facebook, Youtube, Send, Mail, GraduationCap, User } from "lucide-react";
+import { Menu, Facebook, Youtube, Send, Mail, GraduationCap, User, Package } from "lucide-react";
 import CartSidebar from "@/components/CartSidebar";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -116,14 +116,24 @@ const Navbar = () => {
                       </Link>
                     ))}
                     {isLoggedIn && (
-                      <Link
-                        to="/my-courses"
-                        onClick={() => setIsOpen(false)}
-                        className="px-4 py-2.5 text-foreground hover:bg-muted hover:text-primary rounded-md transition-colors font-medium flex items-center gap-2"
-                      >
-                        <GraduationCap className="w-4 h-4" />
-                        আমার কোর্স
-                      </Link>
+                      <>
+                        <Link
+                          to="/my-courses"
+                          onClick={() => setIsOpen(false)}
+                          className="px-4 py-2.5 text-foreground hover:bg-muted hover:text-primary rounded-md transition-colors font-medium flex items-center gap-2"
+                        >
+                          <GraduationCap className="w-4 h-4" />
+                          আমার কোর্স
+                        </Link>
+                        <Link
+                          to="/my-orders"
+                          onClick={() => setIsOpen(false)}
+                          className="px-4 py-2.5 text-foreground hover:bg-muted hover:text-primary rounded-md transition-colors font-medium flex items-center gap-2"
+                        >
+                          <Package className="w-4 h-4" />
+                          আমার অর্ডার
+                        </Link>
+                      </>
                     )}
                     {!isLoggedIn && (
                       <Link

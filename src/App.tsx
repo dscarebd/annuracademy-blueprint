@@ -20,6 +20,7 @@ import ThankYou from "./pages/ThankYou";
 import RefundPolicy from "./pages/RefundPolicy";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import MyCourses from "./pages/MyCourses";
+import MyOrders from "./pages/MyOrders";
 import StudentAuth from "./pages/StudentAuth";
 import CourseLearning from "./pages/CourseLearning";
 import NotFound from "./pages/NotFound";
@@ -58,6 +59,7 @@ const App = () => (
               <Route path="/refund-policy" element={<RefundPolicy />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/my-courses" element={<MyCourses />} />
+              <Route path="/my-orders" element={<MyOrders />} />
               <Route path="/learn/:slug" element={<CourseLearning />} />
               <Route path="/student-login" element={<StudentAuth />} />
               <Route path="/admin/auth" element={<AdminAuth />} />
