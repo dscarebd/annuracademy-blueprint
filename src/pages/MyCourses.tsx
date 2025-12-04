@@ -216,6 +216,16 @@ const MyCourses = () => {
                         )}
                       </div>
 
+                      {/* Last Watched / Continue Info */}
+                      {enrollment.last_watched_at && enrollment.progress > 0 && enrollment.progress < 100 && (
+                        <div className="flex items-center gap-1 text-xs text-primary mb-2">
+                          <Play className="w-3 h-3" />
+                          <span>
+                            মডিউল {(enrollment.last_module_index ?? 0) + 1}, লেসন {(enrollment.last_lesson_index ?? 0) + 1} থেকে শুরু করুন
+                          </span>
+                        </div>
+                      )}
+
                       {/* Enrolled Date */}
                       <div className="flex items-center gap-1 text-xs text-muted-foreground mb-4">
                         <Calendar className="w-3 h-3" />

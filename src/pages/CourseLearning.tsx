@@ -32,6 +32,7 @@ import {
   useMarkLessonComplete,
   useUnmarkLessonComplete,
   useUpdateEnrollmentProgress,
+  useSaveLastWatched,
 } from "@/hooks/useLessonProgress";
 import { useToast } from "@/hooks/use-toast";
 
@@ -65,12 +66,14 @@ const CourseLearning = () => {
   const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [initialPositionSet, setInitialPositionSet] = useState(false);
 
   const { data: enrollment, isLoading: enrollmentLoading } = useCheckEnrollment(course?.id || "");
   const { data: lessonProgress } = useLessonProgress(course?.id || "");
   const markComplete = useMarkLessonComplete();
   const unmarkComplete = useUnmarkLessonComplete();
   const updateProgress = useUpdateEnrollmentProgress();
+  const saveLastWatched = useSaveLastWatched();
 
   // Fetch course
   useEffect(() => {
@@ -130,6 +133,35 @@ const CourseLearning = () => {
       updateProgress.mutate({ courseId: course.id, progress: progressPercent });
     }
   }, [progressPercent, course?.id, enrollment]);
+
+  // Set initial position from last watched
+  useEffect(() => {
+    if (enrollment && !initialPositionSet && course?.modules) {
+      const lastModule = enrollment.last_module_index ?? 0;
+      const lastLesson = enrollment.last_lesson_index ?? 0;
+      
+      // Validate indices are within bounds
+      const moduleCount = course.modules.length;
+      const validModule = Math.min(lastModule, moduleCount - 1);
+      const lessonCount = course.modules[validModule]?.lessons?.length || 0;
+      const validLesson = Math.min(lastLesson, lessonCount - 1);
+      
+      setCurrentModuleIndex(Math.max(0, validModule));
+      setCurrentLessonIndex(Math.max(0, validLesson));
+      setInitialPositionSet(true);
+    }
+  }, [enrollment, initialPositionSet, course]);
+
+  // Save last watched position when lesson changes
+  useEffect(() => {
+    if (course?.id && initialPositionSet) {
+      saveLastWatched.mutate({
+        courseId: course.id,
+        moduleIndex: currentModuleIndex,
+        lessonIndex: currentLessonIndex,
+      });
+    }
+  }, [currentModuleIndex, currentLessonIndex, course?.id, initialPositionSet]);
 
   const isLessonCompleted = (moduleIndex: number, lessonIndex: number) => {
     return lessonProgress?.some(
