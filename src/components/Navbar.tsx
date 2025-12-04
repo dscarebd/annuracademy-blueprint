@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Menu, Facebook, Youtube, Send, Mail, GraduationCap, User } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, Facebook, Youtube, Send, Mail, GraduationCap, User, Settings, LogOut, ShoppingBag, ChevronDown } from "lucide-react";
 import CartSidebar from "@/components/CartSidebar";
 import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import {
   Popover,
   PopoverContent,
@@ -12,6 +17,10 @@ import {
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const { profile } = useProfile();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -26,6 +35,15 @@ const Navbar = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "লগআউট সফল",
+      description: "আপনি সফলভাবে লগআউট হয়েছেন",
+    });
+    navigate("/");
+  };
 
   const navLinks = [
     { to: "/", label: "হোম" },
@@ -70,7 +88,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right Side - Cart & Mobile Menu */}
+          {/* Right Side - Cart & Dashboard/Login */}
           <div className="flex items-center gap-2">
             <CartSidebar />
             {!isLoggedIn && (
@@ -83,13 +101,79 @@ const Navbar = () => {
               </Link>
             )}
             {isLoggedIn && (
-              <Link
-                to="/my-courses"
-                className="hidden md:flex gradient-purple text-white font-semibold hover:opacity-90 px-4 py-2 rounded-md items-center gap-2"
-              >
-                <GraduationCap className="w-5 h-5" />
-                ড্যাশবোর্ড
-              </Link>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button className="hidden md:flex gradient-purple text-white font-semibold hover:opacity-90 px-4 py-2 rounded-md items-center gap-2">
+                    <Avatar className="w-6 h-6 border border-white/30">
+                      <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
+                      <AvatarFallback className="bg-white/20 text-white text-xs">
+                        {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    ড্যাশবোর্ড
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-72 p-0" align="end">
+                  <div className="p-4 border-b border-border">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
+                        <AvatarFallback className="bg-primary/10 text-primary">
+                          {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm truncate">
+                          {profile?.full_name || user?.email?.split('@')[0] || 'Student'}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-2">
+                    <Link to="/my-courses" className="block">
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <GraduationCap className="w-4 h-4 mr-2" />
+                        আমার কোর্স
+                      </Button>
+                    </Link>
+                    <Link to="/profile-settings" className="block">
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <Settings className="w-4 h-4 mr-2" />
+                        প্রোফাইল সেটিংস
+                      </Button>
+                    </Link>
+                    <Link to="/my-orders" className="block">
+                      <Button 
+                        variant="ghost" 
+                        className="w-full justify-start"
+                        size="sm"
+                      >
+                        <ShoppingBag className="w-4 h-4 mr-2" />
+                        আমার অর্ডার
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="ghost" 
+                      onClick={handleLogout}
+                      className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+                      size="sm"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      লগ আউট
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             )}
             
             {/* Mobile Menu Button */}
