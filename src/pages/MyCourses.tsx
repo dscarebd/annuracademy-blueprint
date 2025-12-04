@@ -234,7 +234,7 @@ const MyCourses = () => {
                         />
                       </div>
 
-                      <Link to={`/courses/${enrollment.course?.slug}`}>
+                      <Link to={`/learn/${enrollment.course?.slug}`}>
                         <Button 
                           className={`w-full ${enrollment.progress >= 100 ? '' : 'gradient-purple text-white'}`}
                           variant={enrollment.progress >= 100 ? "outline" : "default"}
