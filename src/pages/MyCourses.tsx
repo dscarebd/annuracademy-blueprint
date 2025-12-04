@@ -15,12 +15,14 @@ import {
   Clock,
   BookText,
   CheckCircle2,
-  Calendar,
   BarChart3,
   LogOut,
   ShoppingBag,
   Package,
-  XCircle
+  XCircle,
+  Settings,
+  ChevronDown,
+  User
 } from "lucide-react";
 import { useEnrollments } from "@/hooks/useEnrollments";
 import { useUserOrders } from "@/hooks/useUserOrders";
@@ -28,7 +30,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
-import { Settings } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const MyCourses = () => {
   const navigate = useNavigate();
@@ -120,45 +126,6 @@ const MyCourses = () => {
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Left Sidebar */}
             <aside className="lg:w-72 shrink-0 space-y-4">
-              {/* User Profile Card */}
-              <Card className="p-4">
-                <div className="flex items-center gap-3 mb-4">
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm truncate">
-                      {profile?.full_name || user?.email?.split('@')[0] || 'Student'}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Link to="/profile-settings">
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      size="sm"
-                    >
-                      <Settings className="w-4 h-4 mr-2" />
-                      প্রোফাইল সেটিংস
-                    </Button>
-                  </Link>
-                  <Button 
-                    variant="ghost" 
-                    onClick={handleLogout}
-                    className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                    size="sm"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    লগ আউট
-                  </Button>
-                </div>
-              </Card>
-
               {/* Stats Card */}
               <Card className="p-4">
                 <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
@@ -228,14 +195,81 @@ const MyCourses = () => {
             {/* Main Content */}
             <div className="flex-1">
               {/* Header */}
-              <div className="mb-6">
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
-                  <GraduationCap className="w-8 h-8 text-primary" />
-                  আমার কোর্সসমূহ
-                </h1>
-                <p className="text-muted-foreground text-sm mt-1">
-                  আপনার এনরোল করা সব কোর্স এখানে দেখুন
-                </p>
+              <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
+                    <GraduationCap className="w-8 h-8 text-primary" />
+                    আমার কোর্সসমূহ
+                  </h1>
+                  <p className="text-muted-foreground text-sm mt-1">
+                    আপনার এনরোল করা সব কোর্স এখানে দেখুন
+                  </p>
+                </div>
+                
+                {/* Dashboard Button with Profile Dropdown */}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="gap-2">
+                      <Avatar className="w-6 h-6">
+                        <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      ড্যাশবোর্ড
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-72 p-0" align="end">
+                    <div className="p-4 border-b border-border">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
+                          <AvatarFallback className="bg-primary/10 text-primary">
+                            {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm truncate">
+                            {profile?.full_name || user?.email?.split('@')[0] || 'Student'}
+                          </p>
+                          <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      <Link to="/profile-settings" className="block">
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start"
+                          size="sm"
+                        >
+                          <Settings className="w-4 h-4 mr-2" />
+                          প্রোফাইল সেটিংস
+                        </Button>
+                      </Link>
+                      <Link to="/my-orders" className="block">
+                        <Button 
+                          variant="ghost" 
+                          className="w-full justify-start"
+                          size="sm"
+                        >
+                          <ShoppingBag className="w-4 h-4 mr-2" />
+                          আমার অর্ডার
+                        </Button>
+                      </Link>
+                      <Button 
+                        variant="ghost" 
+                        onClick={handleLogout}
+                        className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+                        size="sm"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        লগ আউট
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {/* Course Grid */}
