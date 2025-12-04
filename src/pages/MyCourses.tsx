@@ -4,7 +4,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -16,31 +15,16 @@ import {
   BookText,
   CheckCircle2,
   BarChart3,
-  LogOut,
   ShoppingBag,
   Package,
-  XCircle,
-  Settings,
-  ChevronDown,
-  User
+  XCircle
 } from "lucide-react";
 import { useEnrollments } from "@/hooks/useEnrollments";
 import { useUserOrders } from "@/hooks/useUserOrders";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { useProfile } from "@/hooks/useProfile";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 const MyCourses = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { user } = useAuth();
-  const { profile } = useProfile();
   const { data: enrollments, isLoading } = useEnrollments();
   const { data: orders, isLoading: ordersLoading } = useUserOrders();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -55,15 +39,6 @@ const MyCourses = () => {
     };
     checkAuth();
   }, [navigate]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast({
-      title: "লগআউট সফল",
-      description: "আপনি সফলভাবে লগআউট হয়েছেন",
-    });
-    navigate("/");
-  };
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -195,81 +170,14 @@ const MyCourses = () => {
             {/* Main Content */}
             <div className="flex-1">
               {/* Header */}
-              <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
-                    <GraduationCap className="w-8 h-8 text-primary" />
-                    আমার কোর্সসমূহ
-                  </h1>
-                  <p className="text-muted-foreground text-sm mt-1">
-                    আপনার এনরোল করা সব কোর্স এখানে দেখুন
-                  </p>
-                </div>
-                
-                {/* Dashboard Button with Profile Dropdown */}
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="gap-2">
-                      <Avatar className="w-6 h-6">
-                        <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
-                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                          {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
-                      ড্যাশবোর্ড
-                      <ChevronDown className="w-4 h-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-72 p-0" align="end">
-                    <div className="p-4 border-b border-border">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-12 h-12">
-                          <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
-                          <AvatarFallback className="bg-primary/10 text-primary">
-                            {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm truncate">
-                            {profile?.full_name || user?.email?.split('@')[0] || 'Student'}
-                          </p>
-                          <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-2">
-                      <Link to="/profile-settings" className="block">
-                        <Button 
-                          variant="ghost" 
-                          className="w-full justify-start"
-                          size="sm"
-                        >
-                          <Settings className="w-4 h-4 mr-2" />
-                          প্রোফাইল সেটিংস
-                        </Button>
-                      </Link>
-                      <Link to="/my-orders" className="block">
-                        <Button 
-                          variant="ghost" 
-                          className="w-full justify-start"
-                          size="sm"
-                        >
-                          <ShoppingBag className="w-4 h-4 mr-2" />
-                          আমার অর্ডার
-                        </Button>
-                      </Link>
-                      <Button 
-                        variant="ghost" 
-                        onClick={handleLogout}
-                        className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-                        size="sm"
-                      >
-                        <LogOut className="w-4 h-4 mr-2" />
-                        লগ আউট
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+              <div className="mb-6">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
+                  <GraduationCap className="w-8 h-8 text-primary" />
+                  আমার কোর্সসমূহ
+                </h1>
+                <p className="text-muted-foreground text-sm mt-1">
+                  আপনার এনরোল করা সব কোর্স এখানে দেখুন
+                </p>
               </div>
 
               {/* Course Grid */}
