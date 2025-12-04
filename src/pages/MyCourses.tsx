@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -19,19 +20,21 @@ import {
   LogOut,
   ShoppingBag,
   Package,
-  XCircle,
-  User
+  XCircle
 } from "lucide-react";
 import { useEnrollments } from "@/hooks/useEnrollments";
 import { useUserOrders } from "@/hooks/useUserOrders";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useProfile";
+import { Settings } from "lucide-react";
 
 const MyCourses = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { profile } = useProfile();
   const { data: enrollments, isLoading } = useEnrollments();
   const { data: orders, isLoading: ordersLoading } = useUserOrders();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -120,25 +123,40 @@ const MyCourses = () => {
               {/* User Profile Card */}
               <Card className="p-4">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-primary" />
-                  </div>
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm truncate">
-                      {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Student'}
+                      {profile?.full_name || user?.email?.split('@')[0] || 'Student'}
                     </p>
                     <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                   </div>
                 </div>
-                <Button 
-                  variant="outline" 
-                  onClick={handleLogout}
-                  className="w-full text-muted-foreground hover:text-destructive hover:border-destructive"
-                  size="sm"
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  লগ আউট
-                </Button>
+                <div className="space-y-2">
+                  <Link to="/profile-settings">
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      size="sm"
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      প্রোফাইল সেটিংস
+                    </Button>
+                  </Link>
+                  <Button 
+                    variant="ghost" 
+                    onClick={handleLogout}
+                    className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                    size="sm"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    লগ আউট
+                  </Button>
+                </div>
               </Card>
 
               {/* Stats Card */}
