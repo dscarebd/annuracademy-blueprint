@@ -21,6 +21,7 @@ import RefundPolicy from "./pages/RefundPolicy";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import MyCourses from "./pages/MyCourses";
 import StudentAuth from "./pages/StudentAuth";
+import CourseLearning from "./pages/CourseLearning";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -57,6 +58,7 @@ const App = () => (
               <Route path="/refund-policy" element={<RefundPolicy />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/my-courses" element={<MyCourses />} />
+              <Route path="/learn/:slug" element={<CourseLearning />} />
               <Route path="/student-login" element={<StudentAuth />} />
               <Route path="/admin/auth" element={<AdminAuth />} />
               <Route path="/admin/login" element={<AdminAuth />} />
