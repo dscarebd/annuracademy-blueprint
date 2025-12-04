@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,6 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Accordion,
   AccordionContent,
@@ -24,6 +26,9 @@ import {
   Lock,
   Menu,
   X,
+  StickyNote,
+  Save,
+  Trash2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCheckEnrollment } from "@/hooks/useEnrollments";
@@ -34,6 +39,7 @@ import {
   useUpdateEnrollmentProgress,
   useSaveLastWatched,
 } from "@/hooks/useLessonProgress";
+import { useLessonNote, useSaveNote, useDeleteNote } from "@/hooks/useLessonNotes";
 import { useToast } from "@/hooks/use-toast";
 
 interface Lesson {
@@ -67,13 +73,24 @@ const CourseLearning = () => {
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [initialPositionSet, setInitialPositionSet] = useState(false);
+  const [noteContent, setNoteContent] = useState("");
+  const [noteSaving, setNoteSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState("video");
 
   const { data: enrollment, isLoading: enrollmentLoading } = useCheckEnrollment(course?.id || "");
   const { data: lessonProgress } = useLessonProgress(course?.id || "");
+  const { data: currentNote } = useLessonNote(course?.id || "", currentModuleIndex, currentLessonIndex);
   const markComplete = useMarkLessonComplete();
   const unmarkComplete = useUnmarkLessonComplete();
   const updateProgress = useUpdateEnrollmentProgress();
   const saveLastWatched = useSaveLastWatched();
+  const saveNote = useSaveNote();
+  const deleteNote = useDeleteNote();
+
+  // Update note content when lesson changes or note loads
+  useEffect(() => {
+    setNoteContent(currentNote?.content || "");
+  }, [currentNote, currentModuleIndex, currentLessonIndex]);
 
   // Fetch course
   useEffect(() => {
@@ -188,6 +205,39 @@ const CourseLearning = () => {
         lessonIndex,
       });
       toast({ title: "লেসন সম্পন্ন হিসেবে চিহ্নিত হয়েছে" });
+    }
+  };
+
+  const handleSaveNote = useCallback(async () => {
+    if (!course) return;
+    setNoteSaving(true);
+    try {
+      await saveNote.mutateAsync({
+        courseId: course.id,
+        moduleIndex: currentModuleIndex,
+        lessonIndex: currentLessonIndex,
+        content: noteContent,
+      });
+      toast({ title: "নোট সেভ হয়েছে" });
+    } catch (error) {
+      toast({ title: "নোট সেভ করতে সমস্যা হয়েছে", variant: "destructive" });
+    } finally {
+      setNoteSaving(false);
+    }
+  }, [course, currentModuleIndex, currentLessonIndex, noteContent, saveNote, toast]);
+
+  const handleDeleteNote = async () => {
+    if (!course) return;
+    try {
+      await deleteNote.mutateAsync({
+        courseId: course.id,
+        moduleIndex: currentModuleIndex,
+        lessonIndex: currentLessonIndex,
+      });
+      setNoteContent("");
+      toast({ title: "নোট মুছে ফেলা হয়েছে" });
+    } catch (error) {
+      toast({ title: "নোট মুছতে সমস্যা হয়েছে", variant: "destructive" });
     }
   };
 
@@ -379,29 +429,91 @@ const CourseLearning = () => {
             </p>
             <h1 className="font-semibold text-foreground">{currentLesson?.name}</h1>
           </div>
-          <Badge variant="outline" className="hidden sm:flex">
-            <Clock className="w-3 h-3 mr-1" />
-            {currentLesson?.duration}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="hidden sm:flex">
+              <Clock className="w-3 h-3 mr-1" />
+              {currentLesson?.duration}
+            </Badge>
+            <Button
+              variant={activeTab === "notes" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setActiveTab(activeTab === "notes" ? "video" : "notes")}
+              className="gap-1"
+            >
+              <StickyNote className="w-4 h-4" />
+              <span className="hidden sm:inline">নোট</span>
+            </Button>
+          </div>
         </header>
 
-        {/* Video Player */}
-        <div className="flex-1 bg-black">
-          {currentLesson?.video_url && getYouTubeEmbedUrl(currentLesson.video_url) ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <iframe
-                src={getYouTubeEmbedUrl(currentLesson.video_url)!}
-                title={currentLesson.name}
-                className="w-full aspect-video max-h-[calc(100vh-250px)]"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
+        {/* Content Area - Video or Notes */}
+        <div className="flex-1 bg-black overflow-hidden">
+          {activeTab === "video" ? (
+            // Video Player
+            currentLesson?.video_url && getYouTubeEmbedUrl(currentLesson.video_url) ? (
+              <div className="w-full h-full flex items-center justify-center">
+                <iframe
+                  src={getYouTubeEmbedUrl(currentLesson.video_url)!}
+                  title={currentLesson.name}
+                  className="w-full aspect-video max-h-[calc(100vh-250px)]"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-white">
+                <div className="text-center">
+                  <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                  <p>ভিডিও পাওয়া যায়নি</p>
+                </div>
+              </div>
+            )
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-white">
-              <div className="text-center">
-                <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <p>ভিডিও পাওয়া যায়নি</p>
+            // Notes Panel
+            <div className="w-full h-full bg-background p-4 overflow-auto">
+              <div className="max-w-3xl mx-auto">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold flex items-center gap-2">
+                    <StickyNote className="w-5 h-5 text-primary" />
+                    এই লেসনের নোট
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    {currentNote && noteContent && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleDeleteNote}
+                        disabled={deleteNote.isPending}
+                        className="text-destructive hover:text-destructive gap-1"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        <span className="hidden sm:inline">মুছুন</span>
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      onClick={handleSaveNote}
+                      disabled={noteSaving || !noteContent.trim()}
+                      className="gap-1 gradient-purple text-white"
+                    >
+                      {noteSaving ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Save className="w-4 h-4" />
+                      )}
+                      <span className="hidden sm:inline">সেভ করুন</span>
+                    </Button>
+                  </div>
+                </div>
+                <Textarea
+                  value={noteContent}
+                  onChange={(e) => setNoteContent(e.target.value)}
+                  placeholder="এই লেসন থেকে আপনার নোট এখানে লিখুন..."
+                  className="min-h-[300px] resize-none text-base"
+                />
+                <p className="text-xs text-muted-foreground mt-2">
+                  টিপ: ভিডিও দেখার সময় গুরুত্বপূর্ণ পয়েন্টগুলো নোট করে রাখুন
+                </p>
               </div>
             </div>
           )}
