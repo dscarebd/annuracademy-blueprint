@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Camera, Loader2, Save, User } from "lucide-react";
+import { ArrowLeft, Camera, Loader2, Save, User, Lock, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -22,6 +23,13 @@ const ProfileSettings = () => {
   const [phone, setPhone] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
+
+  // Password change state
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Initialize form values when profile loads
   if (profile && !hasInitialized) {
@@ -115,6 +123,52 @@ const ProfileSettings = () => {
       return profile.full_name.slice(0, 2).toUpperCase();
     }
     return user.email?.slice(0, 2).toUpperCase() || "U";
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (newPassword.length < 6) {
+      toast({
+        title: "ত্রুটি",
+        description: "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "ত্রুটি",
+        description: "নতুন পাসওয়ার্ড মিলছে না",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "সফল",
+        description: "পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে",
+      });
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error: any) {
+      toast({
+        title: "ত্রুটি",
+        description: error.message || "পাসওয়ার্ড পরিবর্তন করতে সমস্যা হয়েছে",
+        variant: "destructive",
+      });
+    } finally {
+      setIsChangingPassword(false);
+    }
   };
 
   return (
@@ -232,6 +286,89 @@ const ProfileSettings = () => {
                     <>
                       <Save className="h-4 w-4 mr-2" />
                       সংরক্ষণ করুন
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Password Change Card */}
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                পাসওয়ার্ড পরিবর্তন
+              </CardTitle>
+              <CardDescription>
+                আপনার অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করুন
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                {/* New Password */}
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">নতুন পাসওয়ার্ড</Label>
+                  <div className="relative">
+                    <Input
+                      id="newPassword"
+                      type={showNewPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="নতুন পাসওয়ার্ড দিন"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন
+                  </p>
+                </div>
+
+                {/* Confirm Password */}
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">পাসওয়ার্ড নিশ্চিত করুন</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="পাসওয়ার্ড আবার দিন"
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <Button 
+                  type="submit" 
+                  variant="outline"
+                  className="w-full"
+                  disabled={isChangingPassword || !newPassword || !confirmPassword}
+                >
+                  {isChangingPassword ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      পরিবর্তন হচ্ছে...
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="h-4 w-4 mr-2" />
+                      পাসওয়ার্ড পরিবর্তন করুন
                     </>
                   )}
                 </Button>
