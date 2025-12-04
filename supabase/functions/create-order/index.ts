@@ -41,12 +41,13 @@ interface OrderItem {
 interface OrderRequest {
   customer_name: string;
   customer_email: string;
-  customer_password: string;
-  customer_phone: string;
+  customer_password?: string | null;
+  customer_phone?: string | null;
   payment_method: string;
   transaction_id: string;
   total_amount: number;
   items: OrderItem[];
+  user_id?: string | null;
 }
 
 Deno.serve(async (req) => {
@@ -74,6 +75,9 @@ Deno.serve(async (req) => {
 
     const body: OrderRequest = await req.json();
     
+    // Check if this is a logged-in user purchase
+    const isLoggedInPurchase = !!body.user_id;
+    
     // Validate required fields
     const errors: string[] = [];
     
@@ -85,12 +89,15 @@ Deno.serve(async (req) => {
       errors.push("Invalid email format");
     }
     
-    if (!body.customer_password || !isValidPassword(body.customer_password)) {
-      errors.push("Password must be 6-100 characters");
-    }
-    
-    if (!body.customer_phone || !isValidPhone(body.customer_phone)) {
-      errors.push("Invalid phone format (use 01XXXXXXXXX)");
+    // Only validate password and phone for guest users
+    if (!isLoggedInPurchase) {
+      if (!body.customer_password || !isValidPassword(body.customer_password)) {
+        errors.push("Password must be 6-100 characters");
+      }
+      
+      if (!body.customer_phone || !isValidPhone(body.customer_phone)) {
+        errors.push("Invalid phone format (use 01XXXXXXXXX)");
+      }
     }
     
     if (!body.transaction_id || !isValidTransactionId(body.transaction_id)) {
@@ -129,38 +136,44 @@ Deno.serve(async (req) => {
 
     const customerEmail = body.customer_email.trim().toLowerCase();
     
-    // Check if user already exists
-    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-    const existingUser = existingUsers?.users?.find(u => u.email === customerEmail);
-    
     let userId: string;
     
-    if (existingUser) {
-      // User exists, use their ID
-      userId = existingUser.id;
-      console.log("Existing user found:", userId);
+    if (isLoggedInPurchase) {
+      // Use the provided user_id for logged-in users
+      userId = body.user_id!;
+      console.log("Logged-in user purchase:", userId);
     } else {
-      // Create new user account
-      const { data: newUser, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
-        email: customerEmail,
-        password: body.customer_password,
-        email_confirm: true, // Auto-confirm email
-        user_metadata: {
-          full_name: body.customer_name.trim(),
-          phone: body.customer_phone.trim(),
-        },
-      });
-
-      if (signUpError) {
-        console.error("User creation error:", signUpError);
-        return new Response(JSON.stringify({ error: "অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে। দয়া করে অন্য ইমেইল ব্যবহার করুন।" }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+      // Check if user already exists for guest checkout
+      const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+      const existingUser = existingUsers?.users?.find(u => u.email === customerEmail);
+      
+      if (existingUser) {
+        // User exists, use their ID
+        userId = existingUser.id;
+        console.log("Existing user found:", userId);
+      } else {
+        // Create new user account
+        const { data: newUser, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
+          email: customerEmail,
+          password: body.customer_password!,
+          email_confirm: true, // Auto-confirm email
+          user_metadata: {
+            full_name: body.customer_name.trim(),
+            phone: body.customer_phone?.trim(),
+          },
         });
-      }
 
-      userId = newUser.user.id;
-      console.log("New user created:", userId);
+        if (signUpError) {
+          console.error("User creation error:", signUpError);
+          return new Response(JSON.stringify({ error: "অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে। দয়া করে অন্য ইমেইল ব্যবহার করুন।" }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+
+        userId = newUser.user.id;
+        console.log("New user created:", userId);
+      }
     }
 
     // Generate order number
@@ -174,7 +187,7 @@ Deno.serve(async (req) => {
       order_number: orderNumber,
       customer_name: sanitizeString(body.customer_name),
       customer_email: customerEmail,
-      customer_phone: body.customer_phone.trim(),
+      customer_phone: body.customer_phone?.trim() || '',
       payment_method: body.payment_method,
       transaction_id: body.transaction_id.trim().toUpperCase(),
       status: 'পেন্ডিং',
