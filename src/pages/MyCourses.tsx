@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Navbar from "@/components/Navbar";
+import DashboardHeader from "@/components/DashboardHeader";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,10 +17,13 @@ import {
   BarChart3,
   ShoppingBag,
   Package,
-  XCircle
+  XCircle,
+  Star,
+  ArrowRight
 } from "lucide-react";
 import { useEnrollments } from "@/hooks/useEnrollments";
 import { useUserOrders } from "@/hooks/useUserOrders";
+import { useCourses } from "@/hooks/useCourses";
 import { supabase } from "@/integrations/supabase/client";
 
 const MyCourses = () => {
@@ -80,10 +83,16 @@ const MyCourses = () => {
   const completedCourses = enrollments?.filter(e => e.progress >= 100).length || 0;
   const inProgressCourses = enrollments?.filter(e => e.progress > 0 && e.progress < 100).length || 0;
 
+  // Get popular courses (top 3 by students count)
+  const { data: allCourses } = useCourses();
+  const popularCourses = allCourses
+    ?.sort((a, b) => (b.students_count || 0) - (a.students_count || 0))
+    .slice(0, 3);
+
   if (isAuthenticated === null || isLoading) {
     return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Navbar />
+      <div className="min-h-screen flex flex-col bg-muted/30">
+        <DashboardHeader />
         <main className="flex-grow flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </main>
@@ -93,8 +102,8 @@ const MyCourses = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Navbar />
+    <div className="min-h-screen flex flex-col bg-muted/30">
+      <DashboardHeader />
 
       <main className="flex-grow">
         <div className="container mx-auto px-4 py-6">
@@ -292,6 +301,59 @@ const MyCourses = () => {
                   <div className="text-center py-4">
                     <Package className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
                     <p className="text-xs text-muted-foreground">কোনো অর্ডার নেই</p>
+                  </div>
+                )}
+              </Card>
+
+              {/* Popular Courses Card */}
+              <Card className="p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-sm flex items-center gap-2">
+                    <Star className="w-4 h-4 text-amber-500" />
+                    জনপ্রিয় কোর্স
+                  </h3>
+                </div>
+                
+                {popularCourses && popularCourses.length > 0 ? (
+                  <div className="space-y-3">
+                    {popularCourses.map((course) => (
+                      <Link 
+                        key={course.id} 
+                        to={`/courses/${course.slug}`}
+                        className="block group"
+                      >
+                        <div className="flex gap-2 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+                          <img
+                            src={course.image_url || '/placeholder.svg'}
+                            alt={course.title}
+                            className="w-14 h-10 object-cover rounded"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium text-xs line-clamp-2 group-hover:text-primary transition-colors">
+                              {course.title}
+                            </h4>
+                            <p className="text-primary font-semibold text-xs mt-0.5">
+                              {course.is_free ? 'ফ্রি' : `৳${course.price.toLocaleString()}`}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                    <Link to="/courses">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full mt-2 text-xs"
+                      >
+                        সব কোর্স দেখুন
+                        <ArrowRight className="w-3 h-3 ml-1" />
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="text-center py-4">
+                    <BookOpen className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-xs text-muted-foreground">কোনো কোর্স নেই</p>
                   </div>
                 )}
               </Card>
