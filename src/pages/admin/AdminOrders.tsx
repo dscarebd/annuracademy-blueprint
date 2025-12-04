@@ -93,9 +93,16 @@ export default function AdminOrders() {
       )
     );
 
-    toast({
-      title: "স্ট্যাটাস আপডেট হয়েছে",
-    });
+    if (newStatus === "কনফার্মড") {
+      toast({
+        title: "অর্ডার কনফার্ম হয়েছে",
+        description: "স্টুডেন্টের অ্যাকাউন্টে কোর্স অ্যাক্সেস দেওয়া হয়েছে",
+      });
+    } else {
+      toast({
+        title: "স্ট্যাটাস আপডেট হয়েছে",
+      });
+    }
   };
 
   const formatDate = (dateStr: string) => {
