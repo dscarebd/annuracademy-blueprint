@@ -20,6 +20,10 @@ export interface Enrollment {
     category: string;
     modules: any;
     slug: string | null;
+    duration: string | null;
+    lessons_count: number | null;
+    level: string | null;
+    description: string | null;
   };
 }
 
@@ -34,7 +38,7 @@ export const useEnrollments = () => {
         .from("enrollments")
         .select(`
           *,
-          course:courses(id, title, image_url, instructor, category, modules, slug)
+          course:courses(id, title, image_url, instructor, category, modules, slug, duration, lessons_count, level, description)
         `)
         .eq("user_id", user.id)
         .order("enrolled_at", { ascending: false });
