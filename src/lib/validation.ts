@@ -25,4 +25,13 @@ export const checkoutFormSchema = z.object({
     .regex(/^[A-Za-z0-9]{6,20}$/, "সঠিক Transaction ID দিন (৬-২০ অক্ষর)"),
 });
 
+// Schema for logged-in users (no password required)
+export const loggedInCheckoutFormSchema = z.object({
+  transactionId: z
+    .string()
+    .trim()
+    .regex(/^[A-Za-z0-9]{6,20}$/, "সঠিক Transaction ID দিন (৬-২০ অক্ষর)"),
+});
+
 export type CheckoutFormData = z.infer<typeof checkoutFormSchema>;
+export type LoggedInCheckoutFormData = z.infer<typeof loggedInCheckoutFormSchema>;

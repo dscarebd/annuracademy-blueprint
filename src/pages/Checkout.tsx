@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -9,15 +9,17 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Tag, X, Loader2, Check } from "lucide-react";
+import { ArrowLeft, Tag, X, Loader2, Check, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { checkoutFormSchema } from "@/lib/validation";
+import { checkoutFormSchema, loggedInCheckoutFormSchema } from "@/lib/validation";
 import { useValidateCoupon, useIncrementCouponUsage, Coupon } from "@/hooks/useCoupons";
+import { useAuth } from "@/hooks/useAuth";
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user, isLoading: authLoading } = useAuth();
   
   const [paymentMethod, setPaymentMethod] = useState("bkash");
   const [formData, setFormData] = useState({
@@ -28,6 +30,17 @@ const Checkout = () => {
     transactionId: "",
   });
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Auto-fill user data when logged in
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        email: user.email || "",
+        name: user.user_metadata?.full_name || user.user_metadata?.name || "",
+      }));
+    }
+  }, [user]);
   
   // Coupon state
   const [couponCode, setCouponCode] = useState("");
@@ -87,23 +100,41 @@ const Checkout = () => {
     e.preventDefault();
     setFieldErrors({});
     
-    // Validate with zod
-    const validation = checkoutFormSchema.safeParse(formData);
-    
-    if (!validation.success) {
-      const errors: Record<string, string> = {};
-      validation.error.errors.forEach((err) => {
-        if (err.path[0]) {
-          errors[err.path[0] as string] = err.message;
-        }
-      });
-      setFieldErrors(errors);
-      toast({
-        title: "তথ্য সঠিক নয়",
-        description: "দয়া করে সকল তথ্য সঠিকভাবে পূরণ করুন",
-        variant: "destructive",
-      });
-      return;
+    // Different validation for logged-in vs guest users
+    if (user) {
+      const validation = loggedInCheckoutFormSchema.safeParse({ transactionId: formData.transactionId });
+      if (!validation.success) {
+        const errors: Record<string, string> = {};
+        validation.error.errors.forEach((err) => {
+          if (err.path[0]) {
+            errors[err.path[0] as string] = err.message;
+          }
+        });
+        setFieldErrors(errors);
+        toast({
+          title: "তথ্য সঠিক নয়",
+          description: "দয়া করে Transaction ID সঠিকভাবে দিন",
+          variant: "destructive",
+        });
+        return;
+      }
+    } else {
+      const validation = checkoutFormSchema.safeParse(formData);
+      if (!validation.success) {
+        const errors: Record<string, string> = {};
+        validation.error.errors.forEach((err) => {
+          if (err.path[0]) {
+            errors[err.path[0] as string] = err.message;
+          }
+        });
+        setFieldErrors(errors);
+        toast({
+          title: "তথ্য সঠিক নয়",
+          description: "দয়া করে সকল তথ্য সঠিকভাবে পূরণ করুন",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setIsProcessing(true);
@@ -118,16 +149,17 @@ const Checkout = () => {
 
       const { data, error } = await supabase.functions.invoke('create-order', {
         body: {
-          customer_name: formData.name,
-          customer_email: formData.email,
-          customer_password: formData.password,
-          customer_phone: formData.phone,
+          customer_name: user ? (user.user_metadata?.full_name || user.email?.split('@')[0] || 'User') : formData.name,
+          customer_email: user ? user.email : formData.email,
+          customer_password: user ? null : formData.password,
+          customer_phone: user ? null : formData.phone,
           payment_method: paymentDetails[paymentMethod as keyof typeof paymentDetails].name,
           transaction_id: formData.transactionId,
           total_amount: finalPrice,
           items: orderItems,
           coupon_code: appliedCoupon?.code || null,
           discount_amount: discount,
+          user_id: user?.id || null,
         },
       });
 
@@ -202,80 +234,104 @@ const Checkout = () => {
             <div className="grid md:grid-cols-2 gap-8">
               {/* Left Side - Personal Info & FAQ */}
               <div className="space-y-6">
-                {/* Personal Info Card */}
-                <Card className="p-6">
-                  <h2 className="text-xl font-semibold mb-4">প্রয়োজনীয় তথ্য দিন</h2>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="name">আপনার নাম <span className="text-destructive">*</span></Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="পুরো নাম লিখুন"
-                        required
-                        className={fieldErrors.name ? "border-destructive" : ""}
-                      />
-                      {fieldErrors.name && (
-                        <p className="text-sm text-destructive mt-1">{fieldErrors.name}</p>
-                      )}
+                {/* Logged-in User Info Card */}
+                {user ? (
+                  <Card className="p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                        <User className="w-6 h-6 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-semibold">লগইনড একাউন্ট</h2>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                      </div>
                     </div>
-                    
-                    <div>
-                      <Label htmlFor="email">ইমেইল <span className="text-destructive">*</span></Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="email@example.com"
-                        required
-                        className={fieldErrors.email ? "border-destructive" : ""}
-                      />
-                      {fieldErrors.email && (
-                        <p className="text-sm text-destructive mt-1">{fieldErrors.email}</p>
-                      )}
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="password">পাসওয়ার্ড <span className="text-destructive">*</span></Label>
-                      <Input
-                        id="password"
-                        name="password"
-                        type="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড"
-                        required
-                        className={fieldErrors.password ? "border-destructive" : ""}
-                      />
-                      {fieldErrors.password && (
-                        <p className="text-sm text-destructive mt-1">{fieldErrors.password}</p>
-                      )}
-                      <p className="text-xs text-muted-foreground mt-1">
-                        এই পাসওয়ার্ড দিয়ে আপনি পরে লগইন করতে পারবেন
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2 text-green-700">
+                        <Check className="w-4 h-4" />
+                        <span className="text-sm font-medium">আপনি লগইন অবস্থায় আছেন</span>
+                      </div>
+                      <p className="text-xs text-green-600 mt-1">
+                        কোর্স কনফার্ম হলে স্বয়ংক্রিয়ভাবে আপনার ড্যাশবোর্ডে যুক্ত হবে
                       </p>
                     </div>
-                    
-                    <div>
-                      <Label htmlFor="phone">মোবাইল নম্বর <span className="text-destructive">*</span></Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="01XXXXXXXXX"
-                        required
-                        className={fieldErrors.phone ? "border-destructive" : ""}
-                      />
-                      {fieldErrors.phone && (
-                        <p className="text-sm text-destructive mt-1">{fieldErrors.phone}</p>
-                      )}
+                  </Card>
+                ) : (
+                  /* Guest User Personal Info Card */
+                  <Card className="p-6">
+                    <h2 className="text-xl font-semibold mb-4">প্রয়োজনীয় তথ্য দিন</h2>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="name">আপনার নাম <span className="text-destructive">*</span></Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          placeholder="পুরো নাম লিখুন"
+                          required
+                          className={fieldErrors.name ? "border-destructive" : ""}
+                        />
+                        {fieldErrors.name && (
+                          <p className="text-sm text-destructive mt-1">{fieldErrors.name}</p>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="email">ইমেইল <span className="text-destructive">*</span></Label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          placeholder="email@example.com"
+                          required
+                          className={fieldErrors.email ? "border-destructive" : ""}
+                        />
+                        {fieldErrors.email && (
+                          <p className="text-sm text-destructive mt-1">{fieldErrors.email}</p>
+                        )}
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="password">পাসওয়ার্ড <span className="text-destructive">*</span></Label>
+                        <Input
+                          id="password"
+                          name="password"
+                          type="password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড"
+                          required
+                          className={fieldErrors.password ? "border-destructive" : ""}
+                        />
+                        {fieldErrors.password && (
+                          <p className="text-sm text-destructive mt-1">{fieldErrors.password}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground mt-1">
+                          এই পাসওয়ার্ড দিয়ে আপনি পরে লগইন করতে পারবেন
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="phone">মোবাইল নম্বর <span className="text-destructive">*</span></Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          placeholder="01XXXXXXXXX"
+                          required
+                          className={fieldErrors.phone ? "border-destructive" : ""}
+                        />
+                        {fieldErrors.phone && (
+                          <p className="text-sm text-destructive mt-1">{fieldErrors.phone}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Card>
+                  </Card>
+                )}
 
                 {/* FAQ Card */}
                 <Card className="p-6">
