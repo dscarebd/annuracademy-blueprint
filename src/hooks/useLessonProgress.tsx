@@ -134,3 +134,38 @@ export const useUpdateEnrollmentProgress = () => {
     },
   });
 };
+
+export const useSaveLastWatched = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      courseId,
+      moduleIndex,
+      lessonIndex,
+    }: {
+      courseId: string;
+      moduleIndex: number;
+      lessonIndex: number;
+    }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { error } = await supabase
+        .from("enrollments")
+        .update({ 
+          last_module_index: moduleIndex,
+          last_lesson_index: lessonIndex,
+          last_watched_at: new Date().toISOString(),
+        })
+        .eq("user_id", user.id)
+        .eq("course_id", courseId);
+
+      if (error) throw error;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["enrollment", variables.courseId] });
+      queryClient.invalidateQueries({ queryKey: ["enrollments"] });
+    },
+  });
+};

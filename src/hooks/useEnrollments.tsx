@@ -12,6 +12,9 @@ export interface Enrollment {
   completed_at: string | null;
   created_at: string;
   updated_at: string;
+  last_module_index: number | null;
+  last_lesson_index: number | null;
+  last_watched_at: string | null;
   course?: {
     id: string;
     title: string;

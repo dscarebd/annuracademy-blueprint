@@ -198,6 +198,9 @@ export type Database = {
           created_at: string
           enrolled_at: string
           id: string
+          last_lesson_index: number | null
+          last_module_index: number | null
+          last_watched_at: string | null
           order_id: string | null
           progress: number | null
           updated_at: string
@@ -209,6 +212,9 @@ export type Database = {
           created_at?: string
           enrolled_at?: string
           id?: string
+          last_lesson_index?: number | null
+          last_module_index?: number | null
+          last_watched_at?: string | null
           order_id?: string | null
           progress?: number | null
           updated_at?: string
@@ -220,6 +226,9 @@ export type Database = {
           created_at?: string
           enrolled_at?: string
           id?: string
+          last_lesson_index?: number | null
+          last_module_index?: number | null
+          last_watched_at?: string | null
           order_id?: string | null
           progress?: number | null
           updated_at?: string
