@@ -75,7 +75,7 @@ const Navbar = () => {
             <CartSidebar />
             {!isLoggedIn && (
               <Link
-                to="/admin/auth"
+                to="/student-login"
                 className="hidden md:flex gradient-purple text-white font-semibold hover:opacity-90 px-4 py-2 rounded-md items-center gap-2"
               >
                 <User className="w-5 h-5" />
@@ -127,7 +127,7 @@ const Navbar = () => {
                     )}
                     {!isLoggedIn && (
                       <Link
-                        to="/admin/auth"
+                        to="/student-login"
                         onClick={() => setIsOpen(false)}
                         className="px-4 py-2.5 text-foreground hover:bg-muted hover:text-primary rounded-md transition-colors font-medium flex items-center gap-2"
                       >

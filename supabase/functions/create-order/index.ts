@@ -23,6 +23,10 @@ const isValidTransactionId = (txId: string): boolean => {
   return txRegex.test(txId);
 };
 
+const isValidPassword = (password: string): boolean => {
+  return !!password && password.length >= 6 && password.length <= 100;
+};
+
 const sanitizeString = (str: string): string => {
   return str.trim().slice(0, 500);
 };
@@ -37,6 +41,7 @@ interface OrderItem {
 interface OrderRequest {
   customer_name: string;
   customer_email: string;
+  customer_password: string;
   customer_phone: string;
   payment_method: string;
   transaction_id: string;
@@ -80,6 +85,10 @@ Deno.serve(async (req) => {
       errors.push("Invalid email format");
     }
     
+    if (!body.customer_password || !isValidPassword(body.customer_password)) {
+      errors.push("Password must be 6-100 characters");
+    }
+    
     if (!body.customer_phone || !isValidPhone(body.customer_phone)) {
       errors.push("Invalid phone format (use 01XXXXXXXXX)");
     }
@@ -118,6 +127,42 @@ Deno.serve(async (req) => {
       });
     }
 
+    const customerEmail = body.customer_email.trim().toLowerCase();
+    
+    // Check if user already exists
+    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+    const existingUser = existingUsers?.users?.find(u => u.email === customerEmail);
+    
+    let userId: string;
+    
+    if (existingUser) {
+      // User exists, use their ID
+      userId = existingUser.id;
+      console.log("Existing user found:", userId);
+    } else {
+      // Create new user account
+      const { data: newUser, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
+        email: customerEmail,
+        password: body.customer_password,
+        email_confirm: true, // Auto-confirm email
+        user_metadata: {
+          full_name: body.customer_name.trim(),
+          phone: body.customer_phone.trim(),
+        },
+      });
+
+      if (signUpError) {
+        console.error("User creation error:", signUpError);
+        return new Response(JSON.stringify({ error: "অ্যাকাউন্ট তৈরি করতে সমস্যা হয়েছে। দয়া করে অন্য ইমেইল ব্যবহার করুন।" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      userId = newUser.user.id;
+      console.log("New user created:", userId);
+    }
+
     // Generate order number
     const date = new Date();
     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
@@ -128,7 +173,7 @@ Deno.serve(async (req) => {
     const sanitizedData = {
       order_number: orderNumber,
       customer_name: sanitizeString(body.customer_name),
-      customer_email: body.customer_email.trim().toLowerCase().slice(0, 255),
+      customer_email: customerEmail,
       customer_phone: body.customer_phone.trim(),
       payment_method: body.payment_method,
       transaction_id: body.transaction_id.trim().toUpperCase(),
@@ -161,7 +206,7 @@ Deno.serve(async (req) => {
     console.log("Order created successfully:", orderNumber);
     
     return new Response(
-      JSON.stringify({ success: true, order_number: orderNumber }),
+      JSON.stringify({ success: true, order_number: orderNumber, user_id: userId }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
