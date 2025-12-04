@@ -1,11 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
-import { LogOut, Settings, Home } from "lucide-react";
+import { LogOut, Settings, Home, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const DashboardHeader = () => {
   const navigate = useNavigate();
@@ -37,18 +42,18 @@ const DashboardHeader = () => {
             </div>
           </Link>
 
-          {/* Right Side */}
-          <div className="flex items-center gap-2">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-2">
             <Link to="/">
               <Button variant="ghost" size="sm" className="text-muted-foreground">
                 <Home className="w-4 h-4 mr-1" />
-                <span className="hidden sm:inline">হোম</span>
+                হোম
               </Button>
             </Link>
             <Link to="/profile-settings">
               <Button variant="ghost" size="sm" className="text-muted-foreground">
                 <Settings className="w-4 h-4 mr-1" />
-                <span className="hidden sm:inline">সেটিংস</span>
+                সেটিংস
               </Button>
             </Link>
             <Button 
@@ -58,7 +63,7 @@ const DashboardHeader = () => {
               className="text-muted-foreground hover:text-destructive"
             >
               <LogOut className="w-4 h-4 mr-1" />
-              <span className="hidden sm:inline">লগআউট</span>
+              লগআউট
             </Button>
             
             {/* User Avatar */}
@@ -69,10 +74,69 @@ const DashboardHeader = () => {
                   {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-sm font-medium text-foreground hidden md:block max-w-[120px] truncate">
+              <span className="text-sm font-medium text-foreground max-w-[120px] truncate">
                 {profile?.full_name || user?.email?.split('@')[0] || 'Student'}
               </span>
             </div>
+          </div>
+
+          {/* Mobile Dropdown */}
+          <div className="md:hidden">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="gradient-purple text-white font-semibold hover:opacity-90 px-3 py-2 rounded-md flex items-center gap-2 text-sm">
+                  <Avatar className="w-6 h-6 border border-white/30">
+                    <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
+                    <AvatarFallback className="bg-white/20 text-white text-xs">
+                      {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  ড্যাশবোর্ড
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-56 p-0 bg-background border border-border shadow-lg" align="end">
+                <div className="p-3 border-b border-border">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage src={profile?.avatar_url || ""} alt={profile?.full_name || "User"} />
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {profile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm truncate">
+                        {profile?.full_name || user?.email?.split('@')[0] || 'Student'}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <Link to="/" className="block">
+                    <Button variant="ghost" className="w-full justify-start" size="sm">
+                      <Home className="w-4 h-4 mr-2" />
+                      হোম
+                    </Button>
+                  </Link>
+                  <Link to="/profile-settings" className="block">
+                    <Button variant="ghost" className="w-full justify-start" size="sm">
+                      <Settings className="w-4 h-4 mr-2" />
+                      প্রোফাইল সেটিংস
+                    </Button>
+                  </Link>
+                  <Button 
+                    variant="ghost" 
+                    onClick={handleLogout}
+                    className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+                    size="sm"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    লগ আউট
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
