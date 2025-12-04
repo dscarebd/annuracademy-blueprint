@@ -17,7 +17,8 @@ import {
   CheckCircle2,
   Calendar,
   BarChart3,
-  LogOut
+  LogOut,
+  ShoppingBag
 } from "lucide-react";
 import { useEnrollments } from "@/hooks/useEnrollments";
 import { supabase } from "@/integrations/supabase/client";
@@ -92,14 +93,25 @@ const MyCourses = () => {
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 হোমে যান
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleLogout}
-                className="text-muted-foreground hover:text-destructive hover:border-destructive"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                লগআউট
-              </Button>
+              <div className="flex items-center gap-2">
+                <Link to="/my-orders">
+                  <Button 
+                    variant="outline" 
+                    className="text-muted-foreground hover:text-primary hover:border-primary"
+                  >
+                    <ShoppingBag className="w-4 h-4 mr-2" />
+                    অর্ডার
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  onClick={handleLogout}
+                  className="text-muted-foreground hover:text-destructive hover:border-destructive"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  লগআউট
+                </Button>
+              </div>
             </div>
             
             <h1 className="text-3xl md:text-4xl font-bold text-foreground text-center flex items-center justify-center gap-3">
