@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Loader2, CreditCard } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, CreditCard, Upload, X, Image } from "lucide-react";
 import {
   useAllPaymentMethods,
   useCreatePaymentMethod,
@@ -28,6 +28,8 @@ import {
   useDeletePaymentMethod,
   PaymentMethod,
 } from "@/hooks/usePaymentMethods";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const colorOptions = [
   { value: "bg-pink-500", label: "পিংক" },
@@ -45,6 +47,7 @@ const AdminPaymentMethods = () => {
   const createPaymentMethod = useCreatePaymentMethod();
   const updatePaymentMethod = useUpdatePaymentMethod();
   const deletePaymentMethod = useDeletePaymentMethod();
+  const { toast } = useToast();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMethod, setEditingMethod] = useState<PaymentMethod | null>(null);
@@ -54,7 +57,10 @@ const AdminPaymentMethods = () => {
     color: "bg-pink-500",
     is_active: true,
     sort_order: 0,
+    icon_url: "",
   });
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const resetForm = () => {
     setFormData({
@@ -63,6 +69,7 @@ const AdminPaymentMethods = () => {
       color: "bg-pink-500",
       is_active: true,
       sort_order: 0,
+      icon_url: "",
     });
     setEditingMethod(null);
   };
@@ -75,8 +82,64 @@ const AdminPaymentMethods = () => {
       color: method.color,
       is_active: method.is_active,
       sort_order: method.sort_order,
+      icon_url: method.icon_url || "",
     });
     setIsDialogOpen(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "শুধুমাত্র ইমেজ ফাইল আপলোড করুন",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: "ফাইল সাইজ ২MB এর বেশি হতে পারবে না",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = fileName;
+
+      const { error: uploadError } = await supabase.storage
+        .from('payment-icons')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('payment-icons')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, icon_url: publicUrl });
+      toast({ title: "আইকন আপলোড হয়েছে" });
+    } catch (error: any) {
+      toast({
+        title: "আইকন আপলোড ব্যর্থ",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const removeIcon = () => {
+    setFormData({ ...formData, icon_url: "" });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,7 +191,7 @@ const AdminPaymentMethods = () => {
                 নতুন পেমেন্ট মেথড
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>
                   {editingMethod ? "পেমেন্ট মেথড সম্পাদনা" : "নতুন পেমেন্ট মেথড"}
@@ -155,8 +218,54 @@ const AdminPaymentMethods = () => {
                     required
                   />
                 </div>
+
+                {/* Icon Upload Section */}
                 <div>
-                  <Label htmlFor="color">রঙ</Label>
+                  <Label>আইকন (ঐচ্ছিক)</Label>
+                  <div className="mt-2">
+                    {formData.icon_url ? (
+                      <div className="relative inline-block">
+                        <img
+                          src={formData.icon_url}
+                          alt="Payment icon"
+                          className="w-20 h-20 object-contain rounded-lg border"
+                        />
+                        <button
+                          type="button"
+                          onClick={removeIcon}
+                          className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full h-24 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors"
+                      >
+                        {isUploading ? (
+                          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                        ) : (
+                          <>
+                            <Upload className="w-6 h-6 text-muted-foreground mb-1" />
+                            <span className="text-sm text-muted-foreground">আইকন আপলোড করুন</span>
+                            <span className="text-xs text-muted-foreground">PNG, JPG (সর্বোচ্চ 2MB)</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="color">ফলব্যাক রঙ (আইকন না থাকলে)</Label>
                   <div className="grid grid-cols-4 gap-2 mt-2">
                     {colorOptions.map((color) => (
                       <button
@@ -215,7 +324,7 @@ const AdminPaymentMethods = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>রঙ</TableHead>
+                  <TableHead>আইকন</TableHead>
                   <TableHead>নাম</TableHead>
                   <TableHead>নম্বর</TableHead>
                   <TableHead>ক্রম</TableHead>
@@ -227,7 +336,17 @@ const AdminPaymentMethods = () => {
                 {paymentMethods.map((method) => (
                   <TableRow key={method.id}>
                     <TableCell>
-                      <div className={`w-8 h-8 rounded-full ${method.color}`} />
+                      {method.icon_url ? (
+                        <img
+                          src={method.icon_url}
+                          alt={method.name}
+                          className="w-10 h-10 object-contain rounded-lg"
+                        />
+                      ) : (
+                        <div className={`w-10 h-10 rounded-full ${method.color} flex items-center justify-center text-white font-bold`}>
+                          {method.name.charAt(0)}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell className="font-medium">{method.name}</TableCell>
                     <TableCell>{method.number}</TableCell>

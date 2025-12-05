@@ -407,6 +407,7 @@ export type Database = {
           color: string
           created_at: string
           icon: string | null
+          icon_url: string | null
           id: string
           is_active: boolean | null
           name: string
@@ -418,6 +419,7 @@ export type Database = {
           color?: string
           created_at?: string
           icon?: string | null
+          icon_url?: string | null
           id?: string
           is_active?: boolean | null
           name: string
@@ -429,6 +431,7 @@ export type Database = {
           color?: string
           created_at?: string
           icon?: string | null
+          icon_url?: string | null
           id?: string
           is_active?: boolean | null
           name?: string

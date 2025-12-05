@@ -492,9 +492,17 @@ const Checkout = () => {
                             }`}
                           >
                             <RadioGroupItem value={method.id} id={method.id} className="sr-only" />
-                            <span className={`w-10 h-10 ${method.color} rounded-full flex items-center justify-center text-white text-sm font-bold`}>
-                              {method.name.charAt(0)}
-                            </span>
+                            {method.icon_url ? (
+                              <img
+                                src={method.icon_url}
+                                alt={method.name}
+                                className="w-10 h-10 object-contain"
+                              />
+                            ) : (
+                              <span className={`w-10 h-10 ${method.color} rounded-full flex items-center justify-center text-white text-sm font-bold`}>
+                                {method.name.charAt(0)}
+                              </span>
+                            )}
                             <span className="text-sm font-medium mt-1">{method.name}</span>
                           </Label>
                         ))}
