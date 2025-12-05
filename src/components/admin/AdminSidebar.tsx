@@ -12,6 +12,7 @@ import {
   Tag,
   Share2,
   CreditCard,
+  Layout,
 } from "lucide-react";
 import {
   Sidebar,
@@ -33,6 +34,7 @@ const menuItems = [
   { title: "কোর্স", url: "/admin/courses", icon: BookOpen },
   { title: "কুপন", url: "/admin/coupons", icon: Tag },
   { title: "পেমেন্ট মেথড", url: "/admin/payment-methods", icon: CreditCard },
+  { title: "পেজ এডিটর", url: "/admin/page-editor", icon: Layout },
   { title: "টেস্টিমোনিয়াল", url: "/admin/testimonials", icon: MessageSquare },
   { title: "ব্লগ", url: "/admin/blogs", icon: FileText },
   { title: "সোশ্যাল লিংক", url: "/admin/social-links", icon: Share2 },
