@@ -1,7 +1,12 @@
 import { Star, Loader2 } from "lucide-react";
 import { useTestimonials } from "@/hooks/useTestimonials";
 
-const TestimonialsSection = () => {
+interface TestimonialsSectionProps {
+  title?: string | null;
+  description?: string | null;
+}
+
+const TestimonialsSection = ({ title, description }: TestimonialsSectionProps) => {
   const { data: testimonials, isLoading } = useTestimonials();
 
   return (
@@ -10,10 +15,14 @@ const TestimonialsSection = () => {
         {/* Section Heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            স্টুডেন্ট <span className="text-gradient">টেস্টিমোনিয়াল</span>
+            {title || (
+              <>
+                স্টুডেন্ট <span className="text-gradient">টেস্টিমোনিয়াল</span>
+              </>
+            )}
           </h2>
           <p className="text-lg text-muted-foreground">
-            মার্কেটপ্লেস কোর্স সম্পর্কে যা ভাবেন
+            {description || "মার্কেটপ্লেস কোর্স সম্পর্কে যা ভাবেন"}
           </p>
         </div>
 
