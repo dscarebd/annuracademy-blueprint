@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Loader2, CreditCard, Upload, X, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, CreditCard, Upload, X, GripVertical, TrendingUp, BarChart3 } from "lucide-react";
 import {
   useAllPaymentMethods,
   useCreatePaymentMethod,
@@ -28,8 +28,10 @@ import {
   useDeletePaymentMethod,
   PaymentMethod,
 } from "@/hooks/usePaymentMethods";
+import { usePaymentAnalytics } from "@/hooks/usePaymentAnalytics";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Progress } from "@/components/ui/progress";
 import {
   DndContext,
   closestCenter,
@@ -140,6 +142,7 @@ const SortableRow = ({ method, onEdit, onDelete, onToggleActive }: SortableRowPr
 
 const AdminPaymentMethods = () => {
   const { data: paymentMethods, isLoading } = useAllPaymentMethods();
+  const { data: analytics, isLoading: analyticsLoading } = usePaymentAnalytics();
   const createPaymentMethod = useCreatePaymentMethod();
   const updatePaymentMethod = useUpdatePaymentMethod();
   const deletePaymentMethod = useDeletePaymentMethod();
@@ -438,6 +441,82 @@ const AdminPaymentMethods = () => {
             </DialogContent>
           </Dialog>
         </div>
+
+        {/* Payment Analytics Section */}
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <BarChart3 className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">মোট কনফার্মড অর্ডার</p>
+                <p className="text-2xl font-bold">
+                  {analyticsLoading ? "..." : analytics?.totalOrders || 0}
+                </p>
+              </div>
+            </div>
+          </Card>
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-500/10 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-green-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">মোট আয়</p>
+                <p className="text-2xl font-bold">
+                  {analyticsLoading ? "..." : `${(analytics?.totalRevenue || 0).toLocaleString()}৳`}
+                </p>
+              </div>
+            </div>
+          </Card>
+          <Card className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-500/10 rounded-lg">
+                <CreditCard className="w-5 h-5 text-blue-500" />
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground">পেমেন্ট মেথড সংখ্যা</p>
+                <p className="text-2xl font-bold">
+                  {isLoading ? "..." : paymentMethods?.filter(m => m.is_active).length || 0}
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Payment Method Usage Analytics */}
+        {analytics && analytics.data.length > 0 && (
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
+              পেমেন্ট মেথড ব্যবহারের পরিসংখ্যান
+            </h2>
+            <div className="space-y-4">
+              {analytics.data.map((item) => {
+                const percentage = analytics.totalOrders > 0 
+                  ? Math.round((item.count / analytics.totalOrders) * 100) 
+                  : 0;
+                return (
+                  <div key={item.payment_method} className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium">{item.payment_method}</span>
+                      <div className="flex items-center gap-4">
+                        <span className="text-muted-foreground">
+                          {item.count} অর্ডার ({percentage}%)
+                        </span>
+                        <span className="font-medium text-primary">
+                          {item.total_amount.toLocaleString()}৳
+                        </span>
+                      </div>
+                    </div>
+                    <Progress value={percentage} className="h-2" />
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
+        )}
 
         <Card className="relative">
           {isReordering && (
