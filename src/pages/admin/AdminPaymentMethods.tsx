@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Loader2, CreditCard, Upload, X, Image } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, CreditCard, Upload, X, GripVertical } from "lucide-react";
 import {
   useAllPaymentMethods,
   useCreatePaymentMethod,
@@ -30,6 +30,23 @@ import {
 } from "@/hooks/usePaymentMethods";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const colorOptions = [
   { value: "bg-pink-500", label: "পিংক" },
@@ -41,6 +58,85 @@ const colorOptions = [
   { value: "bg-yellow-500", label: "হলুদ" },
   { value: "bg-teal-500", label: "টিল" },
 ];
+
+interface SortableRowProps {
+  method: PaymentMethod;
+  onEdit: (method: PaymentMethod) => void;
+  onDelete: (id: string) => void;
+  onToggleActive: (method: PaymentMethod) => void;
+}
+
+const SortableRow = ({ method, onEdit, onDelete, onToggleActive }: SortableRowProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: method.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <TableRow ref={setNodeRef} style={style}>
+      <TableCell>
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-muted rounded"
+        >
+          <GripVertical className="w-4 h-4 text-muted-foreground" />
+        </button>
+      </TableCell>
+      <TableCell>
+        {method.icon_url ? (
+          <img
+            src={method.icon_url}
+            alt={method.name}
+            className="w-10 h-10 object-contain rounded-lg"
+          />
+        ) : (
+          <div className={`w-10 h-10 rounded-full ${method.color} flex items-center justify-center text-white font-bold`}>
+            {method.name.charAt(0)}
+          </div>
+        )}
+      </TableCell>
+      <TableCell className="font-medium">{method.name}</TableCell>
+      <TableCell>{method.number}</TableCell>
+      <TableCell>{method.sort_order}</TableCell>
+      <TableCell>
+        <Switch
+          checked={method.is_active}
+          onCheckedChange={() => onToggleActive(method)}
+        />
+      </TableCell>
+      <TableCell className="text-right">
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onEdit(method)}
+          >
+            <Pencil className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onDelete(method.id)}
+            className="text-destructive hover:text-destructive"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      </TableCell>
+    </TableRow>
+  );
+};
 
 const AdminPaymentMethods = () => {
   const { data: paymentMethods, isLoading } = useAllPaymentMethods();
@@ -60,7 +156,15 @@ const AdminPaymentMethods = () => {
     icon_url: "",
   });
   const [isUploading, setIsUploading] = useState(false);
+  const [isReordering, setIsReordering] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const resetForm = () => {
     setFormData({
@@ -91,7 +195,6 @@ const AdminPaymentMethods = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       toast({
         title: "শুধুমাত্র ইমেজ ফাইল আপলোড করুন",
@@ -100,7 +203,6 @@ const AdminPaymentMethods = () => {
       return;
     }
 
-    // Validate file size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
       toast({
         title: "ফাইল সাইজ ২MB এর বেশি হতে পারবে না",
@@ -171,6 +273,38 @@ const AdminPaymentMethods = () => {
     });
   };
 
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id || !paymentMethods) return;
+
+    const oldIndex = paymentMethods.findIndex((m) => m.id === active.id);
+    const newIndex = paymentMethods.findIndex((m) => m.id === over.id);
+
+    const reorderedMethods = arrayMove(paymentMethods, oldIndex, newIndex);
+
+    setIsReordering(true);
+    try {
+      // Update sort_order for all affected items
+      await Promise.all(
+        reorderedMethods.map((method, index) =>
+          updatePaymentMethod.mutateAsync({
+            id: method.id,
+            sort_order: index,
+          })
+        )
+      );
+      toast({ title: "ক্রম আপডেট হয়েছে" });
+    } catch (error) {
+      toast({
+        title: "ক্রম আপডেট ব্যর্থ",
+        variant: "destructive",
+      });
+    } finally {
+      setIsReordering(false);
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -178,7 +312,7 @@ const AdminPaymentMethods = () => {
           <div>
             <h1 className="text-2xl font-bold">পেমেন্ট মেথড</h1>
             <p className="text-muted-foreground">
-              চেকআউট পেজে প্রদর্শিত পেমেন্ট মেথডগুলো পরিচালনা করুন
+              চেকআউট পেজে প্রদর্শিত পেমেন্ট মেথডগুলো পরিচালনা করুন। ড্র্যাগ করে ক্রম পরিবর্তন করুন।
             </p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -282,16 +416,6 @@ const AdminPaymentMethods = () => {
                     ))}
                   </div>
                 </div>
-                <div>
-                  <Label htmlFor="sort_order">ক্রম</Label>
-                  <Input
-                    id="sort_order"
-                    type="number"
-                    value={formData.sort_order}
-                    onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
-                    placeholder="0"
-                  />
-                </div>
                 <div className="flex items-center gap-2">
                   <Switch
                     id="is_active"
@@ -315,71 +439,52 @@ const AdminPaymentMethods = () => {
           </Dialog>
         </div>
 
-        <Card>
+        <Card className="relative">
+          {isReordering && (
+            <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10 rounded-lg">
+              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            </div>
+          )}
           {isLoading ? (
             <div className="flex items-center justify-center p-8">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : paymentMethods && paymentMethods.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>আইকন</TableHead>
-                  <TableHead>নাম</TableHead>
-                  <TableHead>নম্বর</TableHead>
-                  <TableHead>ক্রম</TableHead>
-                  <TableHead>স্ট্যাটাস</TableHead>
-                  <TableHead className="text-right">অ্যাকশন</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paymentMethods.map((method) => (
-                  <TableRow key={method.id}>
-                    <TableCell>
-                      {method.icon_url ? (
-                        <img
-                          src={method.icon_url}
-                          alt={method.name}
-                          className="w-10 h-10 object-contain rounded-lg"
-                        />
-                      ) : (
-                        <div className={`w-10 h-10 rounded-full ${method.color} flex items-center justify-center text-white font-bold`}>
-                          {method.name.charAt(0)}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium">{method.name}</TableCell>
-                    <TableCell>{method.number}</TableCell>
-                    <TableCell>{method.sort_order}</TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={method.is_active}
-                        onCheckedChange={() => toggleActive(method)}
-                      />
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openEditDialog(method)}
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(method.id)}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-10"></TableHead>
+                    <TableHead>আইকন</TableHead>
+                    <TableHead>নাম</TableHead>
+                    <TableHead>নম্বর</TableHead>
+                    <TableHead>ক্রম</TableHead>
+                    <TableHead>স্ট্যাটাস</TableHead>
+                    <TableHead className="text-right">অ্যাকশন</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  <SortableContext
+                    items={paymentMethods.map((m) => m.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {paymentMethods.map((method) => (
+                      <SortableRow
+                        key={method.id}
+                        method={method}
+                        onEdit={openEditDialog}
+                        onDelete={handleDelete}
+                        onToggleActive={toggleActive}
+                      />
+                    ))}
+                  </SortableContext>
+                </TableBody>
+              </Table>
+            </DndContext>
           ) : (
             <div className="flex flex-col items-center justify-center p-8 text-center">
               <CreditCard className="w-12 h-12 text-muted-foreground mb-4" />
