@@ -14,14 +14,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { checkoutFormSchema, loggedInCheckoutFormSchema } from "@/lib/validation";
 import { useValidateCoupon, useIncrementCouponUsage, Coupon } from "@/hooks/useCoupons";
 import { useAuth } from "@/hooks/useAuth";
+import { usePaymentMethods, PaymentMethod } from "@/hooks/usePaymentMethods";
 
 const Checkout = () => {
   const { items, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, isLoading: authLoading } = useAuth();
+  const { data: paymentMethods, isLoading: paymentMethodsLoading } = usePaymentMethods();
   
-  const [paymentMethod, setPaymentMethod] = useState("bkash");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -41,6 +43,13 @@ const Checkout = () => {
       }));
     }
   }, [user]);
+
+  // Set default payment method when loaded
+  useEffect(() => {
+    if (paymentMethods && paymentMethods.length > 0 && !selectedPaymentMethod) {
+      setSelectedPaymentMethod(paymentMethods[0]);
+    }
+  }, [paymentMethods, selectedPaymentMethod]);
   
   // Coupon state
   const [couponCode, setCouponCode] = useState("");
@@ -88,11 +97,6 @@ const Checkout = () => {
     setCouponCode("");
   };
 
-  const paymentDetails = {
-    bkash: { name: "বিকাশ", number: "01XXXXXXXXX", color: "bg-pink-500" },
-    nagad: { name: "নগদ", number: "01XXXXXXXXX", color: "bg-orange-500" },
-    rocket: { name: "রকেট", number: "01XXXXXXXXX", color: "bg-purple-600" },
-  };
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
@@ -153,7 +157,7 @@ const Checkout = () => {
           customer_email: user ? user.email : formData.email,
           customer_password: user ? null : formData.password,
           customer_phone: user ? null : formData.phone,
-          payment_method: paymentDetails[paymentMethod as keyof typeof paymentDetails].name,
+          payment_method: selectedPaymentMethod?.name || 'Unknown',
           transaction_id: formData.transactionId,
           total_amount: finalPrice,
           items: orderItems,
@@ -466,47 +470,60 @@ const Checkout = () => {
                 <Card className="p-6">
                   <h2 className="text-xl font-semibold mb-4">পেমেন্ট মেথড</h2>
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    <RadioGroup
-                      value={paymentMethod}
-                      onValueChange={setPaymentMethod}
-                      className="grid grid-cols-3 gap-2"
-                    >
-                      {Object.entries(paymentDetails).map(([key, value]) => (
-                        <Label
-                          key={key}
-                          htmlFor={key}
-                          className={`flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer transition-colors ${
-                            paymentMethod === key ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
-                          }`}
-                        >
-                          <RadioGroupItem value={key} id={key} className="sr-only" />
-                          <span className={`w-10 h-10 ${value.color} rounded-full flex items-center justify-center text-white text-sm font-bold`}>
-                            {value.name.charAt(0)}
-                          </span>
-                          <span className="text-sm font-medium mt-1">{value.name}</span>
-                        </Label>
-                      ))}
-                    </RadioGroup>
+                    {paymentMethodsLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                      </div>
+                    ) : paymentMethods && paymentMethods.length > 0 ? (
+                      <RadioGroup
+                        value={selectedPaymentMethod?.id || ""}
+                        onValueChange={(id) => {
+                          const method = paymentMethods.find(m => m.id === id);
+                          if (method) setSelectedPaymentMethod(method);
+                        }}
+                        className="grid grid-cols-3 gap-2"
+                      >
+                        {paymentMethods.map((method) => (
+                          <Label
+                            key={method.id}
+                            htmlFor={method.id}
+                            className={`flex flex-col items-center justify-center p-3 rounded-lg border cursor-pointer transition-colors ${
+                              selectedPaymentMethod?.id === method.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                            }`}
+                          >
+                            <RadioGroupItem value={method.id} id={method.id} className="sr-only" />
+                            <span className={`w-10 h-10 ${method.color} rounded-full flex items-center justify-center text-white text-sm font-bold`}>
+                              {method.name.charAt(0)}
+                            </span>
+                            <span className="text-sm font-medium mt-1">{method.name}</span>
+                          </Label>
+                        ))}
+                      </RadioGroup>
+                    ) : (
+                      <p className="text-muted-foreground text-center py-4">কোনো পেমেন্ট মেথড পাওয়া যায়নি</p>
+                    )}
 
                     {/* Payment Instructions */}
-                    <Card className="p-4 bg-muted/50">
-                      <p className="text-sm font-medium mb-2">পেমেন্ট নির্দেশনা:</p>
-                      <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-                        <li>
-                          {paymentDetails[paymentMethod as keyof typeof paymentDetails].name} অ্যাপ ওপেন করুন
-                        </li>
-                        <li>Send Money অপশনে যান</li>
-                        <li>
-                          নম্বর: <span className="font-mono font-semibold text-foreground">
-                            {paymentDetails[paymentMethod as keyof typeof paymentDetails].number}
-                          </span>
-                        </li>
-                        <li>
-                          পরিমাণ: <span className="font-semibold text-foreground">{finalPrice.toLocaleString()}৳</span>
-                        </li>
-                        <li>পেমেন্ট সম্পন্ন করে Transaction ID কপি করুন</li>
-                      </ol>
-                    </Card>
+                    {selectedPaymentMethod && (
+                      <Card className="p-4 bg-muted/50">
+                        <p className="text-sm font-medium mb-2">পেমেন্ট নির্দেশনা:</p>
+                        <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
+                          <li>
+                            {selectedPaymentMethod.name} অ্যাপ ওপেন করুন
+                          </li>
+                          <li>Send Money অপশনে যান</li>
+                          <li>
+                            নম্বর: <span className="font-mono font-semibold text-foreground">
+                              {selectedPaymentMethod.number}
+                            </span>
+                          </li>
+                          <li>
+                            পরিমাণ: <span className="font-semibold text-foreground">{finalPrice.toLocaleString()}৳</span>
+                          </li>
+                          <li>পেমেন্ট সম্পন্ন করে Transaction ID কপি করুন</li>
+                        </ol>
+                      </Card>
+                    )}
 
                     <div>
                       <Label htmlFor="transactionId">Transaction ID <span className="text-destructive">*</span></Label>
@@ -524,7 +541,7 @@ const Checkout = () => {
                       )}
                     </div>
 
-                    <Button type="submit" className="w-full" size="lg" disabled={isProcessing}>
+                    <Button type="submit" className="w-full" size="lg" disabled={isProcessing || !selectedPaymentMethod}>
                       {isProcessing ? "প্রসেসিং..." : "পেমেন্ট কনফার্ম করুন"}
                     </Button>
                   </form>
