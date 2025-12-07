@@ -2,14 +2,19 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Json } from "@/integrations/supabase/types";
 
+export type VideoSourceType = 'youtube' | 'vimeo' | 'upload';
+
+export interface CourseLesson {
+  name: string;
+  duration: string;
+  preview: boolean;
+  video_url?: string;
+  video_source_type?: VideoSourceType;
+}
+
 export interface CourseModule {
   title: string;
-  lessons: {
-    name: string;
-    duration: string;
-    preview: boolean;
-    video_url?: string;
-  }[];
+  lessons: CourseLesson[];
 }
 
 export interface Course {
