@@ -1,4 +1,5 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -341,11 +342,14 @@ function BlogForm({
         </div>
       </div>
       <div>
-        <Label>ছবির URL</Label>
-        <Input
-          value={formData.image_url}
-          onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-        />
+        <Label>ব্লগ ছবি</Label>
+        <div className="mt-2">
+          <ImageUpload
+            value={formData.image_url}
+            onChange={(url) => setFormData({ ...formData, image_url: url })}
+            folder="blogs"
+          />
+        </div>
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
