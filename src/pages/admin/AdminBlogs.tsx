@@ -348,6 +348,8 @@ function BlogForm({
             value={formData.image_url}
             onChange={(url) => setFormData({ ...formData, image_url: url })}
             folder="blogs"
+            sizeHint="1200x630"
+            aspectRatio="16:9"
           />
         </div>
       </div>
