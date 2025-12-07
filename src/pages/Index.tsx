@@ -148,15 +148,10 @@ const Index = () => {
             return (
               <div key={section.id}>
                 {sectionContent}
-                {/* Add static callout after hero section, then WhySection */}
-                {section.section_key === "hero" && (
-                  <>
-                    <StaticCallout />
-                    <WhySection />
-                  </>
-                )}
+                {/* Add static callout after hero section */}
+                {section.section_key === "hero" && <StaticCallout />}
                 {/* Add CourseFeaturesSection after why_us */}
-                {section.section_key === "popular_courses" && <CourseFeaturesSection />}
+                {section.section_key === "why_us" && <CourseFeaturesSection />}
               </div>
             );
           })}
