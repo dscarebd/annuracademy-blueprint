@@ -262,48 +262,50 @@ const MyCourses = () => {
                 </div>
               </Card>
 
-              {/* Recent Orders Card */}
-              <Card className="p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-sm flex items-center gap-2">
-                    <ShoppingBag className="w-4 h-4 text-primary" />
-                    সাম্প্রতিক অর্ডার
-                  </h3>
-                  <Link to="/my-orders" className="text-xs text-primary hover:underline">
-                    সব দেখুন
-                  </Link>
-                </div>
-                
-                {ordersLoading ? (
-                  <div className="flex justify-center py-4">
-                    <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+              {/* Recent Orders Card - Only show if user has enrollments OR pending orders */}
+              {(totalCourses > 0 || (orders && orders.some(o => o.status === 'পেন্ডিং'))) && (
+                <Card className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-sm flex items-center gap-2">
+                      <ShoppingBag className="w-4 h-4 text-primary" />
+                      সাম্প্রতিক অর্ডার
+                    </h3>
+                    <Link to="/my-orders" className="text-xs text-primary hover:underline">
+                      সব দেখুন
+                    </Link>
                   </div>
-                ) : orders && orders.length > 0 ? (
-                  <div className="space-y-3">
-                    {orders.slice(0, 3).map((order) => (
-                      <div key={order.id} className="border-b border-border pb-3 last:border-0 last:pb-0">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <span className="font-mono text-xs text-muted-foreground">
-                            {order.order_number}
-                          </span>
-                          {getStatusBadge(order.status)}
+                  
+                  {ordersLoading ? (
+                    <div className="flex justify-center py-4">
+                      <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : orders && orders.length > 0 ? (
+                    <div className="space-y-3">
+                      {orders.slice(0, 3).map((order) => (
+                        <div key={order.id} className="border-b border-border pb-3 last:border-0 last:pb-0">
+                          <div className="flex items-start justify-between gap-2 mb-1">
+                            <span className="font-mono text-xs text-muted-foreground">
+                              {order.order_number}
+                            </span>
+                            {getStatusBadge(order.status)}
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {formatDate(order.created_at)}
+                          </p>
+                          <p className="text-sm font-semibold text-primary mt-1">
+                            {order.total_amount.toLocaleString()}৳
+                          </p>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(order.created_at)}
-                        </p>
-                        <p className="text-sm font-semibold text-primary mt-1">
-                          {order.total_amount.toLocaleString()}৳
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-4">
-                    <Package className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-xs text-muted-foreground">কোনো অর্ডার নেই</p>
-                  </div>
-                )}
-              </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <Package className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                      <p className="text-xs text-muted-foreground">কোনো অর্ডার নেই</p>
+                    </div>
+                  )}
+                </Card>
+              )}
 
               {/* Popular Courses Card */}
               <Card className="p-4">
