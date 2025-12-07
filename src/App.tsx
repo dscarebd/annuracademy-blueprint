@@ -37,6 +37,7 @@ import AdminSocialLinks from "./pages/admin/AdminSocialLinks";
 import AdminPaymentMethods from "./pages/admin/AdminPaymentMethods";
 import AdminPages from "./pages/admin/AdminPages";
 import AdminPageEditor from "./pages/admin/AdminPageEditor";
+import AdminContentEditor from "./pages/admin/AdminContentEditor";
 import AdminAuth from "./pages/admin/AdminAuth";
 
 const queryClient = new QueryClient();
@@ -82,6 +83,7 @@ const App = () => (
               <Route path="/admin/payment-methods" element={<ProtectedAdminRoute><AdminPaymentMethods /></ProtectedAdminRoute>} />
               <Route path="/admin/pages" element={<ProtectedAdminRoute><AdminPages /></ProtectedAdminRoute>} />
               <Route path="/admin/page-editor/:pageSlug" element={<ProtectedAdminRoute><AdminPageEditor /></ProtectedAdminRoute>} />
+              <Route path="/admin/content-editor" element={<ProtectedAdminRoute><AdminContentEditor /></ProtectedAdminRoute>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

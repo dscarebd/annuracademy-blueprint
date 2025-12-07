@@ -522,6 +522,48 @@ export type Database = {
         }
         Relationships: []
       }
+      site_content: {
+        Row: {
+          content_key: string
+          content_type: string
+          created_at: string | null
+          id: string
+          json_value: Json | null
+          label: string
+          page: string
+          section: string
+          sort_order: number | null
+          updated_at: string | null
+          value: string | null
+        }
+        Insert: {
+          content_key: string
+          content_type?: string
+          created_at?: string | null
+          id?: string
+          json_value?: Json | null
+          label: string
+          page?: string
+          section: string
+          sort_order?: number | null
+          updated_at?: string | null
+          value?: string | null
+        }
+        Update: {
+          content_key?: string
+          content_type?: string
+          created_at?: string | null
+          id?: string
+          json_value?: Json | null
+          label?: string
+          page?: string
+          section?: string
+          sort_order?: number | null
+          updated_at?: string | null
+          value?: string | null
+        }
+        Relationships: []
+      }
       social_links: {
         Row: {
           color: string
