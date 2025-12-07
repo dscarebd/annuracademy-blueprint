@@ -192,6 +192,7 @@ Deno.serve(async (req) => {
       transaction_id: body.transaction_id.trim().toUpperCase(),
       status: 'পেন্ডিং',
       total_amount: Math.round(body.total_amount),
+      user_id: userId, // Store user_id for proper RLS
       items: body.items.map(item => ({
         id: String(item.id).slice(0, 100),
         title: sanitizeString(item.title),
