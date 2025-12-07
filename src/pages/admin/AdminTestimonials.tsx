@@ -1,4 +1,5 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -302,11 +303,14 @@ function TestimonialForm({
         />
       </div>
       <div>
-        <Label>ছবির URL</Label>
-        <Input
-          value={formData.image_url}
-          onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-        />
+        <Label>ছবি</Label>
+        <div className="mt-2">
+          <ImageUpload
+            value={formData.image_url}
+            onChange={(url) => setFormData({ ...formData, image_url: url })}
+            folder="testimonials"
+          />
+        </div>
       </div>
       <div>
         <Label>রেটিং (১-৫)</Label>
