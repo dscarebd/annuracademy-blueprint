@@ -4,8 +4,23 @@ import Navbar from "@/components/Navbar";
 import TopBanner from "@/components/TopBanner";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import instructorImage from "@/assets/instructor-about.jpg";
 
 const About = () => {
+  // Same content as home page AboutMeSection
+  const content = {
+    heading: "আমার সম্পর্কে",
+    headingHighlight: "কিছু কথা",
+    subtitle: "কে, কেন, কিভাবে?",
+    
+    bio1: "আমি নুর আল-আমীন—একজন প্যাশনেট ওয়ার্ডপ্রেস ডিজাইনার, ডিজিটাল স্কিল (আই আউটো মেশন) ইনস্ট্রাক্টর এবং An-Nur Academy-এর প্রতিষ্ঠাতা। গত কয়েক বছর ধরে আমি বিশ্বব্যাপী ক্লায়েন্টদের সাথে কাজ করে বিভিন্ন টেক-বেইজড প্রজেক্ট সফলভাবে সম্পন্ন করেছি। যেখানে আমি শত শত ক্লায়েন্টকে ওয়েব ডিজাইন সার্ভিস দিয়ে সহায়তা করেছি।",
+    
+    bio2: "টেকনোলজি শেখার প্রতি আমার আগ্রহ থেকেই আমি নতুন নতুন স্কিল শেখা এবং অন্যদের শেখাতে ভালোবাসি। এজন্যই আমি তৈরি করেছি An-Nur Academy, যেখানে শিক্ষার্থীরা সহজ ভাষায় কোডিং, এআই অটোমেশন, চ্যাটজিপিটি মাস্টারক্লাস সহ আধুনিক স্কিল শিখতে পারবে।",
+    
+    name: "নুর আল-আমীন",
+    title: "ওয়ার্ডপ্রেস ডিজাইনার, ইনস্ট্রাক্টর",
+    role: "Founder & CEO - An-Nur Academy",
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -17,10 +32,10 @@ const About = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-8 animate-fade-in">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              আমার সম্পর্কে <span className="text-primary">কিছু কথা</span>
+              {content.heading} <span className="text-primary">{content.headingHighlight}</span>
             </h1>
             <p className="text-xl text-muted-foreground">
-              কে, কেন, কিভাবে?
+              {content.subtitle}
             </p>
           </div>
 
@@ -30,37 +45,33 @@ const About = () => {
             <div className="relative animate-fade-in" style={{ animationDelay: "0.2s" }}>
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img
-                  src="/placeholder.svg"
-                  alt="Instructor"
+                  src={instructorImage}
+                  alt={content.name}
                   className="w-full h-auto object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
               </div>
             </div>
 
             {/* Text Section */}
             <div className="space-y-6 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-              <div className="border-l-4 border-primary pl-6">
+              <div className="border-l-4 border-primary pl-6 space-y-4">
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  আমি একজন ওয়েব ডেভেলপার, দীর্ঘদিন ফ্রিল্যান্সিং করছি টপ মার্কেটপ্লেস, যেমন Fiverr আর Upwork-এ। এমনকি Upwork-এ আমি ছিলাম টপ রেটেড ফ্রিল্যান্সার। এরপর যুক্ত হই একটি আমেরিকান কোম্পানির রিমোট জবের জন্য।
+                  {content.bio1}
                 </p>
-                <p className="text-lg text-muted-foreground leading-relaxed mt-4">
-                  প্রোগ্রামিং আর ওয়েব ডেভেলপমেন্ট শেখা আমার জন্য সবসময়ই এক ধরনের ভালো লাগার বিষয়। আর সেই ভালো লাগা থেকেই ২০১৯ সালে শুরু করি YouTube চ্যানেল। এখন সেখানে ৬২৫টিরও বেশি ভিডিও রয়েছে, যেগুলো লক্ষ লক্ষ লার্নারকে প্রতিদিন সহায়তা করছে।
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  {content.bio2}
                 </p>
               </div>
 
               <div className="bg-primary/5 rounded-xl p-6 border-l-4 border-primary">
-                <h3 className="text-2xl font-bold text-foreground mb-2">
-                  An-Nur Academy
+                <h3 className="text-2xl font-bold text-primary mb-2">
+                  {content.name}
                 </h3>
-                <p className="text-muted-foreground mb-1">
-                  ওয়েব ডেভেলপার, শিক্ষক
+                <p className="text-muted-foreground mb-1 font-semibold">
+                  {content.title}
                 </p>
-                <p className="text-sm text-primary font-semibold">
-                  Founder & CEO - An-Nur Academy
-                </p>
-                <p className="text-xs text-muted-foreground mt-2">
-                  ট্রেড লাইসেন্স : TRAD/DNCC/002347/2025
+                <p className="text-sm text-foreground font-medium">
+                  {content.role}
                 </p>
               </div>
             </div>
