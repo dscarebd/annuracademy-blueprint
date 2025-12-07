@@ -294,8 +294,112 @@ const Payment = () => {
         </div>
 
         <div className="grid lg:grid-cols-5 gap-6">
-          {/* Left Column - Main Content */}
-          <div className="lg:col-span-3 space-y-6">
+          {/* Left Column - Order Summary */}
+          <div className="lg:col-span-2 order-2 lg:order-1">
+            <div className="sticky top-24 space-y-4">
+              <Card className="p-6">
+                <h2 className="text-lg font-semibold mb-4">অর্ডার সামারি</h2>
+                
+                <div className="space-y-3 mb-4">
+                  {items.map((item) => (
+                    <div key={item.id} className="flex gap-3">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-16 h-12 object-cover rounded-lg"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium line-clamp-2">{item.title}</p>
+                        <p className="text-sm text-primary font-semibold">
+                          {item.price.toLocaleString()}৳
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Coupon Section */}
+                <div className="border-t pt-4 mb-4">
+                  <Label className="text-sm font-medium mb-2 block">কুপন কোড</Label>
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-green-600" />
+                        <span className="font-mono font-semibold text-green-700">{appliedCoupon.code}</span>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemoveCoupon}
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 h-7 w-7 p-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                        <Input
+                          value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                          placeholder="কুপন কোড"
+                          className="pl-9 uppercase"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleApplyCoupon}
+                        disabled={validateCoupon.isPending || !couponCode.trim()}
+                        className="shrink-0"
+                      >
+                        {validateCoupon.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          "প্রয়োগ"
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t pt-4 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">সাবটোটাল</span>
+                    <span>{totalPrice.toLocaleString()}৳</span>
+                  </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>ডিসকাউন্ট</span>
+                      <span>-{discount.toLocaleString()}৳</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-xl font-bold pt-3 border-t">
+                    <span>মোট</span>
+                    <span className="text-primary">{finalPrice.toLocaleString()}৳</span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Security Badge */}
+              <Card className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <ShieldCheck className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">১০০% সিকিউর পেমেন্ট</p>
+                    <p className="text-xs text-muted-foreground">আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+
+          {/* Right Column - Main Content */}
+          <div className="lg:col-span-3 space-y-6 order-1 lg:order-2">
             {step === 'info' && !user && (
               <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
@@ -541,110 +645,6 @@ const Payment = () => {
                 </Card>
               </>
             )}
-          </div>
-
-          {/* Right Column - Order Summary */}
-          <div className="lg:col-span-2">
-            <div className="sticky top-24 space-y-4">
-              <Card className="p-6">
-                <h2 className="text-lg font-semibold mb-4">অর্ডার সামারি</h2>
-                
-                <div className="space-y-3 mb-4">
-                  {items.map((item) => (
-                    <div key={item.id} className="flex gap-3">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-16 h-12 object-cover rounded-lg"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium line-clamp-2">{item.title}</p>
-                        <p className="text-sm text-primary font-semibold">
-                          {item.price.toLocaleString()}৳
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Coupon Section */}
-                <div className="border-t pt-4 mb-4">
-                  <Label className="text-sm font-medium mb-2 block">কুপন কোড</Label>
-                  {appliedCoupon ? (
-                    <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
-                      <div className="flex items-center gap-2">
-                        <Check className="w-4 h-4 text-green-600" />
-                        <span className="font-mono font-semibold text-green-700">{appliedCoupon.code}</span>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={handleRemoveCoupon}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50 h-7 w-7 p-0"
-                      >
-                        <X className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                        <Input
-                          value={couponCode}
-                          onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                          placeholder="কুপন কোড"
-                          className="pl-9 uppercase"
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={handleApplyCoupon}
-                        disabled={validateCoupon.isPending || !couponCode.trim()}
-                        className="shrink-0"
-                      >
-                        {validateCoupon.isPending ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          "প্রয়োগ"
-                        )}
-                      </Button>
-                    </div>
-                  )}
-                </div>
-
-                <div className="border-t pt-4 space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">সাবটোটাল</span>
-                    <span>{totalPrice.toLocaleString()}৳</span>
-                  </div>
-                  {discount > 0 && (
-                    <div className="flex justify-between text-sm text-green-600">
-                      <span>ডিসকাউন্ট</span>
-                      <span>-{discount.toLocaleString()}৳</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-xl font-bold pt-3 border-t">
-                    <span>মোট</span>
-                    <span className="text-primary">{finalPrice.toLocaleString()}৳</span>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Security Badge */}
-              <Card className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <ShieldCheck className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-sm">১০০% সিকিউর পেমেন্ট</p>
-                    <p className="text-xs text-muted-foreground">আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
-                  </div>
-                </div>
-              </Card>
-            </div>
           </div>
         </div>
       </main>
