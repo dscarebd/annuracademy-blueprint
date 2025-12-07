@@ -11,7 +11,7 @@ const AboutMeSection = () => {
     
     bio2: "টেকনোলজি শেখার প্রতি আমার আগ্রহ থেকেই আমি নতুন নতুন স্কিল শেখা এবং অন্যদের শেখাতে ভালোবাসি। এজন্যই আমি তৈরি করেছি An-Nur Academy, যেখানে শিক্ষার্থীরা সহজ ভাষায় কোডিং, এআই অটোমেশন, চ্যাটজিপিটি মাস্টারক্লাস সহ আধুনিক স্কিল শিখতে পারবে।",
     
-    bio3: "আপনাদের ভালোবাসাই আমার আনুপ্রেরনা। আর এই অনুপ্রেরণাই আমাকে প্রতিদিন নতুন কিছু শেখা ও শেখানোর শক্তি দেয়।",
+    
     
     name: "নুর আল-আমীন",
     title: "ওয়ার্ডপ্রেস ডিজাইনার, ইনস্ট্রাক্টর",
@@ -54,10 +54,6 @@ const AboutMeSection = () => {
               <p className="text-base leading-relaxed text-muted-foreground">
                 {content.bio2}
               </p>
-              <p className="text-base leading-relaxed text-muted-foreground">
-                {content.bio3}
-              </p>
-              
               {/* Name and Title */}
               <div className="pt-4">
                 <h3 className="text-2xl font-bold text-primary mb-2">
