@@ -264,6 +264,8 @@ const PageSectionEditor = ({ section, onSave }: { section: PageSection; onSave: 
           <ImageUpload
             value={formData.image_url}
             onChange={(url) => handleChange("image_url", url)}
+            sizeHint={section.section_type === "hero" ? "1920x1080" : "800x600"}
+            aspectRatio={section.section_type === "hero" ? "16:9" : "4:3"}
           />
         </div>
 

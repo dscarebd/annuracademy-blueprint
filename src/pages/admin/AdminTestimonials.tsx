@@ -309,6 +309,8 @@ function TestimonialForm({
             value={formData.image_url}
             onChange={(url) => setFormData({ ...formData, image_url: url })}
             folder="testimonials"
+            sizeHint="200x200"
+            aspectRatio="1:1"
           />
         </div>
       </div>

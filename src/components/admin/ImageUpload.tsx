@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Upload, X, Image as ImageIcon, Link } from "lucide-react";
+import { Loader2, Upload, X, Image as ImageIcon, Link, Info } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -11,13 +11,19 @@ interface ImageUploadProps {
   onChange: (url: string) => void;
   bucket?: string;
   folder?: string;
+  /** Recommended image size hint, e.g. "1920x1080", "400x400" */
+  sizeHint?: string;
+  /** Aspect ratio hint, e.g. "16:9", "1:1", "4:3" */
+  aspectRatio?: string;
 }
 
 export const ImageUpload = ({ 
   value, 
   onChange, 
   bucket = "site-content",
-  folder = "images"
+  folder = "images",
+  sizeHint,
+  aspectRatio
 }: ImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [urlInput, setUrlInput] = useState(value);
@@ -90,8 +96,26 @@ export const ImageUpload = ({
     setActiveTab("upload");
   };
 
+  const SizeHintBadge = () => {
+    if (!sizeHint && !aspectRatio) return null;
+    
+    return (
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-md">
+        <Info className="w-3 h-3" />
+        <span>
+          প্রস্তাবিত: {sizeHint && <strong>{sizeHint}px</strong>}
+          {sizeHint && aspectRatio && " • "}
+          {aspectRatio && <span>অনুপাত {aspectRatio}</span>}
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-3">
+      {/* Size hint badge */}
+      <SizeHintBadge />
+      
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3 h-9">
           <TabsTrigger value="preview" className="text-xs gap-1" disabled={!value}>
@@ -162,6 +186,9 @@ export const ImageUpload = ({
                 <Upload className="w-8 h-8 text-muted-foreground" />
                 <p className="text-sm font-medium">ছবি আপলোড করুন</p>
                 <p className="text-xs text-muted-foreground">PNG, JPG, GIF (সর্বোচ্চ ৫MB)</p>
+                {sizeHint && (
+                  <p className="text-xs text-primary font-medium">প্রস্তাবিত সাইজ: {sizeHint}px</p>
+                )}
               </div>
             )}
           </div>

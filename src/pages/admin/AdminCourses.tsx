@@ -845,6 +845,8 @@ function CourseForm({
               value={formData.image_url}
               onChange={(url) => setFormData({ ...formData, image_url: url })}
               folder="courses"
+              sizeHint="800x450"
+              aspectRatio="16:9"
             />
           </div>
         </div>
@@ -1067,6 +1069,8 @@ function CourseForm({
               value={formData.instructor_image_url}
               onChange={(url) => setFormData({ ...formData, instructor_image_url: url })}
               folder="instructors"
+              sizeHint="400x400"
+              aspectRatio="1:1"
             />
           </div>
         </div>
