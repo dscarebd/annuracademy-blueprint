@@ -5,6 +5,40 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// =============================================
+// RATE LIMITING - In-memory store (resets on cold start)
+// =============================================
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_MAX_REQUESTS = 10; // Max orders per IP
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour window
+
+function checkRateLimit(clientIp: string): { allowed: boolean; remaining: number } {
+  const now = Date.now();
+  const record = rateLimitStore.get(clientIp);
+  
+  // Clean up expired entries periodically
+  if (rateLimitStore.size > 1000) {
+    for (const [ip, data] of rateLimitStore.entries()) {
+      if (now > data.resetTime) {
+        rateLimitStore.delete(ip);
+      }
+    }
+  }
+  
+  if (!record || now > record.resetTime) {
+    // New window
+    rateLimitStore.set(clientIp, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - 1 };
+  }
+  
+  if (record.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return { allowed: false, remaining: 0 };
+  }
+  
+  record.count++;
+  return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS - record.count };
+}
+
 // Validation helpers
 const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -63,6 +97,30 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // =============================================
+    // RATE LIMITING CHECK
+    // =============================================
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() 
+      || req.headers.get("cf-connecting-ip") 
+      || req.headers.get("x-real-ip") 
+      || "unknown";
+    
+    const rateCheck = checkRateLimit(clientIp);
+    
+    if (!rateCheck.allowed) {
+      console.log(`Rate limit exceeded for IP: ${clientIp}`);
+      return new Response(JSON.stringify({ 
+        error: "Too many order attempts. Please try again later." 
+      }), {
+        status: 429,
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Retry-After": "3600"
+        },
+      });
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
@@ -104,8 +162,23 @@ Deno.serve(async (req) => {
       errors.push("Invalid transaction ID (6-20 alphanumeric characters)");
     }
     
-    if (!body.payment_method || !["বিকাশ", "নগদ", "রকেট"].includes(body.payment_method)) {
-      errors.push("Invalid payment method");
+    // =============================================
+    // DYNAMIC PAYMENT METHOD VALIDATION
+    // Query active payment methods from database instead of hardcoded list
+    // =============================================
+    const { data: validPaymentMethods, error: pmError } = await supabaseAdmin
+      .from('payment_methods')
+      .select('name')
+      .eq('is_active', true);
+    
+    if (pmError) {
+      console.error("Error fetching payment methods:", pmError);
+      // Fallback: allow the order but log the issue
+    } else {
+      const validMethodNames = validPaymentMethods?.map(m => m.name) || [];
+      if (!body.payment_method || !validMethodNames.includes(body.payment_method)) {
+        errors.push("Invalid payment method");
+      }
     }
     
     if (!body.total_amount || body.total_amount <= 0) {
@@ -123,6 +196,24 @@ Deno.serve(async (req) => {
           errors.push("Invalid item data");
           break;
         }
+      }
+    }
+
+    // =============================================
+    // DUPLICATE TRANSACTION ID CHECK
+    // Prevent reuse of transaction IDs
+    // =============================================
+    if (body.transaction_id) {
+      const normalizedTxId = body.transaction_id.trim().toUpperCase();
+      const { data: existingOrder } = await supabaseAdmin
+        .from('orders')
+        .select('id')
+        .eq('transaction_id', normalizedTxId)
+        .maybeSingle();
+      
+      if (existingOrder) {
+        console.log(`Duplicate transaction ID attempted: ${normalizedTxId} from IP: ${clientIp}`);
+        errors.push("This transaction ID has already been used");
       }
     }
 
@@ -201,7 +292,7 @@ Deno.serve(async (req) => {
       })),
     };
 
-    console.log("Creating order:", orderNumber);
+    console.log("Creating order:", orderNumber, "from IP:", clientIp);
 
     const { data, error } = await supabaseAdmin
       .from('orders')
