@@ -1,8 +1,8 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Upload, X, Image as ImageIcon, Link, Info } from "lucide-react";
+import { Loader2, Upload, X, Image as ImageIcon, Link, Info, Ruler } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -28,7 +28,24 @@ export const ImageUpload = ({
   const [isUploading, setIsUploading] = useState(false);
   const [urlInput, setUrlInput] = useState(value);
   const [activeTab, setActiveTab] = useState<string>(value ? "preview" : "upload");
+  const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Get actual image dimensions when value changes
+  useEffect(() => {
+    if (value) {
+      const img = new Image();
+      img.onload = () => {
+        setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.onerror = () => {
+        setImageDimensions(null);
+      };
+      img.src = value;
+    } else {
+      setImageDimensions(null);
+    }
+  }, [value]);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -111,6 +128,59 @@ export const ImageUpload = ({
     );
   };
 
+  const ImageDimensionsBadge = () => {
+    if (!imageDimensions) return null;
+    
+    const isMatchingSizeHint = sizeHint && 
+      `${imageDimensions.width}x${imageDimensions.height}` === sizeHint;
+    
+    return (
+      <div className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-md ${
+        isMatchingSizeHint 
+          ? 'bg-green-500/10 text-green-600' 
+          : 'bg-orange-500/10 text-orange-600'
+      }`}>
+        <Ruler className="w-3 h-3" />
+        <span>
+          বর্তমান: <strong>{imageDimensions.width} × {imageDimensions.height}px</strong>
+        </span>
+      </div>
+    );
+  };
+
+  const CurrentImagePreview = () => {
+    if (!value) return null;
+    
+    return (
+      <div className="p-3 bg-muted/50 rounded-lg border border-border/50">
+        <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+          <ImageIcon className="w-3 h-3" />
+          বর্তমান ছবি:
+        </p>
+        <div className="flex items-start gap-3">
+          <div className="relative w-20 h-20 rounded-md overflow-hidden bg-background border shrink-0">
+            <img
+              src={value}
+              alt="Current"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "/placeholder.svg";
+              }}
+            />
+          </div>
+          <div className="flex-1 min-w-0 space-y-1">
+            <p className="text-xs text-muted-foreground truncate">{value}</p>
+            {imageDimensions && (
+              <div className="flex flex-wrap gap-2">
+                <ImageDimensionsBadge />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-3">
       {/* Size hint badge */}
@@ -153,9 +223,16 @@ export const ImageUpload = ({
               >
                 <X className="w-4 h-4" />
               </Button>
-              <p className="text-xs text-muted-foreground mt-2 truncate max-w-md">
-                {value}
-              </p>
+              
+              {/* Image info section */}
+              <div className="mt-3 space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  <ImageDimensionsBadge />
+                </div>
+                <p className="text-xs text-muted-foreground truncate max-w-md">
+                  {value}
+                </p>
+              </div>
             </div>
           ) : (
             <div className="text-center py-8 text-muted-foreground">
@@ -164,7 +241,10 @@ export const ImageUpload = ({
           )}
         </TabsContent>
 
-        <TabsContent value="upload" className="mt-3">
+        <TabsContent value="upload" className="mt-3 space-y-3">
+          {/* Show current image preview at top */}
+          <CurrentImagePreview />
+          
           <div 
             className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
@@ -184,7 +264,7 @@ export const ImageUpload = ({
             ) : (
               <div className="flex flex-col items-center gap-2">
                 <Upload className="w-8 h-8 text-muted-foreground" />
-                <p className="text-sm font-medium">ছবি আপলোড করুন</p>
+                <p className="text-sm font-medium">{value ? 'নতুন ছবি আপলোড করুন' : 'ছবি আপলোড করুন'}</p>
                 <p className="text-xs text-muted-foreground">PNG, JPG, GIF (সর্বোচ্চ ৫MB)</p>
                 {sizeHint && (
                   <p className="text-xs text-primary font-medium">প্রস্তাবিত সাইজ: {sizeHint}px</p>
@@ -192,23 +272,12 @@ export const ImageUpload = ({
               </div>
             )}
           </div>
-          
-          {value && (
-            <div className="mt-3 p-2 bg-muted rounded-lg flex items-center gap-2">
-              <img
-                src={value}
-                alt="Current"
-                className="w-12 h-12 object-cover rounded"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/placeholder.svg";
-                }}
-              />
-              <span className="text-xs text-muted-foreground flex-1 truncate">বর্তমান ছবি</span>
-            </div>
-          )}
         </TabsContent>
 
         <TabsContent value="url" className="mt-3 space-y-3">
+          {/* Show current image preview at top */}
+          <CurrentImagePreview />
+          
           <div className="flex gap-2">
             <Input
               value={urlInput}
