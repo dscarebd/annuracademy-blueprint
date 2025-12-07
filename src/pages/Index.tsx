@@ -121,8 +121,16 @@ const Index = () => {
   const { data: courses, isLoading: isCoursesLoading } = useCourses();
   const { data: sections, isLoading: isSectionsLoading } = usePageSections("home");
 
-  // Static section with two cards (replaces purple callout)
-  const StaticCallout = () => <WhySection />;
+  // Static callout that appears after hero (not in database)
+  const StaticCallout = () => (
+    <PurpleCallout>
+      <h2 className="text-3xl md:text-4xl font-bold mb-4">
+        লাখ টাকা আয়ের স্বপ্নে বিভোর না হয়ে
+        <br />
+        স্কিল ডেভেলপ করে নিজের স্বপ্ন সত্যি করুন
+      </h2>
+    </PurpleCallout>
+  );
 
   return (
     <div className="min-h-screen">
@@ -140,9 +148,14 @@ const Index = () => {
             return (
               <div key={section.id}>
                 {sectionContent}
-                {/* Add WhySection cards after hero section */}
-                {section.section_key === "hero" && <StaticCallout />}
-                {/* Add CourseFeaturesSection after popular_courses */}
+                {/* Add static callout after hero section, then WhySection */}
+                {section.section_key === "hero" && (
+                  <>
+                    <StaticCallout />
+                    <WhySection />
+                  </>
+                )}
+                {/* Add CourseFeaturesSection after why_us */}
                 {section.section_key === "popular_courses" && <CourseFeaturesSection />}
               </div>
             );
