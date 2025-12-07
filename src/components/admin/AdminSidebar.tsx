@@ -32,6 +32,7 @@ const menuItems = [
   { title: "অর্ডার", url: "/admin/orders", icon: ShoppingCart },
   { title: "ব্যয়", url: "/admin/expenses", icon: Wallet },
   { title: "কোর্স", url: "/admin/courses", icon: BookOpen },
+  { title: "কন্টেন্ট এডিটর", url: "/admin/content-editor", icon: FileText },
   { title: "কুপন", url: "/admin/coupons", icon: Tag },
   { title: "পেমেন্ট মেথড", url: "/admin/payment-methods", icon: CreditCard },
   { title: "পেজ সমূহ", url: "/admin/pages", icon: Layout },
