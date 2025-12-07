@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useAllSiteContent, useUpdateSiteContent, SiteContent } from "@/hooks/useSiteContent";
 import { useAllPageSections, useUpdatePageSection, PageSection } from "@/hooks/usePageSections";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -116,24 +117,16 @@ const SiteContentEditor = ({ content, onSave }: { content: SiteContent; onSave: 
 
       {content.content_type === "image" && (
         <div className="space-y-2">
-          <Input
+          <ImageUpload
             value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="Image URL"
-            className="w-full"
+            onChange={(url) => {
+              setValue(url);
+              // Auto-save when image is uploaded
+              if (url) {
+                onSave(url);
+              }
+            }}
           />
-          {value && (
-            <div className="w-32 h-32 border rounded-lg overflow-hidden bg-muted">
-              <img
-                src={value}
-                alt="Preview"
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/placeholder.svg";
-                }}
-              />
-            </div>
-          )}
         </div>
       )}
 
@@ -267,24 +260,11 @@ const PageSectionEditor = ({ section, onSave }: { section: PageSection; onSave: 
         </div>
 
         <div>
-          <label className="text-sm font-medium mb-1 block">ছবি URL</label>
-          <Input
+          <label className="text-sm font-medium mb-1 block">ছবি</label>
+          <ImageUpload
             value={formData.image_url}
-            onChange={(e) => handleChange("image_url", e.target.value)}
-            placeholder="https://..."
+            onChange={(url) => handleChange("image_url", url)}
           />
-          {formData.image_url && (
-            <div className="mt-2 w-32 h-32 border rounded-lg overflow-hidden bg-muted">
-              <img
-                src={formData.image_url}
-                alt="Preview"
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/placeholder.svg";
-                }}
-              />
-            </div>
-          )}
         </div>
 
         {/* Content fields like button_text, button_link */}
