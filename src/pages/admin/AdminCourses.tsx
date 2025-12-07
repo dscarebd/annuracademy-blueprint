@@ -1,4 +1,5 @@
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -838,14 +839,14 @@ function CourseForm({
           </div>
         </div>
         <div>
-          <Label>ছবির URL</Label>
-          <Input
-            value={formData.image_url}
-            placeholder="/src/assets/course-image.jpg"
-            onChange={(e) =>
-              setFormData({ ...formData, image_url: e.target.value })
-            }
-          />
+          <Label>কোর্স ছবি</Label>
+          <div className="mt-2">
+            <ImageUpload
+              value={formData.image_url}
+              onChange={(url) => setFormData({ ...formData, image_url: url })}
+              folder="courses"
+            />
+          </div>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -1060,14 +1061,14 @@ function CourseForm({
           />
         </div>
         <div>
-          <Label>ইন্সট্রাক্টরের ছবি URL</Label>
-          <Input
-            value={formData.instructor_image_url}
-            placeholder="/src/assets/instructor.jpg"
-            onChange={(e) =>
-              setFormData({ ...formData, instructor_image_url: e.target.value })
-            }
-          />
+          <Label>ইন্সট্রাক্টরের ছবি</Label>
+          <div className="mt-2">
+            <ImageUpload
+              value={formData.instructor_image_url}
+              onChange={(url) => setFormData({ ...formData, instructor_image_url: url })}
+              folder="instructors"
+            />
+          </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
