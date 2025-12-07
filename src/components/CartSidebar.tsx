@@ -16,7 +16,7 @@ const CartSidebar = () => {
 
   const handleCheckout = () => {
     setOpen(false);
-    navigate("/checkout");
+    navigate("/payment");
   };
 
   return (

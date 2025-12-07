@@ -96,7 +96,7 @@ const Cart = () => {
                       {totalPrice.toLocaleString()}৳
                     </span>
                   </div>
-                  <Link to="/checkout">
+                  <Link to="/payment">
                     <Button className="w-full" size="lg">
                       চেকআউট করুন
                     </Button>
