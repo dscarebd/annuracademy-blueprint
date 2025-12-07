@@ -5,44 +5,6 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 
 const About = () => {
-  const videoPlaylists = [
-    {
-      title: "WordPress Customization 101",
-      image: "/placeholder.svg",
-      url: "https://youtube.com",
-    },
-    {
-      title: "WordPress Theme Development",
-      image: "/placeholder.svg",
-      url: "https://youtube.com",
-    },
-    {
-      title: "WordPress Plugin Development",
-      image: "/placeholder.svg",
-      url: "https://youtube.com",
-    },
-    {
-      title: "Remote Job Guideline",
-      image: "/placeholder.svg",
-      url: "https://youtube.com",
-    },
-    {
-      title: "Modern JavaScript Tutorial",
-      image: "/placeholder.svg",
-      url: "https://youtube.com",
-    },
-    {
-      title: "Freelancer Guidelines",
-      image: "/placeholder.svg",
-      url: "https://youtube.com",
-    },
-  ];
-
-  const stats = [
-    { label: "Total Fans / Subscribers", value: "321,000" },
-    { label: "Total Youtube Views", value: "22,449,339" },
-    { label: "Video Uploads", value: "782" },
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -115,7 +77,7 @@ const About = () => {
             আমার YouTube চ্যানেলে এখন পর্যন্ত ৬২৫টির বেশি ভিডিও আছে। দেশ-বিদেশের অসংখ্য মানুষ এই ভিডিওগুলো দেখে উপকৃত হয়েছে। ক্যারিয়ার ডেভেলপমেন্ট নিয়ে কথা বললে, লার্নাররা বলছে—এই ভিডিও আর প্লেলিস্টগুলো যেন একেকটা আলোর বাতি। প্রোগ্রামিংয়ের জটিল সব বিষয় সহজ ভাষায় শেখানোর জন্য হাজার হাজার লার্নারের প্রথম পছন্দ আমার চ্যানেল।
           </p>
 
-          <div className="text-center mb-16">
+          <div className="text-center">
             <a
               href="https://www.youtube.com"
               target="_blank"
@@ -128,70 +90,9 @@ const About = () => {
               </Button>
             </a>
           </div>
-
-          {/* Video Playlists Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {videoPlaylists.map((playlist, index) => (
-              <div
-                key={index}
-                className="group bg-white rounded-xl overflow-hidden border border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-2 animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="relative overflow-hidden aspect-video">
-                  <img
-                    src={playlist.image}
-                    alt={playlist.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
-                    <Youtube className="w-16 h-16 text-white opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all" />
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-bold text-foreground mb-4 group-hover:text-primary transition-colors">
-                    {playlist.title}
-                  </h3>
-                  <a
-                    href={playlist.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button
-                      variant="outline"
-                      className="w-full border-primary text-primary hover:bg-primary hover:text-white transition-all"
-                    >
-                      ভিডিও দেখুন
-                    </Button>
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* Statistics Section */}
-      <section className="py-20 bg-gradient-to-b from-primary/5 to-background">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid md:grid-cols-3 gap-8">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-2xl p-8 text-center shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-border animate-fade-in"
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <p className="text-muted-foreground text-sm mb-4 uppercase tracking-wider">
-                  {stat.label}
-                </p>
-                <p className="text-5xl md:text-6xl font-bold text-primary mb-2">
-                  {stat.value}
-                </p>
-                <div className="w-20 h-1 bg-primary/30 mx-auto rounded-full"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>
