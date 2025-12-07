@@ -409,8 +409,8 @@ const Payment = () => {
                     <p className="text-muted-foreground text-xs mt-0.5">আমাদের সাপোর্টে যোগাযোগ করুন, আমরা সমাধান করব।</p>
                   </div>
                   <div className="border-t pt-3">
-                    <p className="font-medium text-foreground">রিফান্ড পলিসি কী?</p>
-                    <p className="text-muted-foreground text-xs mt-0.5">কোর্স শুরুর ৭ দিনের মধ্যে রিফান্ড পাবেন।</p>
+                    <p className="font-medium text-foreground">কোন পেমেন্ট মেথড সাপোর্ট করে?</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">বিকাশ, নগদ, রকেট সহ সব মোবাইল ব্যাংকিং।</p>
                   </div>
                   <div className="border-t pt-3">
                     <p className="font-medium text-foreground">কোর্স অ্যাক্সেস কতদিন থাকবে?</p>
