@@ -41,12 +41,15 @@ import {
 } from "@/hooks/useLessonProgress";
 import { useLessonNote, useSaveNote, useDeleteNote } from "@/hooks/useLessonNotes";
 import { useToast } from "@/hooks/use-toast";
+import { VideoPlayer } from "@/components/VideoPlayer";
+import { VideoSourceType } from "@/hooks/useCourses";
 
 interface Lesson {
   name: string;
   duration: string;
   video_url: string;
   preview?: boolean;
+  video_source_type?: VideoSourceType;
 }
 
 interface Module {
@@ -280,13 +283,6 @@ const CourseLearning = () => {
     return currentLessonIndex > 0 || currentModuleIndex > 0;
   };
 
-  // Extract YouTube video ID
-  const getYouTubeEmbedUrl = (url: string) => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
-    const videoId = match && match[2].length === 11 ? match[2] : null;
-    return videoId ? `https://www.youtube.com/embed/${videoId}?rel=0` : null;
-  };
 
   if (isLoading || enrollmentLoading) {
     return (
@@ -450,14 +446,12 @@ const CourseLearning = () => {
         <div className="flex-1 bg-black overflow-hidden">
           {activeTab === "video" ? (
             // Video Player
-            currentLesson?.video_url && getYouTubeEmbedUrl(currentLesson.video_url) ? (
+            currentLesson?.video_url ? (
               <div className="w-full h-full flex items-center justify-center">
-                <iframe
-                  src={getYouTubeEmbedUrl(currentLesson.video_url)!}
-                  title={currentLesson.name}
-                  className="w-full aspect-video max-h-[calc(100vh-250px)]"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                <VideoPlayer
+                  videoUrl={currentLesson.video_url}
+                  videoSourceType={currentLesson.video_source_type}
+                  className="w-full max-h-[calc(100vh-250px)]"
                 />
               </div>
             ) : (

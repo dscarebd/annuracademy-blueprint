@@ -28,8 +28,15 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, Loader2, X } from "lucide-react";
-import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Plus, Edit, Trash2, Loader2, X, Upload, Youtube, Video } from "lucide-react";
+import { useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   useAdminCourses,
@@ -39,7 +46,10 @@ import {
   Course,
   CourseInsert,
   CourseModule,
+  CourseLesson,
+  VideoSourceType,
 } from "@/hooks/useCourses";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CourseFormData {
   title: string;
@@ -361,6 +371,224 @@ const defaultModules: CourseModule[] = [
   },
 ];
 
+// LessonEditor Component with video source type selection and upload
+function LessonEditor({
+  lesson,
+  moduleIndex,
+  lessonIndex,
+  onUpdate,
+  onRemove,
+}: {
+  lesson: CourseLesson;
+  moduleIndex: number;
+  lessonIndex: number;
+  onUpdate: (moduleIndex: number, lessonIndex: number, field: string, value: string | boolean) => void;
+  onRemove: (moduleIndex: number, lessonIndex: number) => void;
+}) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const videoSourceType = lesson.video_source_type || 'youtube';
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "ত্রুটি!",
+        description: "শুধুমাত্র MP4, WebM, OGG ফরম্যাট সাপোর্টেড",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Max file size: 500MB
+    if (file.size > 500 * 1024 * 1024) {
+      toast({
+        title: "ত্রুটি!",
+        description: "ফাইল সাইজ ৫০০MB এর বেশি হতে পারবে না",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const fileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      const { data, error } = await supabase.storage
+        .from('course-videos')
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      const { data: publicUrl } = supabase.storage
+        .from('course-videos')
+        .getPublicUrl(data.path);
+
+      onUpdate(moduleIndex, lessonIndex, 'video_url', publicUrl.publicUrl);
+      toast({
+        title: "সফল!",
+        description: "ভিডিও আপলোড সম্পন্ন হয়েছে",
+      });
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "ত্রুটি!",
+        description: "ভিডিও আপলোড করতে সমস্যা হয়েছে",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const getVideoPlaceholder = () => {
+    switch (videoSourceType) {
+      case 'youtube':
+        return "YouTube URL (যেমন: https://www.youtube.com/watch?v=...)";
+      case 'vimeo':
+        return "Vimeo URL (যেমন: https://vimeo.com/123456789)";
+      case 'upload':
+        return "আপলোড করা ভিডিও URL";
+      default:
+        return "ভিডিও URL";
+    }
+  };
+
+  const getVideoIcon = () => {
+    switch (videoSourceType) {
+      case 'youtube':
+        return <Youtube className="h-4 w-4 text-red-500" />;
+      case 'vimeo':
+        return <Video className="h-4 w-4 text-blue-500" />;
+      case 'upload':
+        return <Upload className="h-4 w-4 text-green-500" />;
+      default:
+        return <Video className="h-4 w-4" />;
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-2 p-3 bg-muted/50 rounded">
+      <div className="flex items-center gap-2">
+        <Input
+          value={lesson.name}
+          onChange={(e) => onUpdate(moduleIndex, lessonIndex, "name", e.target.value)}
+          placeholder="লেসনের নাম"
+          className="flex-1"
+        />
+        <Input
+          value={lesson.duration}
+          onChange={(e) => onUpdate(moduleIndex, lessonIndex, "duration", e.target.value)}
+          placeholder="00:00"
+          className="w-20"
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={() => onRemove(moduleIndex, lessonIndex)}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+      
+      {/* Video Source Type Selector */}
+      <div className="flex items-center gap-2">
+        <Select
+          value={videoSourceType}
+          onValueChange={(value) => onUpdate(moduleIndex, lessonIndex, "video_source_type", value)}
+        >
+          <SelectTrigger className="w-[160px]">
+            <SelectValue placeholder="ভিডিও সোর্স" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="youtube">
+              <div className="flex items-center gap-2">
+                <Youtube className="h-4 w-4 text-red-500" />
+                YouTube
+              </div>
+            </SelectItem>
+            <SelectItem value="vimeo">
+              <div className="flex items-center gap-2">
+                <Video className="h-4 w-4 text-blue-500" />
+                Vimeo
+              </div>
+            </SelectItem>
+            <SelectItem value="upload">
+              <div className="flex items-center gap-2">
+                <Upload className="h-4 w-4 text-green-500" />
+                আপলোড
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+
+        {videoSourceType === 'upload' ? (
+          <div className="flex-1 flex items-center gap-2">
+            <Input
+              value={lesson.video_url || ""}
+              onChange={(e) => onUpdate(moduleIndex, lessonIndex, "video_url", e.target.value)}
+              placeholder={getVideoPlaceholder()}
+              className="flex-1 text-sm"
+              readOnly={isUploading}
+            />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="video/mp4,video/webm,video/ogg,video/quicktime"
+              className="hidden"
+              onChange={handleFileUpload}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+            >
+              {isUploading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-1" />
+                  আপলোড
+                </>
+              )}
+            </Button>
+          </div>
+        ) : (
+          <div className="flex-1 flex items-center gap-2">
+            {getVideoIcon()}
+            <Input
+              value={lesson.video_url || ""}
+              onChange={(e) => onUpdate(moduleIndex, lessonIndex, "video_url", e.target.value)}
+              placeholder={getVideoPlaceholder()}
+              className="flex-1 text-sm"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Preview toggle */}
+      <div className="flex items-center gap-2">
+        <Switch
+          id={`preview-${moduleIndex}-${lessonIndex}`}
+          checked={lesson.preview || false}
+          onCheckedChange={(checked) => onUpdate(moduleIndex, lessonIndex, "preview", checked)}
+        />
+        <Label htmlFor={`preview-${moduleIndex}-${lessonIndex}`} className="text-sm text-muted-foreground">
+          প্রিভিউ লেসন (ফ্রি)
+        </Label>
+      </div>
+    </div>
+  );
+}
+
 function CourseForm({
   course,
   onSave,
@@ -471,6 +699,7 @@ function CourseForm({
       duration: "00:00",
       preview: false,
       video_url: "",
+      video_source_type: "youtube" as VideoSourceType,
     });
     setFormData({ ...formData, modules: updated });
   };
@@ -769,45 +998,14 @@ function CourseForm({
               </div>
               <div className="space-y-2 ml-4">
                 {module.lessons.map((lesson, lessonIndex) => (
-                  <div
+                  <LessonEditor
                     key={lessonIndex}
-                    className="flex flex-col gap-2 p-3 bg-muted/50 rounded"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Input
-                        value={lesson.name}
-                        onChange={(e) =>
-                          updateLesson(moduleIndex, lessonIndex, "name", e.target.value)
-                        }
-                        placeholder="লেসনের নাম"
-                        className="flex-1"
-                      />
-                      <Input
-                        value={lesson.duration}
-                        onChange={(e) =>
-                          updateLesson(moduleIndex, lessonIndex, "duration", e.target.value)
-                        }
-                        placeholder="00:00"
-                        className="w-20"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeLesson(moduleIndex, lessonIndex)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <Input
-                      value={lesson.video_url || ""}
-                      onChange={(e) =>
-                        updateLesson(moduleIndex, lessonIndex, "video_url", e.target.value)
-                      }
-                      placeholder="YouTube ভিডিও URL (যেমন: https://www.youtube.com/watch?v=...)"
-                      className="text-sm"
-                    />
-                  </div>
+                    lesson={lesson}
+                    moduleIndex={moduleIndex}
+                    lessonIndex={lessonIndex}
+                    onUpdate={updateLesson}
+                    onRemove={removeLesson}
+                  />
                 ))}
                 <Button
                   type="button"
