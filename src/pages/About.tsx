@@ -1,4 +1,5 @@
-import { Youtube } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import TopBanner from "@/components/TopBanner";
 import Footer from "@/components/Footer";
@@ -78,17 +79,12 @@ const About = () => {
           </p>
 
           <div className="text-center">
-            <a
-              href="https://www.youtube.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block"
-            >
+            <Link to="/courses">
               <Button size="lg" className="gradient-purple text-white font-bold text-lg px-8 py-6 hover:opacity-90 transition-all hover:scale-105">
-                <Youtube className="w-6 h-6 mr-2" />
-                YouTube Channel দেখুন
+                <BookOpen className="w-6 h-6 mr-2" />
+                কোর্স দেখুন →
               </Button>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
