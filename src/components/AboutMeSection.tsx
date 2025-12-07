@@ -7,14 +7,15 @@ const AboutMeSection = () => {
     headingHighlight: "কিছু কথা",
     subtitle: "কে, কেন, কিভাবে?",
     
-    bio1: "আমি নূর আল-আমীন একজন প্রথম ডেভেলপার, দীর্ঘদিন ফ্রিল্যান্সিং করছি টপ মার্কেটপ্লেস, যেমন Fiverr আর Upwork এ। এমনকি Upwork এ আমি ছিলাম টপ রেটেড ফ্রিল্যান্সার। এবসসময় যুক্ত ছই একটি আমেরিকান কোম্পানির রিমোট জবের জন্য।",
+    bio1: "আমি নুর আল-আমীন—একজন প্যাশনেট ওয়ার্ডপ্রেস ডিজাইনার, ডিজিটাল স্কিল (আই আউটো মেশন) ইনস্ট্রাক্টর এবং An-Nur Academy-এর প্রতিষ্ঠাতা। গত কয়েক বছর ধরে আমি বিশ্বব্যাপী ক্লায়েন্টদের সাথে কাজ করে বিভিন্ন টেক-বেইজড প্রজেক্ট সফলভাবে সম্পন্ন করেছি। যেখানে আমি শত শত ক্লায়েন্টকে ওয়েব ডিজাইন সার্ভিস দিয়ে সহায়তা করেছি।",
     
-    bio2: "প্রোগ্রামিং আর ওয়েব ডেভেলপমেন্টে খেলা আমার জন্য সবসময়ই এক ধরনের ভালো লাগার বিষয়। আমি সেই ভালো লাগা থেকেই ২০১৯ সালে শুরু করি Procoder BD নামে একটি YouTube চ্যানেল। এখন সেখানে ৬২৬টিরও বেশি ভিডিও রয়েছে, যেখলো লক্ষ লক্ষ লার্নারকে প্রতিদিন সাহায্য করছে।",
+    bio2: "টেকনোলজি শেখার প্রতি আমার আগ্রহ থেকেই আমি নতুন নতুন স্কিল শেখা এবং অন্যদের শেখাতে ভালোবাসি। এজন্যই আমি তৈরি করেছি An-Nur Academy, যেখানে শিক্ষার্থীরা সহজ ভাষায় কোডিং, এআই অটোমেশন, চ্যাটজিপিটি মাস্টারক্লাস সহ আধুনিক স্কিল শিখতে পারবে।",
     
-    name: "নূর আল-আমীন",
-    title: "প্রথম ডেভেলপার, শিক্ষক",
+    bio3: "আপনাদের ভালোবাসাই আমার আনুপ্রেরনা। আর এই অনুপ্রেরণাই আমাকে প্রতিদিন নতুন কিছু শেখা ও শেখানোর শক্তি দেয়।",
+    
+    name: "নুর আল-আমীন",
+    title: "ওয়ার্ডপ্রেস ডিজাইনার, ইনস্ট্রাক্টর",
     role: "Founder & CEO - An-Nur Academy",
-    tradeLicense: "ট্রেড লাইসেন্স: TRAD/DNCC/002347/2025",
   };
 
   return (
@@ -53,6 +54,9 @@ const AboutMeSection = () => {
               <p className="text-base leading-relaxed text-muted-foreground">
                 {content.bio2}
               </p>
+              <p className="text-base leading-relaxed text-muted-foreground">
+                {content.bio3}
+              </p>
               
               {/* Name and Title */}
               <div className="pt-4">
@@ -62,11 +66,8 @@ const AboutMeSection = () => {
                 <p className="text-base font-semibold text-foreground mb-1">
                   {content.title}
                 </p>
-                <p className="text-sm font-medium text-foreground mb-1">
+                <p className="text-sm font-medium text-foreground">
                   {content.role}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {content.tradeLicense}
                 </p>
               </div>
             </div>
