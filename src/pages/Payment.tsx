@@ -390,8 +390,31 @@ const Payment = () => {
                     <ShieldCheck className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm">১০০% সিকিউর পেমেন্ট</p>
+                    <p className="font-medium text-sm"><span className="font-mono">100%</span> সিকিউর পেমেন্ট</p>
                     <p className="text-xs text-muted-foreground">আপনার তথ্য সম্পূর্ণ নিরাপদ</p>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Payment FAQ */}
+              <Card className="p-4">
+                <h3 className="font-semibold text-sm mb-3">সচরাচর জিজ্ঞাসা</h3>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <p className="font-medium text-foreground">পেমেন্ট কতক্ষণে ভেরিফাই হয়?</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">সাধারণত ১-২ ঘন্টার মধ্যে ভেরিফাই করা হয়।</p>
+                  </div>
+                  <div className="border-t pt-3">
+                    <p className="font-medium text-foreground">ভুল Transaction ID দিলে কী হবে?</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">আমাদের সাপোর্টে যোগাযোগ করুন, আমরা সমাধান করব।</p>
+                  </div>
+                  <div className="border-t pt-3">
+                    <p className="font-medium text-foreground">রিফান্ড পলিসি কী?</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">কোর্স শুরুর ৭ দিনের মধ্যে রিফান্ড পাবেন।</p>
+                  </div>
+                  <div className="border-t pt-3">
+                    <p className="font-medium text-foreground">কোর্স অ্যাক্সেস কতদিন থাকবে?</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">লাইফটাইম অ্যাক্সেস পাবেন।</p>
                   </div>
                 </div>
               </Card>
