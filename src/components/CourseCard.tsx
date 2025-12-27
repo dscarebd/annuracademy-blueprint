@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useCart } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { toBanglaNumber, formatBanglaPrice } from "@/lib/utils";
 
 interface CourseCardProps {
   id: string;
@@ -88,8 +89,8 @@ const CourseCard = ({
               />
             ))}
           </div>
-          <span className="text-sm font-semibold">{rating}</span>
-          <span className="text-sm text-muted-foreground">({reviewCount})</span>
+          <span className="text-sm font-semibold">{toBanglaNumber(rating.toFixed(1))}</span>
+          <span className="text-sm text-muted-foreground">({toBanglaNumber(reviewCount)})</span>
         </div>
 
         {/* Title */}
@@ -99,7 +100,7 @@ const CourseCard = ({
 
         {/* Students & Duration */}
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span>{studentsCount} শিক্ষার্থী</span>
+          <span>{toBanglaNumber(studentsCount)} শিক্ষার্থী</span>
           {duration && (
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
@@ -111,9 +112,9 @@ const CourseCard = ({
         {/* Price & Button */}
         <div className="flex items-center justify-between pt-3 border-t">
           {isFree ? (
-            <span className="text-primary font-bold text-lg">Free</span>
+            <span className="text-primary font-bold text-lg">ফ্রি</span>
           ) : (
-            <span className="text-primary font-bold text-lg">{price.toLocaleString()}৳</span>
+            <span className="text-primary font-bold text-lg">{formatBanglaPrice(price)}</span>
           )}
           {isFree ? (
             <Button
