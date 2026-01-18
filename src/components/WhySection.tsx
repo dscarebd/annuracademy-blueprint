@@ -9,7 +9,7 @@ const WhySection = () => {
     "why_description"
   ]);
 
-  const leftHeading = getContentValue(content, "why_left_heading", "লাখ টাকা আয়ের স্বপ্নে বিভোর না হয়ে\nস্কিল ডেভেলপ করে নিজের স্বপ্ন সত্যি করুন");
+  const leftHeading = getContentValue(content, "why_left_heading", "লাখ টাকা আয়ের স্বপ্নে বিভোর না হয়ে, স্কিল ডেভেলপ করে নিজের স্বপ্ন সত্যি করুন");
   const rightHeading = getContentValue(content, "why_right_heading", "কেন?");
   const brandName = getContentValue(content, "why_brand_name", "An-Nur");
   const brandTagline = getContentValue(content, "why_brand_tagline", "ACADEMY");
