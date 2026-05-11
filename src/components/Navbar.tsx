@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, Facebook, Youtube, Send, Mail, GraduationCap, User, Settings, LogOut, ShoppingBag, ChevronDown } from "lucide-react";
 import CartSidebar from "@/components/CartSidebar";
+import logo from "@/assets/logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
