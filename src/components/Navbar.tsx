@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, Facebook, Youtube, Send, Mail, GraduationCap, User, Settings, LogOut, ShoppingBag, ChevronDown } from "lucide-react";
 import CartSidebar from "@/components/CartSidebar";
-import logo from "@/assets/logo.png";
+import BrandLogo from "@/components/BrandLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -67,7 +67,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
-            <img src={logo} alt="An-Nur Academy - Bangladesh's AI Learning Platform" className="h-9 md:h-11 w-auto" />
+            <BrandLogo variant="header" />
           </Link>
 
           {/* Desktop Navigation Links */}
