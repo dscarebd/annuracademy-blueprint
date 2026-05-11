@@ -105,7 +105,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Hind Siliguri', system-ui, -apple-system, sans-serif;
+    font-family: 'Anek Bangla', system-ui, -apple-system, sans-serif;
   }
 }
 
