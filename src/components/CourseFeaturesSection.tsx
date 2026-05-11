@@ -1,22 +1,37 @@
 import { Card } from "@/components/ui/card";
-import { PenTool, BarChart3, Award } from "lucide-react";
+import { Brain, TrendingUp, Briefcase, Clock, Globe, Sparkles } from "lucide-react";
 
 const CourseFeaturesSection = () => {
   const features = [
     {
-      icon: PenTool,
-      title: "প্রোজেক্ট ভিত্তিক স্টাডি",
-      description: "শুধু থিওরি নয়, প্রতিটি কোর্সে রয়েছে বাস্তব প্রোজেক্ট। হাতে-কলমে কাজ করে শিখুন এবং নিজের পোর্টফোলিও তৈরি করুন যা আপনাকে চাকরি বা ফ্রিল্যান্সিংয়ে এগিয়ে রাখবে।",
+      icon: Brain,
+      title: "ভবিষ্যতের স্কিল",
+      description: "AI আজকের সবচেয়ে demanding skill! এখনই শুরু করলে আপনি early adopter হিসেবে এগিয়ে থাকবেন।",
     },
     {
-      icon: BarChart3,
-      title: "নিয়মিত মেথডস মাস্টারিং",
-      description: "প্রতিটি বিষয় ধাপে ধাপে শেখানো হয় যাতে আপনি সহজেই বুঝতে পারেন। নিয়মিত প্র্যাকটিস এবং রিভিশনের মাধ্যমে দক্ষতা অর্জন করুন এবং নিজের গতিতে এগিয়ে যান।",
+      icon: TrendingUp,
+      title: "ক্যারিয়ার গ্রোথ",
+      description: "AI জানা professional-দের salary ও opportunity অন্যদের তুলনায় অনেক বেশি।",
     },
     {
-      icon: Award,
-      title: "শিখুন মার্কেট এক্সপার্ট থেকে",
-      description: "অভিজ্ঞ ইনস্ট্রাক্টরদের কাছ থেকে শিখুন যারা বাস্তব মার্কেটে কাজ করেছেন। তাদের অভিজ্ঞতা এবং টিপস থেকে শিখে নিজেকে প্রফেশনাল হিসেবে গড়ে তুলুন।",
+      icon: Briefcase,
+      title: "নতুন ব্যবসার সুযোগ",
+      description: "AI দিয়ে কম খরচে ও দ্রুত নিজের startup, agency বা freelancing business দাঁড় করানো যায়।",
+    },
+    {
+      icon: Clock,
+      title: "১০x দ্রুত কাজ",
+      description: "যে কাজ আগে দিনে হতো, AI দিয়ে তা ঘণ্টায় শেষ — productivity বহুগুণ বাড়ান।",
+    },
+    {
+      icon: Globe,
+      title: "গ্লোবাল মার্কেটে এন্ট্রি",
+      description: "AI tools দিয়ে international client ও marketplace-এ সহজে কাজ করার সুযোগ পাবেন।",
+    },
+    {
+      icon: Sparkles,
+      title: "সৃজনশীলতা বৃদ্ধি",
+      description: "AI আপনার creativity-কে boost দেয় — content, design, code সব কিছুতে নতুন মাত্রা যোগ করে।",
     },
   ];
 
@@ -25,11 +40,15 @@ const CourseFeaturesSection = () => {
       <div className="container mx-auto px-4">
         {/* Section Heading */}
         <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-primary text-sm font-semibold mb-4">
+            <Brain className="w-4 h-4" />
+            AI যুগ
+          </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            কোর্সে কি <span className="text-gradient">কি পাবেন?</span>
+            কেন আপনার <span className="text-gradient">AI শেখা দরকার?</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            দেখে নিন কি কি ব্যাকড্রস প্যাকেজে কোর্সের জন্য কনবে
+            পৃথিবী দ্রুত বদলাচ্ছে — যারা AI জানে, তারাই সামনে এগিয়ে থাকবে
           </p>
         </div>
 
