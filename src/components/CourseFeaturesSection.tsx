@@ -53,21 +53,21 @@ const CourseFeaturesSection = () => {
         </div>
 
         {/* Feature Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-5xl mx-auto">
           {features.map((feature, index) => (
             <Card
               key={index}
-              className="p-8 text-center hover:shadow-xl transition-all duration-300 bg-white"
+              className="p-5 text-center hover:shadow-lg transition-all duration-300 bg-white"
             >
               {/* Icon with 2 Layers */}
-              <div className="mx-auto mb-6 w-36 h-36 rounded-full border-4 border-dashed border-primary/40 flex items-center justify-center">
-                <div className="w-28 h-28 rounded-full bg-purple-100 flex items-center justify-center">
-                  <feature.icon className="w-12 h-12 text-primary" strokeWidth={2} />
+              <div className="mx-auto mb-4 w-20 h-20 rounded-full border-2 border-dashed border-primary/40 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center">
+                  <feature.icon className="w-6 h-6 text-primary" strokeWidth={2} />
                 </div>
               </div>
 
               {/* Title */}
-              <h3 className="text-xl font-bold mb-4">{feature.title}</h3>
+              <h3 className="text-base font-bold mb-2">{feature.title}</h3>
 
               {/* Description */}
               <p className="text-sm leading-relaxed text-muted-foreground">
