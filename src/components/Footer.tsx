@@ -2,6 +2,7 @@ import { Facebook, Youtube, Send, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCourses } from "@/hooks/useCourses";
 import { useSiteContentMultiple, getContentValue } from "@/hooks/useSiteContent";
+import logo from "@/assets/logo.png";
 
 const Footer = () => {
   const { data: courses } = useCourses();
