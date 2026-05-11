@@ -1,0 +1,1 @@
+UPDATE public.site_content SET value = 'লাখ টাকা আয়ের স্বপ্নে বিভোর না হয়ে, স্কিল ডেভেলপ করে নিজের স্বপ্ন সত্যি করুন।' WHERE content_key = 'why_left_heading';
