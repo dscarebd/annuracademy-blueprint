@@ -47,21 +47,9 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="space-y-6">
             {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <div className="w-10 h-10 rounded-full border-2 border-primary border-dashed flex items-center justify-center">
-                  <div className="w-6 h-6 rounded-full bg-primary"></div>
-                </div>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-foreground">
-                  An-Nur Academy
-                </span>
-                <span className="text-xs text-primary font-bold uppercase tracking-wider">
-                  All in one from ai
-                </span>
-              </div>
-            </div>
+            <Link to="/" className="inline-flex items-center hover:opacity-80 transition-opacity">
+              <img src={logo} alt="An-Nur Academy - Bangladesh's AI Learning Platform" className="h-12 w-auto" />
+            </Link>
 
             {/* Description */}
             <p className="text-sm text-muted-foreground leading-relaxed">
