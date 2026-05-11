@@ -40,10 +40,6 @@ const CourseFeaturesSection = () => {
       <div className="container mx-auto px-4">
         {/* Section Heading */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-primary text-sm font-semibold mb-4">
-            <Brain className="w-4 h-4" />
-            AI যুগ
-          </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
             কেন আপনার <span className="text-gradient">AI শেখা দরকার?</span>
           </h2>
