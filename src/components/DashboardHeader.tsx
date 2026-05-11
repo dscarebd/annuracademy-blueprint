@@ -33,14 +33,8 @@ const DashboardHeader = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">
-              A
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-bold text-foreground">An-Nur</span>
-              <span className="text-[10px] text-primary font-semibold -mt-1">ACADEMY</span>
-            </div>
+          <Link to="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <img src={logo} alt="An-Nur Academy" className="h-10 w-auto" />
           </Link>
 
           {/* Desktop Navigation */}
