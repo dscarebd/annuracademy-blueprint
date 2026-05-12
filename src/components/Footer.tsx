@@ -34,9 +34,9 @@ const Footer = () => {
   ];
 
   const socialLinks = {
-    facebook: "https://facebook.com/annuracademy",
+    facebook: "https://www.facebook.com/annuracademy.net",
     telegram: "https://t.me/annuracademy",
-    youtube: "https://youtube.com/@annuracademy",
+    youtube: "https://www.youtube.com/annuracademy",
     email: "mailto:support@annuracademy.com"
   };
 
