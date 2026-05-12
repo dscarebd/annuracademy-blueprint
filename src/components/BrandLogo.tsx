@@ -34,7 +34,7 @@ const BrandLogo = ({ variant = "header", className }: BrandLogoProps) => {
             "text-muted-foreground font-light tracking-wide whitespace-nowrap mt-0.5",
             isFooter
               ? "text-[11px] md:text-xs"
-              : "hidden lg:block text-[11px]"
+              : "text-[9px] sm:text-[10px] md:text-[11px]"
           )}
         >
           Bangladesh's AI Learning Platform
