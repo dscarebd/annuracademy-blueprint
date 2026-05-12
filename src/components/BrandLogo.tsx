@@ -19,11 +19,11 @@ const BrandLogo = ({ variant = "header", className }: BrandLogoProps) => {
           isFooter ? "h-11 md:h-12" : "h-8 md:h-9 lg:h-10"
         )}
       />
-      <span className="flex flex-col">
+      <span className="flex flex-col items-start text-left leading-none">
         <span
           className={cn(
             "font-bold tracking-tight leading-none whitespace-nowrap",
-            isFooter ? "text-xl md:text-2xl" : "text-base md:text-lg lg:text-xl"
+            isFooter ? "text-xl md:text-2xl" : "text-lg md:text-lg lg:text-xl"
           )}
         >
           <span className="text-foreground">An-Nur</span>{" "}
@@ -31,10 +31,10 @@ const BrandLogo = ({ variant = "header", className }: BrandLogoProps) => {
         </span>
         <span
           className={cn(
-            "text-muted-foreground font-light tracking-wide whitespace-nowrap mt-0.5",
+            "text-muted-foreground font-light tracking-wide whitespace-nowrap leading-none mt-1",
             isFooter
               ? "text-[11px] md:text-xs"
-              : "text-[9px] sm:text-[10px] md:text-[11px]"
+              : "text-[10px] md:text-[10px] lg:text-[11px]"
           )}
         >
           Bangladesh's AI Learning Platform
