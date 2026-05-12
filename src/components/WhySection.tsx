@@ -1,4 +1,5 @@
 import { useSiteContentMultiple, getContentValue } from "@/hooks/useSiteContent";
+import BrandLogo from "@/components/BrandLogo";
 
 const WhySection = () => {
   const { data: content } = useSiteContentMultiple([
@@ -29,15 +30,7 @@ const WhySection = () => {
           {/* Right Card */}
           <div className="bg-card border border-border rounded-2xl p-8 space-y-4">
             <h3 className="text-3xl font-bold text-foreground">{rightHeading}</h3>
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                A
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-xl font-bold text-foreground">{brandName}</span>
-                <span className="text-xs text-primary font-semibold">{brandTagline}</span>
-              </div>
-            </div>
+            <BrandLogo variant="footer" />
             <p className="text-base leading-relaxed text-muted-foreground">
               {description}
             </p>
