@@ -16,7 +16,7 @@ const BrandLogo = ({ variant = "header", className }: BrandLogoProps) => {
         alt="An-Nur Academy"
         className={cn(
           "w-auto object-contain shrink-0",
-          isFooter ? "h-11 md:h-12" : "h-8 md:h-9 lg:h-10"
+          isFooter ? "h-11 md:h-12" : "h-11 md:h-9 lg:h-10"
         )}
       />
       <span className="flex flex-col items-start text-left leading-none">
