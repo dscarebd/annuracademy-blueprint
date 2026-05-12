@@ -20,7 +20,7 @@ const Hero = ({
   imageUrl,
 }: HeroProps) => {
   return (
-    <section className="bg-gradient-to-br from-gray-50 to-white py-16 md:py-24">
+    <section className="bg-gradient-to-br from-gray-50 to-white pt-6 pb-12 md:py-24">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
