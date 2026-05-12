@@ -35,34 +35,16 @@ export function useAdminCoupons() {
 export function useValidateCoupon() {
   return useMutation({
     mutationFn: async ({ code, orderAmount }: { code: string; orderAmount: number }) => {
-      const { data, error } = await supabase
-        .from("coupons")
-        .select("*")
-        .eq("code", code.toUpperCase())
-        .eq("is_active", true)
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("validate_coupon", {
+        _code: code.toUpperCase(),
+        _order_amount: orderAmount,
+      });
 
-      if (error) throw error;
-      if (!data) throw new Error("কুপন কোড সঠিক নয়");
+      if (error) throw new Error(error.message || "কুপন কোড সঠিক নয়");
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row) throw new Error("কুপন কোড সঠিক নয়");
 
-      const coupon = data as Coupon;
-
-      // Check expiry
-      if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
-        throw new Error("কুপনের মেয়াদ শেষ হয়ে গেছে");
-      }
-
-      // Check usage limit
-      if (coupon.max_uses && (coupon.used_count || 0) >= coupon.max_uses) {
-        throw new Error("কুপনের ব্যবহার সীমা শেষ");
-      }
-
-      // Check minimum order amount
-      if (coupon.min_order_amount && orderAmount < coupon.min_order_amount) {
-        throw new Error(`সর্বনিম্ন অর্ডার ${coupon.min_order_amount}৳ হতে হবে`);
-      }
-
-      return coupon;
+      return row as unknown as Coupon;
     },
   });
 }
@@ -132,19 +114,7 @@ export function useIncrementCouponUsage() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { data: coupon, error: fetchError } = await supabase
-        .from("coupons")
-        .select("used_count")
-        .eq("id", id)
-        .single();
-
-      if (fetchError) throw fetchError;
-
-      const { error } = await supabase
-        .from("coupons")
-        .update({ used_count: (coupon.used_count || 0) + 1 })
-        .eq("id", id);
-
+      const { error } = await supabase.rpc("increment_coupon_usage", { _coupon_id: id });
       if (error) throw error;
     },
     onSuccess: () => {
