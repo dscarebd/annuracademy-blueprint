@@ -14,7 +14,7 @@ const AboutMeSection = () => {
     
     
     name: "নুর আল-আমীন",
-    title: "ওয়ার্ডপ্রেস ডিজাইনার, ইনস্ট্রাক্টর",
+    title: "ফাউন্ডার ও লিড ইন্সট্রাক্টর",
     role: "Founder & CEO - An-Nur Academy",
   };
 
