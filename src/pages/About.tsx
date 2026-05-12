@@ -65,7 +65,7 @@ const About = () => {
               <div className="bg-primary/5 rounded-xl p-6 border-l-4 border-primary">
                 <h3 className="text-2xl font-bold text-primary mb-2">{founderName}</h3>
                 <p className="text-muted-foreground mb-1 font-semibold">{founderTitle}</p>
-                <p className="text-sm text-foreground font-medium">ফাউন্ডার ও লিড ইন্সট্রাক্টর</p>
+                <p className="text-sm text-foreground font-medium">Founder & CEO - An-Nur Academy</p>
               </div>
             </div>
           </div>
