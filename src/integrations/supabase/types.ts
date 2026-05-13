@@ -27,6 +27,7 @@ export type Database = {
           is_published: boolean | null
           link: string | null
           published_at: string | null
+          scheduled_at: string | null
           slug: string | null
           title: string
           updated_at: string
@@ -43,6 +44,7 @@ export type Database = {
           is_published?: boolean | null
           link?: string | null
           published_at?: string | null
+          scheduled_at?: string | null
           slug?: string | null
           title: string
           updated_at?: string
@@ -59,6 +61,7 @@ export type Database = {
           is_published?: boolean | null
           link?: string | null
           published_at?: string | null
+          scheduled_at?: string | null
           slug?: string | null
           title?: string
           updated_at?: string
@@ -676,6 +679,7 @@ export type Database = {
         Args: { _coupon_id: string }
         Returns: undefined
       }
+      publish_scheduled_blogs: { Args: never; Returns: undefined }
       validate_coupon: {
         Args: { _code: string; _order_amount: number }
         Returns: {
