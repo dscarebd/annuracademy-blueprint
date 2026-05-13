@@ -40,8 +40,9 @@ const Courses = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {courses?.map((course) => (
-                  <Link key={course.id} to={`/courses/${course.slug}`}>
+                {courses?.map((course) => {
+                  const published = course.is_published !== false;
+                  const card = (
                     <CourseCard
                       id={course.id}
                       title={course.title}
@@ -55,10 +56,15 @@ const Courses = () => {
                       isFree={course.is_free || false}
                       studentsCount={course.students_count || 0}
                       duration={course.duration || undefined}
-                      isPublished={course.is_published !== false}
+                      isPublished={published}
                     />
-                  </Link>
-                ))}
+                  );
+                  return published ? (
+                    <Link key={course.id} to={`/courses/${course.slug}`}>{card}</Link>
+                  ) : (
+                    <div key={course.id} className="cursor-not-allowed">{card}</div>
+                  );
+                })}
               </div>
             )}
           </div>
