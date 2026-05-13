@@ -519,6 +519,49 @@ function BlogForm({
 
 function PublishHistoryPanel() {
   const { data: logs, isLoading, error } = usePublishLog();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [running, setRunning] = useState(false);
+
+  const handleRunNow = async () => {
+    setRunning(true);
+    try {
+      const { data, error } = await (supabase as any).rpc(
+        "run_publish_scheduled_blogs_now"
+      );
+      if (error) throw error;
+      const count = typeof data === "number" ? data : 0;
+      toast({
+        title: "সফল!",
+        description:
+          count > 0
+            ? `${count}টি শিডিউলড পোস্ট এখনই পাবলিশ করা হয়েছে`
+            : "পাবলিশ করার মতো কোনো শিডিউলড পোস্ট ছিল না",
+      });
+      queryClient.invalidateQueries({ queryKey: ["blog-publish-log"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    } catch (e: any) {
+      toast({
+        title: "ত্রুটি!",
+        description: e?.message || "ম্যানুয়াল ট্রিগার ব্যর্থ হয়েছে",
+        variant: "destructive",
+      });
+    } finally {
+      setRunning(false);
+    }
+  };
+
+  const RunNowButton = (
+    <Button onClick={handleRunNow} disabled={running} size="sm">
+      {running ? (
+        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+      ) : (
+        <Play className="h-4 w-4 mr-2" />
+      )}
+      এখনই Run করুন
+    </Button>
+  );
 
   if (isLoading) {
     return (
@@ -530,19 +573,29 @@ function PublishHistoryPanel() {
 
   if (error) {
     return (
-      <div className="text-center py-12 text-destructive">
-        হিস্ট্রি লোড করতে সমস্যা হয়েছে
+      <div className="space-y-4">
+        <div className="flex justify-end">{RunNowButton}</div>
+        <div className="text-center py-12 text-destructive">
+          হিস্ট্রি লোড করতে সমস্যা হয়েছে
+        </div>
       </div>
     );
   }
 
-  if (!logs || logs.length === 0) {
-    return (
-      <Card className="p-8 text-center text-muted-foreground">
-        এখনো কোনো শিডিউলড পোস্ট অটো-পাবলিশ হয়নি।
-      </Card>
-    );
-  }
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          সকল শিডিউলড পোস্ট সময় না হলেও এখনই পাবলিশ করতে চাইলে নিচের বাটনে ক্লিক করুন।
+        </p>
+        {RunNowButton}
+      </div>
+
+      {!logs || logs.length === 0 ? (
+        <Card className="p-8 text-center text-muted-foreground">
+          এখনো কোনো শিডিউলড পোস্ট অটো-পাবলিশ হয়নি।
+        </Card>
+      ) : (
 
   return (
     <Card className="overflow-hidden">
