@@ -68,6 +68,13 @@ const CourseCard = ({
           alt={title}
           className="w-full h-full object-cover"
         />
+        {!isPublished && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <span className="px-3 py-1 bg-white/90 text-foreground font-bold rounded-full text-sm">
+              Upcoming
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Content */}
