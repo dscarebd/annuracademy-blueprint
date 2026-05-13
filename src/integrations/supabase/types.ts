@@ -710,6 +710,7 @@ export type Database = {
         Returns: undefined
       }
       publish_scheduled_blogs: { Args: never; Returns: undefined }
+      run_publish_scheduled_blogs_now: { Args: never; Returns: number }
       validate_coupon: {
         Args: { _code: string; _order_amount: number }
         Returns: {
