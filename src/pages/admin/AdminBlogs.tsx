@@ -48,6 +48,7 @@ interface BlogFormData {
   link: string;
   is_published: boolean;
   published_at: string;
+  scheduled_at: string | null;
 }
 
 const emptyFormData: BlogFormData = {
@@ -62,6 +63,7 @@ const emptyFormData: BlogFormData = {
   link: "",
   is_published: true,
   published_at: format(new Date(), "yyyy-MM-dd"),
+  scheduled_at: null,
 };
 
 export default function AdminBlogs() {
