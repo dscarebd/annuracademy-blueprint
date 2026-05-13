@@ -23,10 +23,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Edit, Trash2, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { Plus, Edit, Trash2, Loader2, History } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   useAdminBlogs,
   useCreateBlog,
@@ -35,6 +38,31 @@ import {
   Blog,
   BlogInsert,
 } from "@/hooks/useBlogs";
+
+interface PublishLogEntry {
+  id: string;
+  blog_id: string | null;
+  blog_title: string;
+  blog_slug: string | null;
+  scheduled_at: string | null;
+  published_at: string;
+}
+
+function usePublishLog() {
+  return useQuery({
+    queryKey: ["blog-publish-log"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("blog_publish_log")
+        .select("*")
+        .order("published_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return (data ?? []) as PublishLogEntry[];
+    },
+    refetchInterval: 60_000,
+  });
+}
 
 interface BlogFormData {
   title: string;
