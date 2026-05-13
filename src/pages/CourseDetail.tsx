@@ -244,6 +244,8 @@ const CourseDetail = () => {
     );
   }
 
+  const isUpcoming = course.is_published === false;
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <TopBanner />
@@ -270,13 +272,14 @@ const CourseDetail = () => {
                 {course.description}
               </p>
               
-              {/* Rating */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex">{renderStars(course.rating || 0)}</div>
-                <span className="text-sm text-muted-foreground">
-                  {(course.rating || 0).toFixed(1)} ({course.review_count || 0} রিভিউ)
-                </span>
-              </div>
+              {!isUpcoming && (
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex">{renderStars(course.rating || 0)}</div>
+                  <span className="text-sm text-muted-foreground">
+                    {(course.rating || 0).toFixed(1)} ({course.review_count || 0} রিভিউ)
+                  </span>
+                </div>
+              )}
 
               {/* Stats */}
               <div className="flex flex-wrap gap-4 mb-4">
@@ -288,7 +291,7 @@ const CourseDetail = () => {
                   <BookOpen className="w-5 h-5" />
                   <span>{totalLessons} লেসন</span>
                 </div>
-                {totalDuration && (
+                {!isUpcoming && totalDuration && (
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Clock className="w-5 h-5" />
                     <span>{totalDuration}</span>
@@ -463,16 +466,18 @@ const CourseDetail = () => {
                     <p className="text-sm text-muted-foreground mb-4">
                       {course.instructor_subtitle || `${course.category} এক্সপার্ট`}
                     </p>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span>{course.rating || 4.9} রেটিং</span>
+                    {!isUpcoming && (
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                          <span>{course.rating || 4.9} রেটিং</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="w-4 h-4" />
+                          <span>{course.students_count || 5000}+ শিক্ষার্থী</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        <span>{course.students_count || 5000}+ শিক্ষার্থী</span>
-                      </div>
-                    </div>
+                    )}
                     <p className="text-sm text-muted-foreground">
                       {course.instructor_description || "দীর্ঘ অভিজ্ঞতা সম্পন্ন পেশাদার ইন্সট্রাক্টর। শত শত শিক্ষার্থীকে সফলভাবে ট্রেনিং দিয়েছেন এবং তাদের ক্যারিয়ার গড়তে সাহায্য করেছেন।"}
                     </p>
@@ -650,16 +655,18 @@ const CourseDetail = () => {
                         <p className="text-sm text-muted-foreground mb-4">
                           {course.instructor_subtitle || `${course.category} এক্সপার্ট`}
                         </p>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-                          <div className="flex items-center gap-1">
-                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                            <span>{course.rating || 4.9} রেটিং</span>
+                        {!isUpcoming && (
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                            <div className="flex items-center gap-1">
+                              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                              <span>{course.rating || 4.9} রেটিং</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Users className="w-4 h-4" />
+                              <span>{course.students_count || 5000}+ শিক্ষার্থী</span>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-1">
-                            <Users className="w-4 h-4" />
-                            <span>{course.students_count || 5000}+ শিক্ষার্থী</span>
-                          </div>
-                        </div>
+                        )}
                         <p className="text-sm text-muted-foreground">
                           {course.instructor_description || "দীর্ঘ অভিজ্ঞতা সম্পন্ন পেশাদার ইন্সট্রাক্টর। শত শত শিক্ষার্থীকে সফলভাবে ট্রেনিং দিয়েছেন এবং তাদের ক্যারিয়ার গড়তে সাহায্য করেছেন।"}
                         </p>
