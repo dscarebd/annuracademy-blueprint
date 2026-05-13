@@ -54,7 +54,7 @@ const renderSection = (section: PageSection, courses: any[] | undefined, isCours
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {courses?.map((course) => (
+                {courses?.filter(c => c.is_published !== false).map((course) => (
                   <CourseCard
                     key={course.id}
                     id={course.id}
@@ -69,6 +69,7 @@ const renderSection = (section: PageSection, courses: any[] | undefined, isCours
                     isFree={course.is_free || false}
                     studentsCount={course.students_count || 0}
                     duration={course.duration || ""}
+                    isPublished={true}
                   />
                 ))}
               </div>
