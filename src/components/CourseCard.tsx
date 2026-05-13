@@ -34,6 +34,7 @@ const CourseCard = ({
   isFree = false,
   studentsCount = 0,
   duration,
+  isPublished = true,
 }: CourseCardProps) => {
   const { addToCart, isInCart } = useCart();
   const { toast } = useToast();
