@@ -205,64 +205,80 @@ export default function AdminBlogs() {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogs?.map((blog) => (
-            <Card key={blog.id} className="overflow-hidden">
-              <img
-                src={blog.image_url || ''}
-                alt={blog.title}
-                className="w-full h-40 object-cover"
-              />
-              <div className="p-4 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs text-white px-2 py-1 rounded ${blog.category_color || 'bg-blue-500'}`}>
-                    {blog.category}
-                  </span>
-                  {blog.scheduled_at && !blog.is_published ? (
-                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                      শিডিউলড: {format(new Date(blog.scheduled_at), "dd/MM/yyyy HH:mm")}
-                    </span>
-                  ) : !blog.is_published ? (
-                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                      Draft
-                    </span>
-                  ) : null}
-                </div>
-                <h3 className="font-semibold line-clamp-2">{blog.title}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {blog.excerpt}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">
-                    {blog.published_at 
-                      ? format(new Date(blog.published_at), "dd/MM/yyyy")
-                      : ""}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => {
-                        setEditingBlog(blog);
-                        setIsDialogOpen(true);
-                      }}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="text-destructive"
-                      onClick={() => setDeleteId(blog.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+        <Tabs defaultValue="posts" className="w-full">
+          <TabsList>
+            <TabsTrigger value="posts">পোস্টসমূহ</TabsTrigger>
+            <TabsTrigger value="history">
+              <History className="h-4 w-4 mr-1" />
+              অটো-পাবলিশ হিস্ট্রি
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="posts" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {blogs?.map((blog) => (
+                <Card key={blog.id} className="overflow-hidden">
+                  <img
+                    src={blog.image_url || ''}
+                    alt={blog.title}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs text-white px-2 py-1 rounded ${blog.category_color || 'bg-blue-500'}`}>
+                        {blog.category}
+                      </span>
+                      {blog.scheduled_at && !blog.is_published ? (
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          শিডিউলড: {format(new Date(blog.scheduled_at), "dd/MM/yyyy HH:mm")}
+                        </span>
+                      ) : !blog.is_published ? (
+                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                          Draft
+                        </span>
+                      ) : null}
+                    </div>
+                    <h3 className="font-semibold line-clamp-2">{blog.title}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {blog.excerpt}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">
+                        {blog.published_at
+                          ? format(new Date(blog.published_at), "dd/MM/yyyy")
+                          : ""}
+                      </span>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            setEditingBlog(blog);
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="text-destructive"
+                          onClick={() => setDeleteId(blog.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="history" className="mt-6">
+            <PublishHistoryPanel />
+          </TabsContent>
+        </Tabs>
       </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
