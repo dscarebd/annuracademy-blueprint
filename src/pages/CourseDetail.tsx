@@ -551,17 +551,27 @@ const CourseDetail = () => {
                     />
                     <div className="p-6">
                       <div className="flex items-baseline gap-3 mb-6">
-                        <span className="text-3xl font-bold text-foreground">
-                          {course.is_free ? "ফ্রি" : `৳${course.price.toLocaleString()}`}
-                        </span>
-                        {course.original_price && (
-                          <span className="text-lg text-muted-foreground line-through">
-                            ৳{course.original_price.toLocaleString()}
-                          </span>
+                        {course.is_published === false ? (
+                          <span className="text-3xl font-bold text-muted-foreground">Upcoming</span>
+                        ) : (
+                          <>
+                            <span className="text-3xl font-bold text-foreground">
+                              {course.is_free ? "ফ্রি" : `৳${course.price.toLocaleString()}`}
+                            </span>
+                            {course.original_price && (
+                              <span className="text-lg text-muted-foreground line-through">
+                                ৳{course.original_price.toLocaleString()}
+                              </span>
+                            )}
+                          </>
                         )}
                       </div>
                       
-                      {course.is_free ? (
+                      {course.is_published === false ? (
+                        <Button className="w-full" size="lg" disabled>
+                          শীঘ্রই আসছে
+                        </Button>
+                      ) : course.is_free ? (
                         <Button className="w-full" size="lg">
                           ফ্রি এনরোল করুন
                         </Button>
