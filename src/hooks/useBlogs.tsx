@@ -15,6 +15,7 @@ export interface Blog {
   link: string | null;
   is_published: boolean | null;
   published_at: string | null;
+  scheduled_at: string | null;
   created_at: string;
   updated_at: string;
 }
