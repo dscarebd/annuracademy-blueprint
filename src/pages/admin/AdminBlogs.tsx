@@ -347,14 +347,68 @@ function BlogForm({
     : "published";
   const [status, setStatus] = useState<"published" | "scheduled" | "draft">(initialStatus);
 
-  // Convert ISO to "YYYY-MM-DDTHH:mm" for datetime-local input
-  const toLocalInput = (iso: string | null) => {
+  // Common timezones for scheduling
+  const TIMEZONES = [
+    "Asia/Dhaka",
+    "Asia/Kolkata",
+    "Asia/Karachi",
+    "Asia/Dubai",
+    "Asia/Riyadh",
+    "Europe/London",
+    "Europe/Berlin",
+    "America/New_York",
+    "America/Los_Angeles",
+    "UTC",
+  ];
+  const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const defaultTz = TIMEZONES.includes(browserTz) ? browserTz : "Asia/Dhaka";
+
+  const [timezone, setTimezone] = useState<string>(defaultTz);
+
+  // Convert ISO UTC -> "YYYY-MM-DDTHH:mm" wall-clock in given tz
+  const isoToZonedInput = (iso: string | null, tz: string) => {
     if (!iso) return "";
-    const d = new Date(iso);
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).formatToParts(new Date(iso));
+    const get = (t: string) => parts.find((p) => p.type === t)!.value;
+    const h = get("hour") === "24" ? "00" : get("hour");
+    return `${get("year")}-${get("month")}-${get("day")}T${h}:${get("minute")}`;
   };
-  const [scheduleLocal, setScheduleLocal] = useState<string>(toLocalInput(blog?.scheduled_at ?? null));
+
+  // Convert "YYYY-MM-DDTHH:mm" wall-clock in tz -> UTC ISO
+  const zonedInputToIso = (local: string, tz: string): string => {
+    const [date, time] = local.split("T");
+    const [y, mo, d] = date.split("-").map(Number);
+    const [h, mi] = time.split(":").map(Number);
+    const utcGuess = Date.UTC(y, mo - 1, d, h, mi);
+    const dtf = new Intl.DateTimeFormat("en-US", {
+      timeZone: tz,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    const parts = dtf.formatToParts(new Date(utcGuess));
+    const get = (t: string) => Number(parts.find((p) => p.type === t)!.value);
+    const hour = get("hour") === 24 ? 0 : get("hour");
+    const asTzMs = Date.UTC(get("year"), get("month") - 1, get("day"), hour, get("minute"), get("second"));
+    const offset = asTzMs - utcGuess;
+    return new Date(utcGuess - offset).toISOString();
+  };
+
+  const [scheduleLocal, setScheduleLocal] = useState<string>(
+    isoToZonedInput(blog?.scheduled_at ?? null, defaultTz)
+  );
 
   const handleSubmit = () => {
     let payload: BlogFormData = { ...formData };
@@ -370,7 +424,7 @@ function BlogForm({
         alert("শিডিউল করার জন্য তারিখ ও সময় নির্বাচন করুন");
         return;
       }
-      const iso = new Date(scheduleLocal).toISOString();
+      const iso = zonedInputToIso(scheduleLocal, timezone);
       if (new Date(iso).getTime() <= Date.now()) {
         alert("শিডিউলের সময় ভবিষ্যতের হতে হবে");
         return;
@@ -491,16 +545,41 @@ function BlogForm({
           ))}
         </div>
         {status === "scheduled" && (
-          <div className="pt-2">
-            <Label>পাবলিশের তারিখ ও সময়</Label>
-            <Input
-              type="datetime-local"
-              value={scheduleLocal}
-              onChange={(e) => setScheduleLocal(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              এই সময়ে অটোমেটিক পাবলিশ হয়ে যাবে
-            </p>
+          <div className="pt-2 space-y-3">
+            <div>
+              <Label>টাইমজোন</Label>
+              <select
+                value={timezone}
+                onChange={(e) => {
+                  const newTz = e.target.value;
+                  // Re-interpret current wall-clock in new tz (keep same numbers, treat as new tz)
+                  setTimezone(newTz);
+                }}
+                className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+              >
+                {TIMEZONES.map((tz) => (
+                  <option key={tz} value={tz}>
+                    {tz}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-muted-foreground mt-1">
+                নির্বাচিত টাইমজোন অনুযায়ী এই সময়ে পাবলিশ হবে
+              </p>
+            </div>
+            <div>
+              <Label>পাবলিশের তারিখ ও সময়</Label>
+              <Input
+                type="datetime-local"
+                value={scheduleLocal}
+                onChange={(e) => setScheduleLocal(e.target.value)}
+              />
+              {scheduleLocal && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  → UTC: {new Date(zonedInputToIso(scheduleLocal, timezone)).toISOString()}
+                </p>
+              )}
+            </div>
           </div>
         )}
       </div>
