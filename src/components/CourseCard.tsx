@@ -83,18 +83,11 @@ const CourseCard = ({
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 ${
-                  i < Math.floor(rating)
-                    ? "fill-yellow-400 text-yellow-400"
-                    : "text-gray-300"
-                }`}
-              />
+              <Star key={i} className="w-4 h-4 text-gray-300" />
             ))}
           </div>
-          <span className="text-sm font-semibold">{toBanglaNumber(rating.toFixed(1))}</span>
-          <span className="text-sm text-muted-foreground">({toBanglaNumber(reviewCount)})</span>
+          <span className="text-sm font-semibold">{toBanglaNumber("0.0")}</span>
+          <span className="text-sm text-muted-foreground">({toBanglaNumber(0)})</span>
         </div>
 
         {/* Title */}
@@ -104,10 +97,10 @@ const CourseCard = ({
 
         {/* Students & Duration */}
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span>{toBanglaNumber(studentsCount)} শিক্ষার্থী</span>
+          <span>{toBanglaNumber(0)} শিক্ষার্থী</span>
           <div className="flex items-center gap-1">
             <Clock className="w-4 h-4" />
-            <span>{duration || "০m"}</span>
+            <span>{toBanglaNumber(0)}m</span>
           </div>
         </div>
 
