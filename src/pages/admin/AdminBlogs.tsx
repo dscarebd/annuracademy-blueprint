@@ -23,10 +23,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Edit, Trash2, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { Plus, Edit, Trash2, Loader2, History } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   useAdminBlogs,
   useCreateBlog,
@@ -35,6 +38,31 @@ import {
   Blog,
   BlogInsert,
 } from "@/hooks/useBlogs";
+
+interface PublishLogEntry {
+  id: string;
+  blog_id: string | null;
+  blog_title: string;
+  blog_slug: string | null;
+  scheduled_at: string | null;
+  published_at: string;
+}
+
+function usePublishLog() {
+  return useQuery({
+    queryKey: ["blog-publish-log"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("blog_publish_log")
+        .select("*")
+        .order("published_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return (data ?? []) as PublishLogEntry[];
+    },
+    refetchInterval: 60_000,
+  });
+}
 
 interface BlogFormData {
   title: string;
@@ -177,64 +205,80 @@ export default function AdminBlogs() {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogs?.map((blog) => (
-            <Card key={blog.id} className="overflow-hidden">
-              <img
-                src={blog.image_url || ''}
-                alt={blog.title}
-                className="w-full h-40 object-cover"
-              />
-              <div className="p-4 space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs text-white px-2 py-1 rounded ${blog.category_color || 'bg-blue-500'}`}>
-                    {blog.category}
-                  </span>
-                  {blog.scheduled_at && !blog.is_published ? (
-                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                      শিডিউলড: {format(new Date(blog.scheduled_at), "dd/MM/yyyy HH:mm")}
-                    </span>
-                  ) : !blog.is_published ? (
-                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                      Draft
-                    </span>
-                  ) : null}
-                </div>
-                <h3 className="font-semibold line-clamp-2">{blog.title}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {blog.excerpt}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">
-                    {blog.published_at 
-                      ? format(new Date(blog.published_at), "dd/MM/yyyy")
-                      : ""}
-                  </span>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => {
-                        setEditingBlog(blog);
-                        setIsDialogOpen(true);
-                      }}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="text-destructive"
-                      onClick={() => setDeleteId(blog.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+        <Tabs defaultValue="posts" className="w-full">
+          <TabsList>
+            <TabsTrigger value="posts">পোস্টসমূহ</TabsTrigger>
+            <TabsTrigger value="history">
+              <History className="h-4 w-4 mr-1" />
+              অটো-পাবলিশ হিস্ট্রি
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="posts" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {blogs?.map((blog) => (
+                <Card key={blog.id} className="overflow-hidden">
+                  <img
+                    src={blog.image_url || ''}
+                    alt={blog.title}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className="p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs text-white px-2 py-1 rounded ${blog.category_color || 'bg-blue-500'}`}>
+                        {blog.category}
+                      </span>
+                      {blog.scheduled_at && !blog.is_published ? (
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          শিডিউলড: {format(new Date(blog.scheduled_at), "dd/MM/yyyy HH:mm")}
+                        </span>
+                      ) : !blog.is_published ? (
+                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                          Draft
+                        </span>
+                      ) : null}
+                    </div>
+                    <h3 className="font-semibold line-clamp-2">{blog.title}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {blog.excerpt}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">
+                        {blog.published_at
+                          ? format(new Date(blog.published_at), "dd/MM/yyyy")
+                          : ""}
+                      </span>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            setEditingBlog(blog);
+                            setIsDialogOpen(true);
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="text-destructive"
+                          onClick={() => setDeleteId(blog.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="history" className="mt-6">
+            <PublishHistoryPanel />
+          </TabsContent>
+        </Tabs>
       </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
@@ -470,5 +514,89 @@ function BlogForm({
         </Button>
       </div>
     </div>
+  );
+}
+
+function PublishHistoryPanel() {
+  const { data: logs, isLoading, error } = usePublishLog();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 text-destructive">
+        হিস্ট্রি লোড করতে সমস্যা হয়েছে
+      </div>
+    );
+  }
+
+  if (!logs || logs.length === 0) {
+    return (
+      <Card className="p-8 text-center text-muted-foreground">
+        এখনো কোনো শিডিউলড পোস্ট অটো-পাবলিশ হয়নি।
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="divide-y">
+        {logs.map((log) => {
+          const delaySec = log.scheduled_at
+            ? Math.round(
+                (new Date(log.published_at).getTime() -
+                  new Date(log.scheduled_at).getTime()) /
+                  1000
+              )
+            : null;
+          return (
+            <div
+              key={log.id}
+              className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+            >
+              <div className="min-w-0">
+                <div className="font-medium truncate">{log.blog_title}</div>
+                <div className="text-xs text-muted-foreground mt-1 space-x-2">
+                  {log.scheduled_at && (
+                    <span>
+                      শিডিউল: {format(new Date(log.scheduled_at), "dd/MM/yyyy HH:mm")}
+                    </span>
+                  )}
+                  <span>
+                    পাবলিশ: {format(new Date(log.published_at), "dd/MM/yyyy HH:mm:ss")}
+                  </span>
+                  {delaySec !== null && (
+                    <span className="text-muted-foreground/80">
+                      (ডিলে: {delaySec}s)
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                  অটো-পাবলিশড
+                </span>
+                {log.blog_slug && (
+                  <a
+                    href={`/blog/${log.blog_slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-primary underline"
+                  >
+                    দেখুন
+                  </a>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </Card>
   );
 }
