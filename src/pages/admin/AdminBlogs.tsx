@@ -190,11 +190,15 @@ export default function AdminBlogs() {
                   <span className={`text-xs text-white px-2 py-1 rounded ${blog.category_color || 'bg-blue-500'}`}>
                     {blog.category}
                   </span>
-                  {!blog.is_published && (
+                  {blog.scheduled_at && !blog.is_published ? (
+                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                      শিডিউলড: {format(new Date(blog.scheduled_at), "dd/MM/yyyy HH:mm")}
+                    </span>
+                  ) : !blog.is_published ? (
                     <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
                       Draft
                     </span>
-                  )}
+                  ) : null}
                 </div>
                 <h3 className="font-semibold line-clamp-2">{blog.title}</h3>
                 <p className="text-sm text-muted-foreground line-clamp-2">
