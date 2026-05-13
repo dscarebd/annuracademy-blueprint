@@ -545,16 +545,41 @@ function BlogForm({
           ))}
         </div>
         {status === "scheduled" && (
-          <div className="pt-2">
-            <Label>পাবলিশের তারিখ ও সময়</Label>
-            <Input
-              type="datetime-local"
-              value={scheduleLocal}
-              onChange={(e) => setScheduleLocal(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              এই সময়ে অটোমেটিক পাবলিশ হয়ে যাবে
-            </p>
+          <div className="pt-2 space-y-3">
+            <div>
+              <Label>টাইমজোন</Label>
+              <select
+                value={timezone}
+                onChange={(e) => {
+                  const newTz = e.target.value;
+                  // Re-interpret current wall-clock in new tz (keep same numbers, treat as new tz)
+                  setTimezone(newTz);
+                }}
+                className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm"
+              >
+                {TIMEZONES.map((tz) => (
+                  <option key={tz} value={tz}>
+                    {tz}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-muted-foreground mt-1">
+                নির্বাচিত টাইমজোন অনুযায়ী এই সময়ে পাবলিশ হবে
+              </p>
+            </div>
+            <div>
+              <Label>পাবলিশের তারিখ ও সময়</Label>
+              <Input
+                type="datetime-local"
+                value={scheduleLocal}
+                onChange={(e) => setScheduleLocal(e.target.value)}
+              />
+              {scheduleLocal && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  → UTC: {new Date(zonedInputToIso(scheduleLocal, timezone)).toISOString()}
+                </p>
+              )}
+            </div>
           </div>
         )}
       </div>
