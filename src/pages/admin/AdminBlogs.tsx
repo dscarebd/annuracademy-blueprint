@@ -285,9 +285,53 @@ function BlogForm({
           link: blog.link || "",
           is_published: blog.is_published ?? true,
           published_at: blog.published_at || format(new Date(), "yyyy-MM-dd"),
+          scheduled_at: blog.scheduled_at || null,
         }
       : emptyFormData
   );
+
+  const initialStatus: "published" | "scheduled" | "draft" = blog
+    ? blog.scheduled_at && !blog.is_published
+      ? "scheduled"
+      : blog.is_published
+      ? "published"
+      : "draft"
+    : "published";
+  const [status, setStatus] = useState<"published" | "scheduled" | "draft">(initialStatus);
+
+  // Convert ISO to "YYYY-MM-DDTHH:mm" for datetime-local input
+  const toLocalInput = (iso: string | null) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+  const [scheduleLocal, setScheduleLocal] = useState<string>(toLocalInput(blog?.scheduled_at ?? null));
+
+  const handleSubmit = () => {
+    let payload: BlogFormData = { ...formData };
+    if (status === "published") {
+      payload.is_published = true;
+      payload.scheduled_at = null;
+    } else if (status === "draft") {
+      payload.is_published = false;
+      payload.scheduled_at = null;
+    } else {
+      // scheduled
+      if (!scheduleLocal) {
+        alert("শিডিউল করার জন্য তারিখ ও সময় নির্বাচন করুন");
+        return;
+      }
+      const iso = new Date(scheduleLocal).toISOString();
+      if (new Date(iso).getTime() <= Date.now()) {
+        alert("শিডিউলের সময় ভবিষ্যতের হতে হবে");
+        return;
+      }
+      payload.is_published = false;
+      payload.scheduled_at = iso;
+    }
+    onSave(payload);
+  };
 
   return (
     <div className="space-y-4">
