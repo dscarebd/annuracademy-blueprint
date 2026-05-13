@@ -18,6 +18,7 @@ interface CourseCardProps {
   isFree?: boolean;
   studentsCount?: number;
   duration?: string;
+  isPublished?: boolean;
 }
 
 const CourseCard = ({
