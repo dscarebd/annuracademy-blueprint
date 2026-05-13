@@ -18,6 +18,7 @@ interface CourseCardProps {
   isFree?: boolean;
   studentsCount?: number;
   duration?: string;
+  isPublished?: boolean;
 }
 
 const CourseCard = ({
@@ -33,6 +34,7 @@ const CourseCard = ({
   isFree = false,
   studentsCount = 0,
   duration,
+  isPublished = true,
 }: CourseCardProps) => {
   const { addToCart, isInCart } = useCart();
   const { toast } = useToast();
@@ -66,6 +68,13 @@ const CourseCard = ({
           alt={title}
           className="w-full h-full object-cover"
         />
+        {!isPublished && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <span className="px-3 py-1 bg-white/90 text-foreground font-bold rounded-full text-sm">
+              Upcoming
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -106,12 +115,18 @@ const CourseCard = ({
 
         {/* Price & Button */}
         <div className="flex items-center justify-between pt-3 border-t">
-          {isFree ? (
+          {!isPublished ? (
+            <span className="text-muted-foreground font-bold text-lg">Upcoming</span>
+          ) : isFree ? (
             <span className="text-primary font-bold text-lg">ফ্রি</span>
           ) : (
             <span className="text-primary font-bold text-lg">{formatBanglaPrice(price)}</span>
           )}
-          {isFree ? (
+          {!isPublished ? (
+            <Button size="sm" variant="outline" disabled>
+              শীঘ্রই আসছে
+            </Button>
+          ) : isFree ? (
             <Button
               size="sm"
               variant="outline"
