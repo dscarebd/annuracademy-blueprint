@@ -48,6 +48,7 @@ interface BlogFormData {
   link: string;
   is_published: boolean;
   published_at: string;
+  scheduled_at: string | null;
 }
 
 const emptyFormData: BlogFormData = {
@@ -62,6 +63,7 @@ const emptyFormData: BlogFormData = {
   link: "",
   is_published: true,
   published_at: format(new Date(), "yyyy-MM-dd"),
+  scheduled_at: null,
 };
 
 export default function AdminBlogs() {
@@ -188,11 +190,15 @@ export default function AdminBlogs() {
                   <span className={`text-xs text-white px-2 py-1 rounded ${blog.category_color || 'bg-blue-500'}`}>
                     {blog.category}
                   </span>
-                  {!blog.is_published && (
+                  {blog.scheduled_at && !blog.is_published ? (
+                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                      শিডিউলড: {format(new Date(blog.scheduled_at), "dd/MM/yyyy HH:mm")}
+                    </span>
+                  ) : !blog.is_published ? (
                     <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
                       Draft
                     </span>
-                  )}
+                  ) : null}
                 </div>
                 <h3 className="font-semibold line-clamp-2">{blog.title}</h3>
                 <p className="text-sm text-muted-foreground line-clamp-2">
@@ -283,9 +289,53 @@ function BlogForm({
           link: blog.link || "",
           is_published: blog.is_published ?? true,
           published_at: blog.published_at || format(new Date(), "yyyy-MM-dd"),
+          scheduled_at: blog.scheduled_at || null,
         }
       : emptyFormData
   );
+
+  const initialStatus: "published" | "scheduled" | "draft" = blog
+    ? blog.scheduled_at && !blog.is_published
+      ? "scheduled"
+      : blog.is_published
+      ? "published"
+      : "draft"
+    : "published";
+  const [status, setStatus] = useState<"published" | "scheduled" | "draft">(initialStatus);
+
+  // Convert ISO to "YYYY-MM-DDTHH:mm" for datetime-local input
+  const toLocalInput = (iso: string | null) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+  const [scheduleLocal, setScheduleLocal] = useState<string>(toLocalInput(blog?.scheduled_at ?? null));
+
+  const handleSubmit = () => {
+    let payload: BlogFormData = { ...formData };
+    if (status === "published") {
+      payload.is_published = true;
+      payload.scheduled_at = null;
+    } else if (status === "draft") {
+      payload.is_published = false;
+      payload.scheduled_at = null;
+    } else {
+      // scheduled
+      if (!scheduleLocal) {
+        alert("শিডিউল করার জন্য তারিখ ও সময় নির্বাচন করুন");
+        return;
+      }
+      const iso = new Date(scheduleLocal).toISOString();
+      if (new Date(iso).getTime() <= Date.now()) {
+        alert("শিডিউলের সময় ভবিষ্যতের হতে হবে");
+        return;
+      }
+      payload.is_published = false;
+      payload.scheduled_at = iso;
+    }
+    onSave(payload);
+  };
 
   return (
     <div className="space-y-4">
@@ -377,19 +427,44 @@ function BlogForm({
           onChange={(e) => setFormData({ ...formData, link: e.target.value })}
         />
       </div>
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="is_published"
-          checked={formData.is_published}
-          onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })}
-        />
-        <Label htmlFor="is_published">পাবলিশড</Label>
+      <div className="space-y-2 rounded-md border p-3">
+        <Label>পাবলিশ স্ট্যাটাস</Label>
+        <div className="flex flex-wrap gap-2">
+          {([
+            { v: "published", label: "এখনই পাবলিশ" },
+            { v: "scheduled", label: "শিডিউল করুন" },
+            { v: "draft", label: "ড্রাফট" },
+          ] as const).map((opt) => (
+            <Button
+              key={opt.v}
+              type="button"
+              size="sm"
+              variant={status === opt.v ? "default" : "outline"}
+              onClick={() => setStatus(opt.v)}
+            >
+              {opt.label}
+            </Button>
+          ))}
+        </div>
+        {status === "scheduled" && (
+          <div className="pt-2">
+            <Label>পাবলিশের তারিখ ও সময়</Label>
+            <Input
+              type="datetime-local"
+              value={scheduleLocal}
+              onChange={(e) => setScheduleLocal(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              এই সময়ে অটোমেটিক পাবলিশ হয়ে যাবে
+            </p>
+          </div>
+        )}
       </div>
       <div className="flex gap-2 justify-end">
         <Button variant="outline" onClick={onCancel} disabled={isLoading}>
           বাতিল
         </Button>
-        <Button onClick={() => onSave(formData)} disabled={isLoading}>
+        <Button onClick={handleSubmit} disabled={isLoading}>
           {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
           সেভ করুন
         </Button>
