@@ -244,6 +244,8 @@ const CourseDetail = () => {
     );
   }
 
+  const isUpcoming = course.is_published === false;
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <TopBanner />
@@ -270,13 +272,14 @@ const CourseDetail = () => {
                 {course.description}
               </p>
               
-              {/* Rating */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex">{renderStars(course.rating || 0)}</div>
-                <span className="text-sm text-muted-foreground">
-                  {(course.rating || 0).toFixed(1)} ({course.review_count || 0} রিভিউ)
-                </span>
-              </div>
+              {!isUpcoming && (
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex">{renderStars(course.rating || 0)}</div>
+                  <span className="text-sm text-muted-foreground">
+                    {(course.rating || 0).toFixed(1)} ({course.review_count || 0} রিভিউ)
+                  </span>
+                </div>
+              )}
 
               {/* Stats */}
               <div className="flex flex-wrap gap-4 mb-4">
@@ -288,7 +291,7 @@ const CourseDetail = () => {
                   <BookOpen className="w-5 h-5" />
                   <span>{totalLessons} লেসন</span>
                 </div>
-                {totalDuration && (
+                {!isUpcoming && totalDuration && (
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Clock className="w-5 h-5" />
                     <span>{totalDuration}</span>
