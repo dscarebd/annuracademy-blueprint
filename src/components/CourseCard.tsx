@@ -105,12 +105,10 @@ const CourseCard = ({
         {/* Students & Duration */}
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <span>{toBanglaNumber(studentsCount)} শিক্ষার্থী</span>
-          {duration && (
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              <span>{duration}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-1">
+            <Clock className="w-4 h-4" />
+            <span>{duration || "০m"}</span>
+          </div>
         </div>
 
         {/* Price & Button */}
