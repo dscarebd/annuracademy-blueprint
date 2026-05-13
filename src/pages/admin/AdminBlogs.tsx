@@ -23,12 +23,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Plus, Edit, Trash2, Loader2, History } from "lucide-react";
+import { Plus, Edit, Trash2, Loader2, History, Play } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   useAdminBlogs,
@@ -519,6 +519,49 @@ function BlogForm({
 
 function PublishHistoryPanel() {
   const { data: logs, isLoading, error } = usePublishLog();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [running, setRunning] = useState(false);
+
+  const handleRunNow = async () => {
+    setRunning(true);
+    try {
+      const { data, error } = await (supabase as any).rpc(
+        "run_publish_scheduled_blogs_now"
+      );
+      if (error) throw error;
+      const count = typeof data === "number" ? data : 0;
+      toast({
+        title: "সফল!",
+        description:
+          count > 0
+            ? `${count}টি শিডিউলড পোস্ট এখনই পাবলিশ করা হয়েছে`
+            : "পাবলিশ করার মতো কোনো শিডিউলড পোস্ট ছিল না",
+      });
+      queryClient.invalidateQueries({ queryKey: ["blog-publish-log"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    } catch (e: any) {
+      toast({
+        title: "ত্রুটি!",
+        description: e?.message || "ম্যানুয়াল ট্রিগার ব্যর্থ হয়েছে",
+        variant: "destructive",
+      });
+    } finally {
+      setRunning(false);
+    }
+  };
+
+  const RunNowButton = (
+    <Button onClick={handleRunNow} disabled={running} size="sm">
+      {running ? (
+        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+      ) : (
+        <Play className="h-4 w-4 mr-2" />
+      )}
+      এখনই Run করুন
+    </Button>
+  );
 
   if (isLoading) {
     return (
@@ -530,73 +573,83 @@ function PublishHistoryPanel() {
 
   if (error) {
     return (
-      <div className="text-center py-12 text-destructive">
-        হিস্ট্রি লোড করতে সমস্যা হয়েছে
+      <div className="space-y-4">
+        <div className="flex justify-end">{RunNowButton}</div>
+        <div className="text-center py-12 text-destructive">
+          হিস্ট্রি লোড করতে সমস্যা হয়েছে
+        </div>
       </div>
-    );
-  }
-
-  if (!logs || logs.length === 0) {
-    return (
-      <Card className="p-8 text-center text-muted-foreground">
-        এখনো কোনো শিডিউলড পোস্ট অটো-পাবলিশ হয়নি।
-      </Card>
     );
   }
 
   return (
-    <Card className="overflow-hidden">
-      <div className="divide-y">
-        {logs.map((log) => {
-          const delaySec = log.scheduled_at
-            ? Math.round(
-                (new Date(log.published_at).getTime() -
-                  new Date(log.scheduled_at).getTime()) /
-                  1000
-              )
-            : null;
-          return (
-            <div
-              key={log.id}
-              className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
-            >
-              <div className="min-w-0">
-                <div className="font-medium truncate">{log.blog_title}</div>
-                <div className="text-xs text-muted-foreground mt-1 space-x-2">
-                  {log.scheduled_at && (
-                    <span>
-                      শিডিউল: {format(new Date(log.scheduled_at), "dd/MM/yyyy HH:mm")}
-                    </span>
-                  )}
-                  <span>
-                    পাবলিশ: {format(new Date(log.published_at), "dd/MM/yyyy HH:mm:ss")}
-                  </span>
-                  {delaySec !== null && (
-                    <span className="text-muted-foreground/80">
-                      (ডিলে: {delaySec}s)
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                  অটো-পাবলিশড
-                </span>
-                {log.blog_slug && (
-                  <a
-                    href={`/blog/${log.blog_slug}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs text-primary underline"
-                  >
-                    দেখুন
-                  </a>
-                )}
-              </div>
-            </div>
-          );
-        })}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          সকল শিডিউলড পোস্ট সময় না হলেও এখনই পাবলিশ করতে চাইলে নিচের বাটনে ক্লিক করুন।
+        </p>
+        {RunNowButton}
       </div>
-    </Card>
+
+      {!logs || logs.length === 0 ? (
+        <Card className="p-8 text-center text-muted-foreground">
+          এখনো কোনো শিডিউলড পোস্ট অটো-পাবলিশ হয়নি।
+        </Card>
+      ) : (
+        <Card className="overflow-hidden">
+          <div className="divide-y">
+            {logs.map((log) => {
+              const delaySec = log.scheduled_at
+                ? Math.round(
+                    (new Date(log.published_at).getTime() -
+                      new Date(log.scheduled_at).getTime()) /
+                      1000
+                  )
+                : null;
+              return (
+                <div
+                  key={log.id}
+                  className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+                >
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{log.blog_title}</div>
+                    <div className="text-xs text-muted-foreground mt-1 space-x-2">
+                      {log.scheduled_at && (
+                        <span>
+                          শিডিউল: {format(new Date(log.scheduled_at), "dd/MM/yyyy HH:mm")}
+                        </span>
+                      )}
+                      <span>
+                        পাবলিশ: {format(new Date(log.published_at), "dd/MM/yyyy HH:mm:ss")}
+                      </span>
+                      {delaySec !== null && (
+                        <span className="text-muted-foreground/80">
+                          (ডিলে: {delaySec}s)
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                      অটো-পাবলিশড
+                    </span>
+                    {log.blog_slug && (
+                      <a
+                        href={`/blog/${log.blog_slug}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-primary underline"
+                      >
+                        দেখুন
+                      </a>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+    </div>
   );
 }
