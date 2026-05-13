@@ -423,19 +423,44 @@ function BlogForm({
           onChange={(e) => setFormData({ ...formData, link: e.target.value })}
         />
       </div>
-      <div className="flex items-center space-x-2">
-        <Switch
-          id="is_published"
-          checked={formData.is_published}
-          onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })}
-        />
-        <Label htmlFor="is_published">পাবলিশড</Label>
+      <div className="space-y-2 rounded-md border p-3">
+        <Label>পাবলিশ স্ট্যাটাস</Label>
+        <div className="flex flex-wrap gap-2">
+          {([
+            { v: "published", label: "এখনই পাবলিশ" },
+            { v: "scheduled", label: "শিডিউল করুন" },
+            { v: "draft", label: "ড্রাফট" },
+          ] as const).map((opt) => (
+            <Button
+              key={opt.v}
+              type="button"
+              size="sm"
+              variant={status === opt.v ? "default" : "outline"}
+              onClick={() => setStatus(opt.v)}
+            >
+              {opt.label}
+            </Button>
+          ))}
+        </div>
+        {status === "scheduled" && (
+          <div className="pt-2">
+            <Label>পাবলিশের তারিখ ও সময়</Label>
+            <Input
+              type="datetime-local"
+              value={scheduleLocal}
+              onChange={(e) => setScheduleLocal(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              এই সময়ে অটোমেটিক পাবলিশ হয়ে যাবে
+            </p>
+          </div>
+        )}
       </div>
       <div className="flex gap-2 justify-end">
         <Button variant="outline" onClick={onCancel} disabled={isLoading}>
           বাতিল
         </Button>
-        <Button onClick={() => onSave(formData)} disabled={isLoading}>
+        <Button onClick={handleSubmit} disabled={isLoading}>
           {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
           সেভ করুন
         </Button>
