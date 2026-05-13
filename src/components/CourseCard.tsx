@@ -115,12 +115,18 @@ const CourseCard = ({
 
         {/* Price & Button */}
         <div className="flex items-center justify-between pt-3 border-t">
-          {isFree ? (
+          {!isPublished ? (
+            <span className="text-muted-foreground font-bold text-lg">Upcoming</span>
+          ) : isFree ? (
             <span className="text-primary font-bold text-lg">ফ্রি</span>
           ) : (
             <span className="text-primary font-bold text-lg">{formatBanglaPrice(price)}</span>
           )}
-          {isFree ? (
+          {!isPublished ? (
+            <Button size="sm" variant="outline" disabled>
+              শীঘ্রই আসছে
+            </Button>
+          ) : isFree ? (
             <Button
               size="sm"
               variant="outline"
