@@ -55,6 +55,7 @@ const Courses = () => {
                       isFree={course.is_free || false}
                       studentsCount={course.students_count || 0}
                       duration={course.duration || undefined}
+                      isPublished={course.is_published !== false}
                     />
                   </Link>
                 ))}
