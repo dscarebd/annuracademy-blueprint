@@ -516,3 +516,87 @@ function BlogForm({
     </div>
   );
 }
+
+function PublishHistoryPanel() {
+  const { data: logs, isLoading, error } = usePublishLog();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12 text-destructive">
+        হিস্ট্রি লোড করতে সমস্যা হয়েছে
+      </div>
+    );
+  }
+
+  if (!logs || logs.length === 0) {
+    return (
+      <Card className="p-8 text-center text-muted-foreground">
+        এখনো কোনো শিডিউলড পোস্ট অটো-পাবলিশ হয়নি।
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="overflow-hidden">
+      <div className="divide-y">
+        {logs.map((log) => {
+          const delaySec = log.scheduled_at
+            ? Math.round(
+                (new Date(log.published_at).getTime() -
+                  new Date(log.scheduled_at).getTime()) /
+                  1000
+              )
+            : null;
+          return (
+            <div
+              key={log.id}
+              className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
+            >
+              <div className="min-w-0">
+                <div className="font-medium truncate">{log.blog_title}</div>
+                <div className="text-xs text-muted-foreground mt-1 space-x-2">
+                  {log.scheduled_at && (
+                    <span>
+                      শিডিউল: {format(new Date(log.scheduled_at), "dd/MM/yyyy HH:mm")}
+                    </span>
+                  )}
+                  <span>
+                    পাবলিশ: {format(new Date(log.published_at), "dd/MM/yyyy HH:mm:ss")}
+                  </span>
+                  {delaySec !== null && (
+                    <span className="text-muted-foreground/80">
+                      (ডিলে: {delaySec}s)
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                  অটো-পাবলিশড
+                </span>
+                {log.blog_slug && (
+                  <a
+                    href={`/blog/${log.blog_slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-primary underline"
+                  >
+                    দেখুন
+                  </a>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </Card>
+  );
+}
