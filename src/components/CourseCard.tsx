@@ -80,22 +80,24 @@ const CourseCard = ({
       {/* Content */}
       <div className="p-5 space-y-3">
         {/* Rating */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 ${
-                  i < Math.floor(rating)
-                    ? "fill-yellow-400 text-yellow-400"
-                    : "text-gray-300"
-                }`}
-              />
-            ))}
+        {isPublished && (
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-4 h-4 ${
+                    i < Math.floor(rating)
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+            <span className="text-sm font-semibold">{toBanglaNumber(rating.toFixed(1))}</span>
+            <span className="text-sm text-muted-foreground">({toBanglaNumber(reviewCount)})</span>
           </div>
-          <span className="text-sm font-semibold">{toBanglaNumber(rating.toFixed(1))}</span>
-          <span className="text-sm text-muted-foreground">({toBanglaNumber(reviewCount)})</span>
-        </div>
+        )}
 
         {/* Title */}
         <h3 className="font-bold text-lg line-clamp-2 group-hover:text-primary transition-colors mb-1">
@@ -103,13 +105,15 @@ const CourseCard = ({
         </h3>
 
         {/* Students & Duration */}
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <span>{toBanglaNumber(studentsCount)} শিক্ষার্থী</span>
-          <div className="flex items-center gap-1">
-            <Clock className="w-4 h-4" />
-            <span>{duration || "০m"}</span>
+        {isPublished && (
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <span>{toBanglaNumber(studentsCount)} শিক্ষার্থী</span>
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>{duration || "০m"}</span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Price & Button */}
         <div className="flex items-center justify-between pt-3 border-t">
