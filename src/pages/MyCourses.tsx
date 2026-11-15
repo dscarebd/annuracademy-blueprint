@@ -84,7 +84,7 @@ const MyCourses = () => {
   const inProgressCourses = enrollments?.filter(e => e.progress > 0 && e.progress < 100).length || 0;
 
   // Get popular courses (top 3 by students count)
-  const { data: allCourses } = useCourses();
+  const { data: allCourses, isError: coursesError, refetch: refetchCourses, isFetching: coursesFetching } = useCourses();
   const popularCourses = allCourses
     ?.sort((a, b) => (b.students_count || 0) - (a.students_count || 0))
     .slice(0, 3);
@@ -316,7 +316,14 @@ const MyCourses = () => {
                   </h3>
                 </div>
                 
-                {popularCourses && popularCourses.length > 0 ? (
+                {coursesError ? (
+                  <div className="text-center py-4">
+                    <p className="text-xs text-muted-foreground mb-2">কোর্স লোড করতে সমস্যা হয়েছে</p>
+                    <Button variant="outline" size="sm" onClick={() => void refetchCourses()} disabled={coursesFetching}>
+                      আবার চেষ্টা করুন
+                    </Button>
+                  </div>
+                ) : popularCourses && popularCourses.length > 0 ? (
                   <div className="space-y-3">
                     {popularCourses.map((course) => (
                       <Link 

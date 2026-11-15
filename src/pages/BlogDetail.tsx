@@ -23,7 +23,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 const BlogDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: blog, isLoading, error } = useBlogBySlug(slug || "");
-  const { data: courses } = useCourses();
+  const { data: courses, isError: coursesError, refetch: refetchCourses, isFetching: coursesFetching } = useCourses();
   const { data: socialLinks } = useSocialLinks();
 
   const popularCourses = courses?.slice(0, 5) || [];
@@ -177,6 +177,14 @@ const BlogDetail = () => {
                       </div>
                     </Link>
                   ))}
+                  {coursesError && (
+                    <div className="text-sm text-muted-foreground">
+                      <p className="mb-2">কোর্স লোড করতে সমস্যা হয়েছে</p>
+                      <Button variant="outline" size="sm" onClick={() => void refetchCourses()} disabled={coursesFetching}>
+                        আবার চেষ্টা করুন
+                      </Button>
+                    </div>
+                  )}
                   <Link to="/courses">
                     <Button variant="outline" size="sm" className="w-full mt-2">
                       সব কোর্স দেখুন

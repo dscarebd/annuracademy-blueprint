@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { useCourses } from "@/hooks/useCourses";
 import { useSiteContentMultiple, getContentValue } from "@/hooks/useSiteContent";
 import BrandLogo from "@/components/BrandLogo";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 
 const Footer = () => {
-  const { data: courses } = useCourses();
+  const { data: courses, isError, refetch, isFetching } = useCourses();
   const { data: content } = useSiteContentMultiple([
     "footer_brand_description",
     "footer_copyright"
@@ -90,7 +92,17 @@ const Footer = () => {
                 </li>
               ))}
               {popularCourses.length === 0 && (
-                <li className="text-sm text-muted-foreground">কোর্স লোড হচ্ছে...</li>
+                <li className="text-sm text-muted-foreground">
+                  {isError ? (
+                    <div className="space-y-2">
+                      <p>কোর্স লোড করতে সমস্যা হয়েছে</p>
+                      <Button variant="outline" size="sm" onClick={() => void refetch()} disabled={isFetching}>
+                        <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+                        আবার চেষ্টা করুন
+                      </Button>
+                    </div>
+                  ) : "কোর্স লোড হচ্ছে..."}
+                </li>
               )}
             </ul>
           </div>

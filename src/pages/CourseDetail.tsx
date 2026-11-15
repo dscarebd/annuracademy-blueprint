@@ -17,7 +17,8 @@ import {
   Play,
   Lock,
   ChevronRight,
-  ShoppingCart
+  ShoppingCart,
+  RefreshCw
 } from "lucide-react";
 import {
   Accordion,
@@ -39,7 +40,7 @@ const CourseDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
   const navigate = useNavigate();
-  const { data: course, isLoading, error } = useCourseBySlug(slug || "");
+  const { data: course, isLoading, error, refetch, isFetching } = useCourseBySlug(slug || "");
   const [showBuyDialog, setShowBuyDialog] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState<string>("");
 
@@ -231,13 +232,25 @@ const CourseDetail = () => {
         <TopBanner />
         <Navbar />
         <main className="flex-grow flex flex-col items-center justify-center gap-4">
-          <p className="text-destructive text-lg">কোর্স পাওয়া যায়নি</p>
-          <Link to="/courses">
-            <Button variant="outline">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              সব কোর্স দেখুন
-            </Button>
-          </Link>
+          {error ? (
+            <>
+              <p className="text-destructive text-lg">কোর্স লোড করতে সমস্যা হয়েছে</p>
+              <Button variant="outline" onClick={() => void refetch()} disabled={isFetching}>
+                <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+                আবার চেষ্টা করুন
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="text-destructive text-lg">কোর্স পাওয়া যায়নি</p>
+              <Link to="/courses">
+                <Button variant="outline">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  সব কোর্স দেখুন
+                </Button>
+              </Link>
+            </>
+          )}
         </main>
         <Footer />
       </div>
