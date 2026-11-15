@@ -60,6 +60,9 @@ function transformCourse(data: Record<string, unknown>): Course {
 export function useCourses() {
   return useQuery({
     queryKey: ["courses"],
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
+    refetchOnReconnect: true,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("courses")
@@ -75,6 +78,9 @@ export function useCourses() {
 export function useCourseBySlug(slug: string) {
   return useQuery({
     queryKey: ["course", slug],
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
+    refetchOnReconnect: true,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("courses")
@@ -92,6 +98,9 @@ export function useCourseBySlug(slug: string) {
 export function useAdminCourses() {
   return useQuery({
     queryKey: ["admin-courses"],
+    retry: 3,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 8000),
+    refetchOnReconnect: true,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("courses")

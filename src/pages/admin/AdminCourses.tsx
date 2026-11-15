@@ -36,7 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Edit, Trash2, Loader2, X, Upload, Youtube, Video } from "lucide-react";
+import { Plus, Edit, Trash2, Loader2, X, Upload, Youtube, Video, RefreshCw } from "lucide-react";
 import { useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -103,7 +103,7 @@ const emptyFormData: CourseFormData = {
 };
 
 export default function AdminCourses() {
-  const { data: courses, isLoading, error } = useAdminCourses();
+  const { data: courses, isLoading, error, refetch, isFetching } = useAdminCourses();
   const createCourse = useCreateCourse();
   const updateCourse = useUpdateCourse();
   const deleteCourse = useDeleteCourse();
@@ -173,8 +173,12 @@ export default function AdminCourses() {
   if (error) {
     return (
       <AdminLayout>
-        <div className="text-center py-12 text-destructive">
-          কোর্স লোড করতে সমস্যা হয়েছে
+        <div className="flex flex-col items-center gap-4 py-12 text-center">
+          <p className="text-destructive">কোর্স লোড করতে সমস্যা হয়েছে</p>
+          <Button variant="outline" onClick={() => void refetch()} disabled={isFetching}>
+            <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+            আবার চেষ্টা করুন
+          </Button>
         </div>
       </AdminLayout>
     );

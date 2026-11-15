@@ -10,12 +10,19 @@ import PurpleCallout from "@/components/PurpleCallout";
 import Footer from "@/components/Footer";
 import { useCourses } from "@/hooks/useCourses";
 import { usePageSections, PageSection } from "@/hooks/usePageSections";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 // Dynamic section renderer
-const renderSection = (section: PageSection, courses: any[] | undefined, isCoursesLoading: boolean) => {
+const renderSection = (
+  section: PageSection,
+  courses: any[] | undefined,
+  isCoursesLoading: boolean,
+  isCoursesError: boolean,
+  refetchCourses: () => void,
+  isCoursesFetching: boolean,
+) => {
   switch (section.section_key) {
     case "hero":
       return (
@@ -51,6 +58,14 @@ const renderSection = (section: PageSection, courses: any[] | undefined, isCours
             {isCoursesLoading ? (
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            ) : isCoursesError ? (
+              <div className="flex flex-col items-center gap-4 py-12 text-center">
+                <p className="text-destructive">কোর্স লোড করতে সমস্যা হয়েছে</p>
+                <Button variant="outline" onClick={refetchCourses} disabled={isCoursesFetching}>
+                  <RefreshCw className={`mr-2 h-4 w-4 ${isCoursesFetching ? "animate-spin" : ""}`} />
+                  আবার চেষ্টা করুন
+                </Button>
               </div>
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -119,7 +134,13 @@ const renderSection = (section: PageSection, courses: any[] | undefined, isCours
 };
 
 const Index = () => {
-  const { data: courses, isLoading: isCoursesLoading } = useCourses();
+  const {
+    data: courses,
+    isLoading: isCoursesLoading,
+    isError: isCoursesError,
+    refetch: refetchCourses,
+    isFetching: isCoursesFetching,
+  } = useCourses();
   const { data: sections, isLoading: isSectionsLoading } = usePageSections("home");
 
 
@@ -135,7 +156,14 @@ const Index = () => {
       ) : sections && sections.length > 0 ? (
         <>
           {sections.map((section) => {
-            const sectionContent = renderSection(section, courses, isCoursesLoading);
+            const sectionContent = renderSection(
+              section,
+              courses,
+              isCoursesLoading,
+              isCoursesError,
+              () => void refetchCourses(),
+              isCoursesFetching,
+            );
             return (
               <div key={section.id}>
                 {sectionContent}
@@ -162,6 +190,14 @@ const Index = () => {
               {isCoursesLoading ? (
                 <div className="flex justify-center items-center py-12">
                   <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                </div>
+              ) : isCoursesError ? (
+                <div className="flex flex-col items-center gap-4 py-12 text-center">
+                  <p className="text-destructive">কোর্স লোড করতে সমস্যা হয়েছে</p>
+                  <Button variant="outline" onClick={() => void refetchCourses()} disabled={isCoursesFetching}>
+                    <RefreshCw className={`mr-2 h-4 w-4 ${isCoursesFetching ? "animate-spin" : ""}`} />
+                    আবার চেষ্টা করুন
+                  </Button>
                 </div>
               ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -2,12 +2,13 @@ import TopBanner from "@/components/TopBanner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CourseCard from "@/components/CourseCard";
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCourses } from "@/hooks/useCourses";
+import { Button } from "@/components/ui/button";
 
 const Courses = () => {
-  const { data: courses, isLoading, error } = useCourses();
+  const { data: courses, isLoading, error, refetch, isFetching } = useCourses();
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -35,8 +36,12 @@ const Courses = () => {
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : error ? (
-              <div className="text-center py-12 text-destructive">
-                কোর্স লোড করতে সমস্যা হয়েছে
+              <div className="flex flex-col items-center gap-4 py-12 text-center">
+                <p className="text-destructive">কোর্স লোড করতে সমস্যা হয়েছে</p>
+                <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
+                  <RefreshCw className={`mr-2 h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+                  আবার চেষ্টা করুন
+                </Button>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
